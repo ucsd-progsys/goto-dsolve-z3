@@ -47,9 +47,18 @@ Notes:
 #define __out_ecount(num_args) __out __ecount(num_args)
 #endif 
 
+#ifndef __inout_ecount
+#define __inout_ecount(num_args) __in __out __ecount(num_args)
+#endif 
+
+#ifndef __inout
+#define __inout __in __out
+#endif
+
 #define Z3_API
 
 #define DEFINE_TYPE(T) typedef struct _ ## T *T
+#define DEFINE_VOID(T) typedef void* T
 
 #include"z3_api.h"
 

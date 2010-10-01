@@ -2,17 +2,19 @@
 
 type config
 and context
+and sort
+and func_decl
 and ast
-and type_ast
-and const_decl_ast
-and const_ast
-and numeral_ast
-and pattern_ast
+and app
+and pattern
 and symbol
-and value
 and parameter
 and model
-and labels
+and literals
+and constructor
+and constructor_list
+and theory
+and theory_data
 and enum_1 =
   | L_FALSE
   | L_UNDEF
@@ -23,26 +25,32 @@ and enum_2 =
   | STRING_SYMBOL
 and symbol_kind = enum_2
 and enum_3 =
-  | UNINTERPRETED_TYPE
-  | BOOL_TYPE
-  | INT_TYPE
-  | REAL_TYPE
-  | BV_TYPE
-  | ARRAY_TYPE
-  | TUPLE_TYPE
-  | UNKNOWN_TYPE
-and type_kind = enum_3
+  | PARAMETER_INT
+  | PARAMETER_DOUBLE
+  | PARAMETER_RATIONAL
+  | PARAMETER_SYMBOL
+  | PARAMETER_SORT
+  | PARAMETER_AST
+  | PARAMETER_FUNC_DECL
+and parameter_kind = enum_3
 and enum_4 =
+  | UNINTERPRETED_SORT
+  | BOOL_SORT
+  | INT_SORT
+  | REAL_SORT
+  | BV_SORT
+  | ARRAY_SORT
+  | DATATYPE_SORT
+  | UNKNOWN_SORT
+and sort_kind = enum_4
+and enum_5 =
   | NUMERAL_AST
-  | CONST_DECL_AST
-  | CONST_AST
-  | TYPE_AST
+  | APP_AST
   | VAR_AST
-  | PATTERN_AST
   | QUANTIFIER_AST
   | UNKNOWN_AST
-and ast_kind = enum_4
-and enum_5 =
+and ast_kind = enum_5
+and enum_6 =
   | OP_TRUE
   | OP_FALSE
   | OP_EQ
@@ -54,6 +62,8 @@ and enum_5 =
   | OP_XOR
   | OP_NOT
   | OP_IMPLIES
+  | OP_OEQ
+  | OP_ANUM
   | OP_LE
   | OP_GE
   | OP_LT
@@ -66,16 +76,20 @@ and enum_5 =
   | OP_IDIV
   | OP_REM
   | OP_MOD
+  | OP_TO_REAL
+  | OP_TO_INT
+  | OP_IS_INT
   | OP_STORE
   | OP_SELECT
   | OP_CONST_ARRAY
+  | OP_ARRAY_MAP
   | OP_ARRAY_DEFAULT
-  | OP_STORE_ITE
   | OP_SET_UNION
   | OP_SET_INTERSECT
   | OP_SET_DIFFERENCE
   | OP_SET_COMPLEMENT
   | OP_SET_SUBSET
+  | OP_BNUM
   | OP_BIT1
   | OP_BIT0
   | OP_BNEG
@@ -122,15 +136,64 @@ and enum_5 =
   | OP_ROTATE_RIGHT
   | OP_INT2BV
   | OP_BV2INT
+  | OP_CARRY
+  | OP_XOR3
+  | OP_PR_UNDEF
+  | OP_PR_TRUE
+  | OP_PR_ASSERTED
+  | OP_PR_GOAL
+  | OP_PR_MODUS_PONENS
+  | OP_PR_REFLEXIVITY
+  | OP_PR_SYMMETRY
+  | OP_PR_TRANSITIVITY
+  | OP_PR_TRANSITIVITY_STAR
+  | OP_PR_MONOTONICITY
+  | OP_PR_QUANT_INTRO
+  | OP_PR_DISTRIBUTIVITY
+  | OP_PR_AND_ELIM
+  | OP_PR_NOT_OR_ELIM
+  | OP_PR_REWRITE
+  | OP_PR_REWRITE_STAR
+  | OP_PR_PULL_QUANT
+  | OP_PR_PULL_QUANT_STAR
+  | OP_PR_PUSH_QUANT
+  | OP_PR_ELIM_UNUSED_VARS
+  | OP_PR_DER
+  | OP_PR_QUANT_INST
+  | OP_PR_HYPOTHESIS
+  | OP_PR_LEMMA
+  | OP_PR_UNIT_RESOLUTION
+  | OP_PR_IFF_TRUE
+  | OP_PR_IFF_FALSE
+  | OP_PR_COMMUTATIVITY
+  | OP_PR_DEF_AXIOM
+  | OP_PR_DEF_INTRO
+  | OP_PR_APPLY_DEF
+  | OP_PR_IFF_OEQ
+  | OP_PR_NNF_POS
+  | OP_PR_NNF_NEG
+  | OP_PR_NNF_STAR
+  | OP_PR_CNF_STAR
+  | OP_PR_SKOLEMIZE
+  | OP_PR_MODUS_PONENS_OEQ
+  | OP_PR_TH_LEMMA
   | OP_UNINTERPRETED
-and decl_kind = enum_5
-and enum_6 =
-  | BOOL_VALUE
-  | NUMERAL_VALUE
-  | ARRAY_VALUE
-  | TUPLE_VALUE
-  | UNKNOWN_VALUE
-and value_kind = enum_6
+and decl_kind = enum_6
+and enum_7 =
+  | NO_FAILURE
+  | UNKNOWN
+  | TIMEOUT
+  | MEMOUT_WATERMARK
+  | CANCELED
+  | NUM_CONFLICTS
+  | THEORY
+  | QUANTIFIERS
+and search_failure = enum_7
+and enum_8 =
+  | PRINT_SMTLIB_FULL
+  | PRINT_LOW_LEVEL
+  | PRINT_SMTLIB_COMPLIANT
+and ast_print_mode = enum_8
 
 (**
    
@@ -150,8 +213,6 @@ and value_kind = enum_6
    
    
    
-   
-   
 *)
 (**
    
@@ -170,6 +231,545 @@ and value_kind = enum_6
 *)
 (**
    
+   
+   
+
+   
+   
+   
+   
+   
+   
+*)
+(**
+   
+*)
+(**
+   
+
+   
+   
+   
+   
+   
+*)
+(**
+   
+
+   (*
+   - OP_TRUE The constant true.
+
+   - OP_FALSE The constant false.
+
+   - OP_EQ The equality predicate.
+
+   - OP_DISTINCT The n-ary distinct predicate (every argument is mutually distinct).
+
+   - OP_ITE The ternary if-then-else term.
+
+   - OP_AND n-ary conjunction.
+
+   - OP_OR n-ary disjunction.
+
+   - OP_IFF equivalence (binary).
+
+   - OP_XOR Exclusive or.
+
+   - OP_NOT Negation.
+
+   - OP_IMPLIES Implication.
+
+   - OP_OEQ Binary equivalence modulo namings. This binary predicate is used in proof terms.
+        It captures equisatisfiability and equivalence modulo renamings.
+
+   - OP_ANUM Arithmetic numeral.
+
+   - OP_LE <=.
+
+   - OP_GE >=.
+
+   - OP_LT <.
+
+   - OP_GT >.
+
+   - OP_ADD Addition - Binary.
+
+   - OP_SUB Binary subtraction.
+
+   - OP_UMINUS Unary minus.
+
+   - OP_MUL Multiplication - Binary.
+
+   - OP_DIV Division - Binary.
+
+   - OP_IDIV Integer division - Binary.
+
+   - OP_REM Remainder - Binary.
+
+   - OP_MOD Modulus - Binary.
+
+   - OP_TO_REAL Coercion of integer to real - Unary.
+
+   - OP_TO_INT Coercion of real to integer - Unary.
+
+   - OP_IS_INT Check if real is also an integer - Unary.
+
+   - OP_STORE Array store. It satisfies select(store(a,i,v),j) = if i = j then v else select(a,j).
+        Array store takes at least 3 arguments. 
+
+   - OP_SELECT Array select. 
+
+   - OP_CONST_ARRAY The constant array. For example, select(const(v),i) = v holds for every v and i. The function is unary.
+
+   - OP_ARRAY_DEFAULT Default value of arrays. For example default(const(v)) = v. The function is unary.
+
+   - OP_ARRAY_MAP Array map operator.
+         It satisfies map[f](a1,..,a_n)[i] = f(a1[i],...,a_n[i]) for every i.
+
+   - OP_SET_UNION Set union between two Booelan arrays (two arrays whose range type is Boolean). The function is binary.
+
+   - OP_SET_INTERSECT Set intersection between two Boolean arrays. The function is binary.
+
+   - OP_SET_DIFFERENCE Set difference between two Boolean arrays. The function is binary.
+
+   - OP_SET_COMPLEMENT Set complement of a Boolean array. The function is unary.
+
+   - OP_SET_SUBSET Subset predicate between two Boolean arrays. The relation is binary.
+
+   - OP_BNUM Bit-vector numeral.
+
+   - OP_BIT1 One bit bit-vector.
+
+   - OP_BIT0 Zero bit bit-vector.
+
+   - OP_BNEG Unary minus.
+
+   - OP_BADD Binary addition.
+
+   - OP_BSUB Binary subtraction.
+
+   - OP_BMUL Binary multiplication.
+    
+   - OP_BSDIV Binary signed division.
+
+   - OP_BUDIV Binary unsigned int division.
+
+   - OP_BSREM Binary signed remainder.
+
+   - OP_BUREM Binary unsigned int remainder.
+
+   - OP_BSMOD Binary signed modulus.
+
+   - OP_BSDIV0 Unary function. bsdiv(x,0) is congruent to bsdiv0(x).
+
+   - OP_BUDIV0 Unary function. budiv(x,0) is congruent to budiv0(x).
+
+   - OP_BSREM0 Unary function. bsrem(x,0) is congruent to bsrem0(x).
+
+   - OP_BUREM0 Unary function. burem(x,0) is congruent to burem0(x).
+
+   - OP_BSMOD0 Unary function. bsmod(x,0) is congruent to bsmod0(x).
+    
+   - OP_ULEQ Unsigned bit-vector <= - Binary relation.
+
+   - OP_SLEQ Signed bit-vector  <= - Binary relation.
+
+   - OP_UGEQ Unsigned bit-vector  >= - Binary relation.
+
+   - OP_SGEQ Signed bit-vector  >= - Binary relation.
+
+   - OP_ULT Unsigned bit-vector  < - Binary relation.
+
+   - OP_SLT Signed bit-vector < - Binary relation.
+
+   - OP_UGT Unsigned bit-vector > - Binary relation.
+
+   - OP_SGT Signed bit-vector > - Binary relation.
+
+   - OP_BAND Bit-wise and - Binary.
+
+   - OP_BOR Bit-wise or - Binary.
+
+   - OP_BNOT Bit-wise not - Unary.
+
+   - OP_BXOR Bit-wise xor - Binary.
+
+   - OP_BNAND Bit-wise nand - Binary.
+
+   - OP_BNOR Bit-wise nor - Binary.
+
+   - OP_BXNOR Bit-wise xnor - Binary.
+
+   - OP_CONCAT Bit-vector concatenation - Binary.
+
+   - OP_SIGN_EXT Bit-vector sign extension.
+
+   - OP_ZERO_EXT Bit-vector zero extension.
+
+   - OP_EXTRACT Bit-vector extraction.
+
+   - OP_REPEAT Repeat bit-vector n times.
+
+   - OP_BREDOR Bit-vector reduce or - Unary.
+
+   - OP_BREDAND Bit-vector reduce and - Unary.
+
+   - OP_BCOMP .
+
+   - OP_BSHL Shift left.
+
+   - OP_BLSHR Logical shift right.
+
+   - OP_BASHR Arithmetical shift right.
+
+   - OP_ROTATE_LEFT Left rotation.
+
+   - OP_ROTATE_RIGHT Right rotation.
+
+   - OP_INT2BV Coerce integer to bit-vector. NB. This function
+       is not supported by the decision procedures. Only the most
+       rudimentary simplification rules are applied to this function.
+
+   - OP_BV2INT Coerce bit-vector to integer. NB. This function
+       is not supported by the decision procedures. Only the most
+       rudimentary simplification rules are applied to this function.
+
+   - OP_CARRY Compute the carry bit in a full-adder. 
+       The meaning is given by the equivalence
+       (carry l1 l2 l3) <=> (or (and l1 l2) (and l1 l3) (and l2 l3)))
+
+   - OP_XOR3 Compute ternary XOR.
+       The meaning is given by the equivalence
+       (xor3 l1 l2 l3) <=> (xor (xor l1 l2) l3)
+
+   - OP_PR_TRUE: Proof for the expression 'true'.
+
+   - OP_PR_ASSERTED: Proof for a fact asserted by the user.
+   
+   - OP_PR_GOAL: Proof for a fact (tagged as goal) asserted by the user.
+
+   - OP_PR_MODUS_PONENS: Given a proof for p and a proof for (implies p q), produces a proof for q.
+       {e
+          T1: p
+          T2: (implies p q)
+          [mp T1 T2]: q
+          }
+          The second antecedents may also be a proof for (iff p q).
+
+   - OP_PR_REFLEXIVITY: A proof for (R t t), where R is a reflexive relation. This proof object has no antecedents.
+        The only reflexive relations that are used are 
+        equivalence modulo namings, equality and equivalence.
+        That is, R is either '~', '=' or 'iff'.
+
+   - OP_PR_SYMMETRY: Given an symmetric relation R and a proof for (R t s), produces a proof for (R s t).
+          {e
+          T1: (R t s)
+          [symmetry T1]: (R s t)
+          }
+          T1 is the antecedent of this proof object.
+
+   - OP_PR_TRANSITIVITY: Given a transitive relation R, and proofs for (R t s) and (R s u), produces a proof
+       for (R t u).
+       {e
+       T1: (R t s)
+       T2: (R s u)
+       [trans T1 T2]: (R t u)
+       }
+
+   - OP_PR_TRANSITIVITY_STAR: Condensed transitivity proof. This proof object is only used if the parameter PROOF_MODE is 1.
+     It combines several symmetry and transitivity proofs. 
+
+          Example:
+          {e
+          T1: (R a b)
+          T2: (R c b)
+          T3: (R c d)
+          [trans* T1 T2 T3]: (R a d)
+          }
+          R must be a symmetric and transitive relation.
+
+          Assuming that this proof object is a proof for (R s t), then
+          a proof checker must check if it is possible to prove (R s t)
+          using the antecedents, symmetry and transitivity.  That is, 
+          if there is a path from s to t, if we view every
+          antecedent (R a b) as an edge between a and b.
+
+   - OP_PR_MONOTONICITY: Monotonicity proof object.
+          {e
+          T1: (R t_1 s_1)
+          ...
+          Tn: (R t_n s_n)
+          [monotonicity T1 ... Tn]: (R (f t_1 ... t_n) (f s_1 ... s_n))
+          }
+          Remark: if t_i == s_i, then the antecedent Ti is suppressed.
+          That is, reflexivity proofs are supressed to save space.
+
+   - OP_PR_QUANT_INTRO: Given a proof for (~ p q), produces a proof for (~ (forall (x) p) (forall (x) q)).
+
+       T1: (~ p q)
+       [quant-intro T1]: (~ (forall (x) p) (forall (x) q))
+   
+   - OP_PR_DISTRIBUTIVITY: Distributivity proof object. 
+          Given that f (= or) distributes over g (= and), produces a proof for
+
+          (= (f a (g c d))
+             (g (f a c) (f a d)))
+
+          If f and g are associative, this proof also justifies the following equality:
+
+          (= (f (g a b) (g c d))
+             (g (f a c) (f a d) (f b c) (f b d)))
+
+          where each f and g can have arbitrary number of arguments.
+
+          This proof object has no antecedents.
+          Remark. This rule is used by the CNF conversion pass and 
+          instantiated by f = or, and g = and.
+    
+   - OP_PR_AND_ELIM: Given a proof for (and l_1 ... l_n), produces a proof for l_i
+        
+       {e
+       T1: (and l_1 ... l_n)
+       [and-elim T1]: l_i
+       }
+   - OP_PR_NOT_OR_ELIM: Given a proof for (not (or l_1 ... l_n)), produces a proof for (not l_i).
+
+       {e
+       T1: (not (or l_1 ... l_n))
+       [not-or-elim T1]: (not l_i)
+       }
+
+   - OP_PR_REWRITE: A proof for a local rewriting step (= t s).
+          The head function symbol of t is interpreted.
+
+          This proof object has no antecedents.
+          The conclusion of a rewrite rule is either an equality (= t s), 
+          an equivalence (iff t s), or equi-satisfiability (~ t s).
+          Remark: if f is bool, then = is iff.
+          
+
+          Examples:
+          {e
+          (= (+ x 0) x)
+          (= (+ x 1 2) (+ 3 x))
+          (iff (or x false) x)
+          }
+
+   - OP_PR_REWRITE_STAR: A proof for rewriting an expression t into an expression s.
+       This proof object is used if the parameter PROOF_MODE is 1.
+       This proof object can have n antecedents.
+       The antecedents are proofs for equalities used as substitution rules.
+       The object is also used in a few cases if the parameter PROOF_MODE is 2.
+       The cases are:
+         - When applying contextual simplification (CONTEXT_SIMPLIFIER=true)
+         - When converting bit-vectors to Booleans (BIT2BOOL=true)
+         - When pulling ite expression up (PULL_CHEAP_ITE_TREES=true)
+
+   - OP_PR_PULL_QUANT: A proof for (iff (f (forall (x) q(x)) r) (forall (x) (f (q x) r))). This proof object has no antecedents.
+
+   - OP_PR_PULL_QUANT_STAR: A proof for (iff P Q) where Q is in prenex normal form.
+       This proof object is only used if the parameter PROOF_MODE is 1.       
+       This proof object has no antecedents.
+  
+   - OP_PR_PUSH_QUANT: A proof for:
+
+       {e
+          (iff (forall (x_1 ... x_m) (and p_1[x_1 ... x_m] ... p_n[x_1 ... x_m]))
+               (and (forall (x_1 ... x_m) p_1[x_1 ... x_m])
+                 ... 
+               (forall (x_1 ... x_m) p_n[x_1 ... x_m])))
+               }
+         This proof object has no antecedents.
+
+   - OP_PR_ELIM_UNUSED_VARS:  
+          A proof for (iff (forall (x_1 ... x_n y_1 ... y_m) p[x_1 ... x_n])
+                           (forall (x_1 ... x_n) p[x_1 ... x_n])) 
+
+          It is used to justify the elimination of unused variables.
+          This proof object has no antecedents.
+
+   - OP_PR_DER: A proof for destructive equality resolution:
+          (iff (forall (x) (or (not (= x t)) P[x])) P[t])
+          if x does not occur in t.
+
+          This proof object has no antecedents.
+          
+          Several variables can be eliminated simultaneously.
+
+   - OP_PR_QUANT_INST: A proof of (or (not (forall (x) (P x))) (P a))
+
+   - OP_PR_HYPOTHESIS: Mark a hypothesis in a natural deduction style proof.
+
+   - OP_PR_LEMMA: 
+
+       {e
+          T1: false
+          [lemma T1]: (or (not l_1) ... (not l_n))
+          }
+          This proof object has one antecedent: a hypothetical proof for false.
+          It converts the proof in a proof for (or (not l_1) ... (not l_n)),
+          when T1 contains the hypotheses: l_1, ..., l_n.
+
+   - OP_PR_UNIT_RESOLUTION: 
+       {e
+          T1:      (or l_1 ... l_n l_1' ... l_m')
+          T2:      (not l_1)
+          ...
+          T(n+1):  (not l_n)
+          [unit-resolution T1 ... T(n+1)]: (or l_1' ... l_m')
+          }
+
+   - OP_PR_IFF_TRUE: 
+      {e
+       T1: p
+       [iff-true T1]: (iff p true)
+       }
+
+   - OP_PR_IFF_FALSE:
+      {e
+       T1: (not p)
+       [iff-false T1]: (iff p false)
+       }
+
+   - OP_PR_COMMUTATIVITY:
+
+          [comm]: (= (f a b) (f b a))
+          
+          f is a commutative operator.
+
+          This proof object has no antecedents.
+          Remark: if f is bool, then = is iff.
+   
+   - OP_PR_DEF_AXIOM: Proof object used to justify Tseitin's like axioms:
+       
+          {e
+          (or (not (and p q)) p)
+          (or (not (and p q)) q)
+          (or (not (and p q r)) p)
+          (or (not (and p q r)) q)
+          (or (not (and p q r)) r)
+          ...
+          (or (and p q) (not p) (not q))
+          (or (not (or p q)) p q)
+          (or (or p q) (not p))
+          (or (or p q) (not q))
+          (or (not (iff p q)) (not p) q)
+          (or (not (iff p q)) p (not q))
+          (or (iff p q) (not p) (not q))
+          (or (iff p q) p q)
+          (or (not (ite a b c)) (not a) b)
+          (or (not (ite a b c)) a c)
+          (or (ite a b c) (not a) (not b))
+          (or (ite a b c) a (not c))
+          (or (not (not a)) (not a))
+          (or (not a) a)
+          }
+          This proof object has no antecedents.
+          Note: all axioms are propositional tautologies.
+          Note also that 'and' and 'or' can take multiple arguments.
+          You can recover the propositional tautologies by
+          unfolding the Boolean connectives in the axioms a small
+          bounded number of steps (=3).
+    
+   - OP_PR_DEF_INTRO: Introduces a name for a formula/term.
+       Suppose e is an expression with free variables x, and def-intro
+       introduces the name n(x). The possible cases are:
+
+       When e is of Boolean type:
+       [def-intro]: (and (or n (not e)) (or (not n) e))
+
+       or:
+       [def-intro]: (or (not n) e)
+       when e only occurs positively.
+
+       When e is of the form (ite cond th el):
+       [def-intro]: (and (or (not cond) (= n th)) (or cond (= n el)))
+
+       Otherwise:
+       [def-intro]: (= n e)       
+
+   - OP_PR_APPLY_DEF: 
+       [apply-def T1]: F ~ n
+       F is 'equivalent' to n, given that T1 is a proof that
+       n is a name for F.
+   
+   - OP_PR_IFF_OEQ:
+       T1: (iff p q)
+       [iff~ T1]: (~ p q)
+ 
+   - OP_PR_NNF_POS: Proof for a (positive) NNF step. Example:
+       {e
+          T1: (not s_1) ~ r_1
+          T2: (not s_2) ~ r_2
+          T3: s_1 ~ r_1'
+          T4: s_2 ~ r_2'
+          [nnf-pos T1 T2 T3 T4]: (~ (iff s_1 s_2)
+                                    (and (or r_1 r_2') (or r_1' r_2)))
+          }
+       The negation normal form steps NNF_POS and NNF_NEG are used in the following cases:
+       (a) When creating the NNF of a positive force quantifier.
+        The quantifier is retained (unless the bound variables are eliminated).
+        Example
+        {e
+           T1: q ~ q_new 
+           [nnf-pos T1]: (~ (forall (x T) q) (forall (x T) q_new))
+        }
+       (b) When recursively creating NNF over Boolean formulas, where the top-level
+       connective is changed during NNF conversion. The relevant Boolean connectives
+       for NNF_POS are 'implies', 'iff', 'xor', 'ite'.
+       NNF_NEG furthermore handles the case where negation is pushed
+       over Boolean connectives 'and' and 'or'.
+
+    
+   - OP_PR_NFF_NEG: Proof for a (negative) NNF step. Examples:
+          {e
+          T1: (not s_1) ~ r_1
+          ...
+          Tn: (not s_n) ~ r_n
+         [nnf-neg T1 ... Tn]: (not (and s_1 ... s_n)) ~ (or r_1 ... r_n)
+      and
+          T1: (not s_1) ~ r_1
+          ...
+          Tn: (not s_n) ~ r_n
+         [nnf-neg T1 ... Tn]: (not (or s_1 ... s_n)) ~ (and r_1 ... r_n)
+      and
+          T1: (not s_1) ~ r_1
+          T2: (not s_2) ~ r_2
+          T3: s_1 ~ r_1'
+          T4: s_2 ~ r_2'
+         [nnf-neg T1 T2 T3 T4]: (~ (not (iff s_1 s_2))
+                                   (and (or r_1 r_2) (or r_1' r_2')))
+       }
+   - OP_PR_NNF_STAR: A proof for (~ P Q) where Q is in negation normal form.
+       
+       This proof object is only used if the parameter PROOF_MODE is 1.       
+              
+       This proof object may have n antecedents. Each antecedent is a PR_DEF_INTRO.
+
+   - OP_PR_CNF_STAR: A proof for (~ P Q) where Q is in conjunctive normal form.
+       This proof object is only used if the parameter PROOF_MODE is 1.       
+       This proof object may have n antecedents. Each antecedent is a PR_DEF_INTRO.          
+
+   - OP_PR_SKOLEMIZE: Proof for:  
+       
+          {e
+          [sk]: (~ (not (forall x (p x y))) (not (p (sk y) y)))
+          [sk]: (~ (exists x (p x y)) (p (sk y) y))
+          }
+
+          This proof object has no antecedents.
+   
+   - OP_PR_MODUS_PONENS_OEQ: Modus ponens style rule for equi-satisfiability.
+       {e
+          T1: p
+          T2: (~ p q)
+          [mp~ T1 T2]: q
+          }
+
+    - OP_PR_TH_LEMMA: Generic proof for theory lemmas.
+
+    *)
+
 *)
 (**
    
@@ -186,8 +786,8 @@ and value_kind = enum_6
 (**
    
 
-*)
-(**
+   
+   
    
 *)
 (** 
@@ -300,31 +900,30 @@ external trace_off : context -> unit
 	= "camlidl_z3_Z3_trace_off"
 
 (**
-       {2 {L Theories}}
+       Summary: Enable/disable printing warning messages to the console.
+
+       Warnings are printed after passing true, warning messages are
+       suppressed after calling this method with false.       
     *)
-(**
-       Summary: Enable arithmetic theory in the given logical context.
-    *)
-external enable_arithmetic : context -> unit
-	= "camlidl_z3_Z3_enable_arithmetic"
+external toggle_warning_messages : bool -> unit
+	= "camlidl_z3_Z3_toggle_warning_messages"
 
 (**
-       Summary: Enable bit-vector theory in the given logical context.
-    *)
-external enable_bv : context -> unit
-	= "camlidl_z3_Z3_enable_bv"
+       Summary: Update a mutable configuration parameter.
 
-(**
-       Summary: Enable array theory in the given logical context.
-    *)
-external enable_arrays : context -> unit
-	= "camlidl_z3_Z3_enable_arrays"
+       The list of all configuration parameters can be obtained using the Z3 executable:
 
-(**
-       Summary: Enable tuple theory in the given logical context.
+       {v 
+       z3.exe -ini?
+        v}
+
+       Only a few configuration parameters are mutable once the context is created.
+       The error handler is invoked when trying to modify an immutable parameter.
+
+       - {b See also}: {!Z3.set_param_value}
     *)
-external enable_tuples : context -> unit
-	= "camlidl_z3_Z3_enable_tuples"
+external update_param_value : context -> string -> string -> unit
+	= "camlidl_z3_Z3_update_param_value"
 
 (**
        {2 {L Symbols}}
@@ -350,35 +949,41 @@ external mk_string_symbol : context -> string -> symbol
 	= "camlidl_z3_Z3_mk_string_symbol"
 
 (**
-       {2 {L Types}}
+       {2 {L Sorts}}
     *)
+(**
+       Summary: compare sorts.
+    *)
+external is_eq_sort : context -> sort -> sort -> bool
+	= "camlidl_z3_Z3_is_eq_sort"
+
 (**
        Summary: Create a free (uninterpreted) type using the given name (symbol).
        
        Two free types are considered the same iff the have the same name.
     *)
-external mk_uninterpreted_type : context -> symbol -> type_ast
-	= "camlidl_z3_Z3_mk_uninterpreted_type"
+external mk_uninterpreted_sort : context -> symbol -> sort
+	= "camlidl_z3_Z3_mk_uninterpreted_sort"
 
 (**
        Summary: Create the Boolean type. 
 
        This type is used to create propositional variables and predicates.
     *)
-external mk_bool_type : context -> type_ast
-	= "camlidl_z3_Z3_mk_bool_type"
+external mk_bool_sort : context -> sort
+	= "camlidl_z3_Z3_mk_bool_sort"
 
 (**
        Summary: Create an integer type.
 
        This type is not the int type found in programming languages.
        A machine integer can be represented using bit-vectors. The function
-       {!Z3.mk_bv_type} creates a bit-vector type.
+       {!Z3.mk_bv_sort} creates a bit-vector type.
 
-       - {b See also}: {!Z3.mk_bv_type}
+       - {b See also}: {!Z3.mk_bv_sort}
     *)
-external mk_int_type : context -> type_ast
-	= "camlidl_z3_Z3_mk_int_type"
+external mk_int_sort : context -> sort
+	= "camlidl_z3_Z3_mk_int_sort"
 
 (**
        Summary: Create a real type. 
@@ -386,8 +991,8 @@ external mk_int_type : context -> type_ast
        This type is not a floating point number.
        Z3 does not have support for floating point numbers yet.
     *)
-external mk_real_type : context -> type_ast
-	= "camlidl_z3_Z3_mk_real_type"
+external mk_real_sort : context -> sort
+	= "camlidl_z3_Z3_mk_real_sort"
 
 (**
        Summary: Create a bit-vector type of the given size.
@@ -396,8 +1001,8 @@ external mk_real_type : context -> type_ast
 
        - {b Remarks}: The size of the bitvector type must be greater than zero.
     *)
-external mk_bv_type : context -> int -> type_ast
-	= "camlidl_z3_Z3_mk_bv_type"
+external mk_bv_sort : context -> int -> sort
+	= "camlidl_z3_Z3_mk_bv_sort"
 
 (**
        Summary: Create an array type. 
@@ -408,14 +1013,14 @@ external mk_bv_type : context -> int -> type_ast
        - {b See also}: {!Z3.mk_select}
        - {b See also}: {!Z3.mk_store}
     *)
-external mk_array_type : context -> type_ast -> type_ast -> type_ast
-	= "camlidl_z3_Z3_mk_array_type"
+external mk_array_sort : context -> sort -> sort -> sort
+	= "camlidl_z3_Z3_mk_array_sort"
 
 (**
        Summary: Create a tuple type.
        
-        [mk_tuple_type c name field_names field_types] creates a tuple with a constructor named [name],
-       a [n] fields, where [n] is the size of the arrays [field_names] and [field_types].
+        [mk_tuple_sort c name field_names field_sorts] creates a tuple with a constructor named [name],
+       a [n] fields, where [n] is the size of the arrays [field_names] and [field_sorts].
        
 
        
@@ -429,12 +1034,159 @@ external mk_array_type : context -> type_ast -> type_ast -> type_ast
        
        
     *)
-external mk_tuple_type : context -> symbol -> symbol array -> type_ast array -> type_ast * const_decl_ast * const_decl_ast array
-	= "camlidl_z3_Z3_mk_tuple_type"
+external mk_tuple_sort : context -> symbol -> symbol array -> sort array -> sort * func_decl * func_decl array
+	= "camlidl_z3_Z3_mk_tuple_sort"
+
+(**
+       Summary: Create a enumeration sort.
+       
+        [mk_enumeration_sort c enums] creates an enumeration sort with enumeration names [enums], 
+               it also returns [n] predicates, where [n] is the number of [enums] corresponding
+               to testing whether an element is one of the enumerants.
+       
+
+       
+       
+
+       
+       
+       
+       
+       
+       
+    *)
+external mk_enumeration_sort : context -> symbol -> symbol array -> sort * func_decl array * func_decl array
+	= "camlidl_z3_Z3_mk_enumeration_sort"
+
+(**
+       Summary: Create a list sort
+       
+        [mk_list_sort c name elem_sort] creates a list sort of [name], over elements of sort [elem_sort].
+       
+
+       
+       
+
+       
+       
+       
+       
+       
+       
+       
+       
+       
+    *)
+external mk_list_sort : context -> symbol -> sort -> sort * func_decl * func_decl * func_decl * func_decl * func_decl * func_decl
+	= "camlidl_z3_Z3_mk_list_sort"
+
+(**
+       Summary: Create a constructor.
+       
+       
+       
+       
+       
+       
+       
+       
+                        sort reference is 0, then the value in sort_refs should be an index referring to 
+                        one of the recursive datatypes that is declared.                        
+    *)
+external mk_constructor : context -> symbol -> symbol -> symbol array -> sort array -> int array -> constructor
+	= "camlidl_z3_Z3_mk_constructor_bytecode" "camlidl_z3_Z3_mk_constructor"
+
+(**
+       Summary: Query constructor for declared funcions.
+       
+       
+       
+       
+       
+       
+       
+    *)
+external query_constructor : context -> constructor -> int -> func_decl * func_decl * func_decl array
+	= "camlidl_z3_Z3_query_constructor"
+
+(**
+       Summary: Reclaim memory allocated to constructor.
+
+       
+       
+    *)
+external del_constructor : context -> constructor -> unit
+	= "camlidl_z3_Z3_del_constructor"
+
+(**
+       Summary: Create recursive datatype. Return the datatype sort.
+
+       
+	   
+       
+       
+    *)
+external mk_datatype : context -> symbol -> constructor array -> sort * constructor array
+	= "camlidl_z3_Z3_mk_datatype"
+
+(**
+       Summary: Create list of constructors.
+
+       
+       
+       
+    *)
+external mk_constructor_list : context -> constructor array -> constructor_list
+	= "camlidl_z3_Z3_mk_constructor_list"
+
+(**
+       Summary: reclaim memory allocated for constructor list.
+
+       Each constructor inside the constructor list must be independently reclaimed using {!Z3.del_constructor}.
+
+       
+       
+
+    *)
+external del_constructor_list : context -> constructor_list -> unit
+	= "camlidl_z3_Z3_del_constructor_list"
+
+(**
+       Summary: Create mutually recursive datatypes.
+
+       
+       
+       
+       
+       
+    *)
+external mk_datatypes : context -> symbol array -> constructor_list array -> sort array * constructor_list array
+	= "camlidl_z3_Z3_mk_datatypes"
+
+(**
+       {2 {L Injective functions}}
+    *)
+(**
+       Summary: Create injective function declaration
+    *)
+external mk_injective_function : context -> symbol -> sort array -> sort -> func_decl
+	= "camlidl_z3_Z3_mk_injective_function"
 
 (**
        {2 {L Constants and Applications}}
      *)
+(**
+       Summary: compare terms.
+    *)
+external is_eq_ast : context -> ast -> ast -> bool
+	= "camlidl_z3_Z3_is_eq_ast"
+
+(**
+       Summary: compare terms.
+    *)
+external is_eq_func_decl : context -> func_decl -> func_decl -> bool
+	= "camlidl_z3_Z3_is_eq_func_decl"
+
 (**
        Summary: Declare a constant or function.
 
@@ -453,7 +1205,7 @@ external mk_tuple_type : context -> symbol -> symbol array -> type_ast array -> 
 
        - {b See also}: {!Z3.mk_app}
     *)
-external mk_func_decl : context -> symbol -> type_ast array -> type_ast -> const_decl_ast
+external mk_func_decl : context -> symbol -> sort array -> sort -> func_decl
 	= "camlidl_z3_Z3_mk_func_decl"
 
 (**
@@ -461,7 +1213,7 @@ external mk_func_decl : context -> symbol -> type_ast array -> type_ast -> const
 
        - {b See also}: {!Z3.mk_func_decl}
     *)
-external mk_app : context -> const_decl_ast -> ast array -> ast
+external mk_app : context -> func_decl -> ast array -> ast
 	= "camlidl_z3_Z3_mk_app"
 
 (**
@@ -478,7 +1230,7 @@ external mk_app : context -> const_decl_ast -> ast array -> ast
        - {b See also}: {!Z3.mk_func_decl}
        - {b See also}: {!Z3.mk_app}
     *)
-external mk_const : context -> symbol -> type_ast -> ast
+external mk_const : context -> symbol -> sort -> ast
 	= "camlidl_z3_Z3_mk_const"
 
 (**
@@ -506,7 +1258,7 @@ external mk_label : context -> symbol -> bool -> ast -> ast
 
        - {b See also}: {!Z3.mk_func_decl}
     *)
-external mk_fresh_func_decl : context -> string -> type_ast array -> type_ast -> const_decl_ast
+external mk_fresh_func_decl : context -> string -> sort array -> sort -> func_decl
 	= "camlidl_z3_Z3_mk_fresh_func_decl"
 
 (**
@@ -525,7 +1277,7 @@ external mk_fresh_func_decl : context -> string -> type_ast array -> type_ast ->
        - {b See also}: {!Z3.mk_func_decl}
        - {b See also}: {!Z3.mk_app}
     *)
-external mk_fresh_const : context -> string -> type_ast -> ast
+external mk_fresh_const : context -> string -> sort -> ast
 	= "camlidl_z3_Z3_mk_fresh_const"
 
 (** 
@@ -558,7 +1310,7 @@ external mk_eq : context -> ast -> ast -> ast
        
        
        
-       All arguments must have the same type.
+       All arguments must have the same sort.
 
        - {b Remarks}: The number of arguments of a distinct construct must be greater than one.
     *)
@@ -569,7 +1321,7 @@ external mk_distinct : context -> ast array -> ast
         Summary: \[ [ mk_not c a ] \] 
         Create an AST node representing {e not(a) }.
         
-        The node a must have Boolean type.
+        The node a must have Boolean sort.
     *)
 external mk_not : context -> ast -> ast
 	= "camlidl_z3_Z3_mk_not"
@@ -579,8 +1331,8 @@ external mk_not : context -> ast -> ast
        Create an AST node representing an if-then-else: {e ite(t1, t2,
        t3) }.
 
-       The node t1 must have Boolean type, t2 and t3 must have the same type.
-       The type of the new node is equal to the type of t2 and t3.
+       The node t1 must have Boolean sort, t2 and t3 must have the same sort.
+       The sort of the new node is equal to the sort of t2 and t3.
     *)
 external mk_ite : context -> ast -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_ite"
@@ -589,7 +1341,7 @@ external mk_ite : context -> ast -> ast -> ast -> ast
        Summary: \[ [ mk_iff c t1 t2 ] \]
        Create an AST node representing {e t1 iff t2 }.
 
-       The nodes t1 and t2 must have Boolean type.
+       The nodes t1 and t2 must have Boolean sort.
     *)
 external mk_iff : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_iff"
@@ -598,7 +1350,7 @@ external mk_iff : context -> ast -> ast -> ast
        Summary: \[ [ mk_implies c t1 t2 ] \]
        Create an AST node representing {e t1 implies t2 }.
 
-       The nodes t1 and t2 must have Boolean type.
+       The nodes t1 and t2 must have Boolean sort.
     *)
 external mk_implies : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_implies"
@@ -607,7 +1359,7 @@ external mk_implies : context -> ast -> ast -> ast
        Summary: \[ [ mk_xor c t1 t2 ] \]
        Create an AST node representing {e t1 xor t2 }.
 
-       The nodes t1 and t2 must have Boolean type.
+       The nodes t1 and t2 must have Boolean sort.
     *)
 external mk_xor : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_xor"
@@ -617,7 +1369,7 @@ external mk_xor : context -> ast -> ast -> ast
         Summary: \[ [mk_and c [| t_1; ...; t_n |]] \] Create the conjunction: {e t_1 and ... and t_n}. 
 
        
-       All arguments must have Boolean type.
+       All arguments must have Boolean sort.
        
        - {b Remarks}: The number of arguments must be greater than zero.
     *)
@@ -629,7 +1381,7 @@ external mk_and : context -> ast array -> ast
         Summary: \[ [mk_or c [| t_1; ...; t_n |]] \] Create the disjunction: {e t_1 or ... or t_n}. 
 
        
-       All arguments must have Boolean type.
+       All arguments must have Boolean sort.
 
        - {b Remarks}: The number of arguments must be greater than zero.
     *)
@@ -641,7 +1393,7 @@ external mk_or : context -> ast array -> ast
         Summary: \[ [mk_add c [| t_1; ...; t_n |]] \] Create the term: {e t_1 + ... + t_n}. 
 
        
-       All arguments must have int or real type.
+       All arguments must have int or real sort.
 
        - {b Remarks}: The number of arguments must be greater than zero.
     *)
@@ -653,7 +1405,7 @@ external mk_add : context -> ast array -> ast
         Summary: \[ [mk_mul c [| t_1; ...; t_n |]] \] Create the term: {e t_1 * ... * t_n}. 
 
        
-       All arguments must have int or real type.
+       All arguments must have int or real sort.
        
        - {b Remarks}: Z3 has limited support for non-linear arithmetic.
        - {b Remarks}: The number of arguments must be greater than zero.
@@ -666,18 +1418,60 @@ external mk_mul : context -> ast array -> ast
         Summary: \[ [mk_sub c [| t_1; ...; t_n |]] \] Create the term: {e t_1 - ... - t_n}. 
 
        
-       All arguments must have int or real type.
+       All arguments must have int or real sort.
 
        - {b Remarks}: The number of arguments must be greater than zero.
     *)
 external mk_sub : context -> ast array -> ast
 	= "camlidl_z3_Z3_mk_sub"
 
+(**
+       
+        Summary: \[ [mk_unary_minus c arg] \] Create the term: {e - arg}. 
+
+       The argument must have int or real type.
+
+    *)
+external mk_unary_minus : context -> ast -> ast
+	= "camlidl_z3_Z3_mk_unary_minus"
+
+(**
+       
+        Summary: \[ [mk_div c t_1 t_2] \] Create the term: {e t_1 div t_2}. 
+
+       The arguments must either both have int type or both have real type.
+       If the arguments have int type, then the result type is an int type, otherwise the
+       the result type is real.
+
+    *)
+external mk_div : context -> ast -> ast -> ast
+	= "camlidl_z3_Z3_mk_div"
+
+(**
+       
+        Summary: \[ [mk_mod c t_1 t_2] \] Create the term: {e t_1 mod t_2}. 
+
+       The arguments must have int type.
+
+    *)
+external mk_mod : context -> ast -> ast -> ast
+	= "camlidl_z3_Z3_mk_mod"
+
+(**
+       
+        Summary: \[ [mk_rem c t_1 t_2] \] Create the term: {e t_1 rem t_2}. 
+
+       The arguments must have int type.
+
+    *)
+external mk_rem : context -> ast -> ast -> ast
+	= "camlidl_z3_Z3_mk_rem"
+
 (** 
         Summary: \[ [ mk_lt c t1 t2 ] \] 
         Create less than.
 
-        The nodes t1 and t2 must have the same type, and must be int or real.
+        The nodes t1 and t2 must have the same sort, and must be int or real.
     *)
 external mk_lt : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_lt"
@@ -686,7 +1480,7 @@ external mk_lt : context -> ast -> ast -> ast
         Summary: \[ [ mk_le c t1 t2 ] \]
         Create less than or equal to.
         
-        The nodes t1 and t2 must have the same type, and must be int or real.
+        The nodes t1 and t2 must have the same sort, and must be int or real.
     *)
 external mk_le : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_le"
@@ -695,7 +1489,7 @@ external mk_le : context -> ast -> ast -> ast
         Summary: \[ [ mk_gt c t1 t2 ] \]
         Create greater than.
         
-        The nodes t1 and t2 must have the same type, and must be int or real.
+        The nodes t1 and t2 must have the same sort, and must be int or real.
     *)
 external mk_gt : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_gt"
@@ -704,25 +1498,85 @@ external mk_gt : context -> ast -> ast -> ast
         Summary: \[ [ mk_ge c t1 t2 ] \]
         Create greater than or equal to.
         
-        The nodes t1 and t2 must have the same type, and must be int or real.
+        The nodes t1 and t2 must have the same sort, and must be int or real.
     *)
 external mk_ge : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_ge"
 
+(** 
+        Summary: \[ [ mk_int2real c t1 ] \]
+        Coerce an integer to a real.
+
+        There is also a converse operation exposed.
+        It follows the semantics prescribed by the SMT-LIB standard.
+
+        You can take the floor of a real by 
+        creating an auxiliary integer constant k and
+        and asserting {e  mk_int2real(k) <= t1 < mk_int2real(k)+1 }.
+        
+        The node t1 must have sort integer.
+
+        - {b See also}: {!Z3.mk_real2int}
+        - {b See also}: {!Z3.mk_is_int}
+    *)
+external mk_int2real : context -> ast -> ast
+	= "camlidl_z3_Z3_mk_int2real"
+
+(** 
+        Summary: \[ [ mk_real2int c t1 ] \]
+        Coerce a real to an integer.
+
+        The semantics of this function follows the SMT-LIB standard
+        for the function to_int
+
+        - {b See also}: {!Z3.mk_int2real}
+        - {b See also}: {!Z3.mk_is_int}
+    *)
+external mk_real2int : context -> ast -> ast
+	= "camlidl_z3_Z3_mk_real2int"
+
+(** 
+        Summary: \[ [ mk_is_int c t1 ] \]
+        Check if a real number is an integer.
+
+        - {b See also}: {!Z3.mk_int2real}
+        - {b See also}: {!Z3.mk_real2int}
+    *)
+external mk_is_int : context -> ast -> ast
+	= "camlidl_z3_Z3_mk_is_int"
+
 (**
-       Summary: \[ [ mk_bvneg c t1 ] \]
+       Summary: \[ [ mk_bvnot c t1 ] \]
        Bitwise negation.
 
-       The node t1 must have a bit-vector type.
+       The node t1 must have a bit-vector sort.
     *)
 external mk_bvnot : context -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvnot"
 
 (**
+       Summary: \[ [ mk_bvredand c t1 ] \]
+       Take conjunction of bits in vector, return vector of length 1.
+
+       The node t1 must have a bit-vector sort.
+    *)
+external mk_bvredand : context -> ast -> ast
+	= "camlidl_z3_Z3_mk_bvredand"
+
+(**
+       Summary: \[ [ mk_bvredor c t1 ] \]
+       Take disjunction of bits in vector, return vector of length 1.
+
+       The node t1 must have a bit-vector sort.
+    *)
+external mk_bvredor : context -> ast -> ast
+	= "camlidl_z3_Z3_mk_bvredor"
+
+(**
        Summary: \[ [ mk_bvand c t1 t2 ] \]
        Bitwise and.
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvand : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvand"
@@ -731,7 +1585,7 @@ external mk_bvand : context -> ast -> ast -> ast
        Summary: \[ [ mk_bvor c t1 t2 ] \]
        Bitwise or.
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvor : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvor"
@@ -740,7 +1594,7 @@ external mk_bvor : context -> ast -> ast -> ast
        Summary: \[ [ mk_bvxor c t1 t2 ] \]
        Bitwise exclusive-or.
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvxor : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvxor"
@@ -749,7 +1603,7 @@ external mk_bvxor : context -> ast -> ast -> ast
        Summary: \[ [ mk_bvnand c t1 t2 ] \]
        Bitwise nand. 
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvnand : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvnand"
@@ -758,7 +1612,7 @@ external mk_bvnand : context -> ast -> ast -> ast
        Summary: \[ [ mk_bvnor c t1 t2 ] \]
        Bitwise nor. 
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvnor : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvnor"
@@ -767,7 +1621,7 @@ external mk_bvnor : context -> ast -> ast -> ast
        Summary: \[ [ mk_bvxnor c t1 t2 ] \]
        Bitwise xnor. 
        
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvxnor : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvxnor"
@@ -776,7 +1630,7 @@ external mk_bvxnor : context -> ast -> ast -> ast
        Summary: \[ [ mk_bvneg c t1 ] \]
        Standard two's complement unary minus. 
 
-       The node t1 must have bit-vector type.
+       The node t1 must have bit-vector sort.
     *)
 external mk_bvneg : context -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvneg"
@@ -785,7 +1639,7 @@ external mk_bvneg : context -> ast -> ast
         Summary: \[ [ mk_bvadd c t1 t2 ] \]
         Standard two's complement addition.
         
-        The nodes t1 and t2 must have the same bit-vector type.
+        The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvadd : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvadd"
@@ -794,7 +1648,7 @@ external mk_bvadd : context -> ast -> ast -> ast
         Summary: \[ [ mk_bvsub c t1 t2 ] \]
         Standard two's complement subtraction.
         
-        The nodes t1 and t2 must have the same bit-vector type.
+        The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvsub : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvsub"
@@ -803,7 +1657,7 @@ external mk_bvsub : context -> ast -> ast -> ast
         Summary: \[ [ mk_bvmul c t1 t2 ] \]
         Standard two's complement multiplication.
         
-        The nodes t1 and t2 must have the same bit-vector type.
+        The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvmul : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvmul"
@@ -816,7 +1670,7 @@ external mk_bvmul : context -> ast -> ast -> ast
         different from zero. If {e t2 } is zero, then the result
         is undefined.
         
-        The nodes t1 and t2 must have the same bit-vector type.
+        The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvudiv : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvudiv"
@@ -833,7 +1687,7 @@ external mk_bvudiv : context -> ast -> ast -> ast
         
         If {e t2 } is zero, then the result is undefined.
         
-        The nodes t1 and t2 must have the same bit-vector type.
+        The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvsdiv : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvsdiv"
@@ -846,7 +1700,7 @@ external mk_bvsdiv : context -> ast -> ast -> ast
        
        If {e t2 } is zero, then the result is undefined.
        
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvurem : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvurem"
@@ -860,7 +1714,7 @@ external mk_bvurem : context -> ast -> ast -> ast
 
        If {e t2 } is zero, then the result is undefined.
        
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
 
        - {b See also}: {!Z3.mk_bvsmod}
     *)
@@ -873,7 +1727,7 @@ external mk_bvsrem : context -> ast -> ast -> ast
        
        If {e t2 } is zero, then the result is undefined.
        
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
 
        - {b See also}: {!Z3.mk_bvsrem}
     *)
@@ -884,7 +1738,7 @@ external mk_bvsmod : context -> ast -> ast -> ast
        Summary: \[ [ mk_bvult c t1 t2 ] \]
        Unsigned less than.
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvult : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvult"
@@ -901,7 +1755,7 @@ external mk_bvult : context -> ast -> ast -> ast
                (bvult s t)))
         v}
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvslt : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvslt"
@@ -910,7 +1764,7 @@ external mk_bvslt : context -> ast -> ast -> ast
        Summary: \[ [ mk_bvule c t1 t2 ] \]
        Unsigned less than or equal to.
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvule : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvule"
@@ -919,7 +1773,7 @@ external mk_bvule : context -> ast -> ast -> ast
        Summary: \[ [ mk_bvsle c t1 t2 ] \]
        Two's complement signed less than or equal to.
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvsle : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvsle"
@@ -928,7 +1782,7 @@ external mk_bvsle : context -> ast -> ast -> ast
        Summary: \[ [ mk_bvuge c t1 t2 ] \]
        Unsigned greater than or equal to.
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvuge : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvuge"
@@ -937,7 +1791,7 @@ external mk_bvuge : context -> ast -> ast -> ast
        Summary: \[ [ mk_bvsge c t1 t2 ] \]
        Two's complement signed greater than or equal to.
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvsge : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvsge"
@@ -946,7 +1800,7 @@ external mk_bvsge : context -> ast -> ast -> ast
        Summary: \[ [ mk_bvugt c t1 t2 ] \]
        Unsigned greater than.
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvugt : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvugt"
@@ -955,7 +1809,7 @@ external mk_bvugt : context -> ast -> ast -> ast
        Summary: \[ [ mk_bvsgt c t1 t2 ] \]
        Two's complement signed greater than.
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvsgt : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvsgt"
@@ -964,7 +1818,7 @@ external mk_bvsgt : context -> ast -> ast -> ast
        Summary: \[ [ mk_concat c t1 t2 ] \]
        Concatenate the given bit-vectors.
        
-       The nodes t1 and t2 must have (possibly different) bit-vector types
+       The nodes t1 and t2 must have (possibly different) bit-vector sorts
 
        The result is a bit-vector of size {e n1+n2 }, where n1 (n2) is the size
        of t1 (t2).
@@ -978,7 +1832,7 @@ external mk_concat : context -> ast -> ast -> ast
        size m to yield a new bitvector of size n, where {e n =
        high - low + 1 }.
 
-       The node t1 must have a bit-vector type.
+       The node t1 must have a bit-vector sort.
     *)
 external mk_extract : context -> int -> int -> ast -> ast
 	= "camlidl_z3_Z3_mk_extract"
@@ -989,7 +1843,7 @@ external mk_extract : context -> int -> int -> ast -> ast
        size {e m+i }, where m is the size of the given
        bit-vector.
 
-       The node t1 must have a bit-vector type.
+       The node t1 must have a bit-vector sort.
     *)
 external mk_sign_ext : context -> int -> ast -> ast
 	= "camlidl_z3_Z3_mk_sign_ext"
@@ -1000,10 +1854,19 @@ external mk_sign_ext : context -> int -> ast -> ast
        bitvector of size {e m+i }, where m is the size of the
        given bit-vector.
        
-       The node t1 must have a bit-vector type. 
+       The node t1 must have a bit-vector sort. 
     *)
 external mk_zero_ext : context -> int -> ast -> ast
 	= "camlidl_z3_Z3_mk_zero_ext"
+
+(**
+       Summary: \[ [ mk_repeat c i t1 ] \]
+       Repeat the given bit-vector up length {e i }.
+       
+       The node t1 must have a bit-vector sort. 
+    *)
+external mk_repeat : context -> int -> ast -> ast
+	= "camlidl_z3_Z3_mk_repeat"
 
 (**
        Summary: \[ [ mk_bvshl c t1 t2 ] \]
@@ -1012,7 +1875,7 @@ external mk_zero_ext : context -> int -> ast -> ast
        It is equivalent to multiplication by {e 2^x } where x is the value of the
        third argument.
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvshl : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvshl"
@@ -1024,7 +1887,7 @@ external mk_bvshl : context -> ast -> ast -> ast
        It is equivalent to unsigned int division by {e 2^x } where x is the
        value of the third argument.
 
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvlshr : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvlshr"
@@ -1037,7 +1900,7 @@ external mk_bvlshr : context -> ast -> ast -> ast
        bits of the result always copy the most significant bit of the
        second argument.
        
-       The nodes t1 and t2 must have the same bit-vector type.
+       The nodes t1 and t2 must have the same bit-vector sort.
     *)
 external mk_bvashr : context -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_bvashr"
@@ -1046,7 +1909,7 @@ external mk_bvashr : context -> ast -> ast -> ast
        Summary: \[ [ mk_rotate_left c i t1 ] \]
        Rotate bits of t1 to the left i times.
        
-       The node t1 must have a bit-vector type. 
+       The node t1 must have a bit-vector sort. 
     *)
 external mk_rotate_left : context -> int -> ast -> ast
 	= "camlidl_z3_Z3_mk_rotate_left"
@@ -1055,19 +1918,129 @@ external mk_rotate_left : context -> int -> ast -> ast
        Summary: \[ [ mk_rotate_right c i t1 ] \]
        Rotate bits of t1 to the right i times.
        
-       The node t1 must have a bit-vector type. 
+       The node t1 must have a bit-vector sort. 
     *)
 external mk_rotate_right : context -> int -> ast -> ast
 	= "camlidl_z3_Z3_mk_rotate_right"
 
 (**
+       Summary: \[ [ mk_int2bv c n t1 ] \]
+       Create an n bit bit-vector from the integer argument t1.
+
+       NB. This function is essentially treated as uninterpreted. 
+       So you cannot expect Z3 to precisely reflect the semantics of this function
+       when solving constraints with this function.
+       
+       The node t1 must have integer sort. 
+    *)
+external mk_int2bv : context -> int -> ast -> ast
+	= "camlidl_z3_Z3_mk_int2bv"
+
+(**
+       Summary: \[ [ mk_bv2int c t1 is_signed ] \]
+       Create an integer from the bit-vector argument t1.
+       If is_signed is false, then the bit-vector t1 is treated as unsigned int. 
+       So the result is non-negative
+       and in the range {e [0..2^N-1] }, where N are the number of bits in t1.
+       If is_signed is true, t1 is treated as a signed bit-vector.
+
+       NB. This function is essentially treated as uninterpreted. 
+       So you cannot expect Z3 to precisely reflect the semantics of this function
+       when solving constraints with this function.
+
+       The node t1 must have a bit-vector sort. 
+    *)
+external mk_bv2int : context -> ast -> bool -> ast
+	= "camlidl_z3_Z3_mk_bv2int"
+
+(**
+       Summary: \[ [ mk_bvadd_no_overflow c t1 t2 is_signed ] \]
+       Create a predicate that checks that the bit-wise addition
+       of t1 and t2 does not overflow.
+       
+       The nodes t1 and t2 must have the same bit-vector sort.
+    *)
+external mk_bvadd_no_overflow : context -> ast -> ast -> bool -> ast
+	= "camlidl_z3_Z3_mk_bvadd_no_overflow"
+
+(**
+       Summary: \[ [ mk_bvadd_no_underflow c t1 t2 ] \]
+       Create a predicate that checks that the bit-wise signed addition
+       of t1 and t2 does not underflow.
+       
+       The nodes t1 and t2 must have the same bit-vector sort.
+    *)
+external mk_bvadd_no_underflow : context -> ast -> ast -> ast
+	= "camlidl_z3_Z3_mk_bvadd_no_underflow"
+
+(**
+       Summary: \[ [ mk_bvsub_no_overflow c t1 t2 ] \]
+       Create a predicate that checks that the bit-wise signed subtraction
+       of t1 and t2 does not overflow.
+       
+       The nodes t1 and t2 must have the same bit-vector sort.
+    *)
+external mk_bvsub_no_overflow : context -> ast -> ast -> ast
+	= "camlidl_z3_Z3_mk_bvsub_no_overflow"
+
+(**
+       Summary: \[ [ mk_bvsub_no_underflow c t1 t2 is_signed ] \]
+       Create a predicate that checks that the bit-wise subtraction
+       of t1 and t2 does not underflow.
+       
+       The nodes t1 and t2 must have the same bit-vector sort.
+    *)
+external mk_bvsub_no_underflow : context -> ast -> ast -> bool -> ast
+	= "camlidl_z3_Z3_mk_bvsub_no_underflow"
+
+(**
+       Summary: \[ [ mk_bvsdiv_no_overflow c t1 t2 ] \]
+       Create a predicate that checks that the bit-wise signed division 
+       of t1 and t2 does not overflow.
+       
+       The nodes t1 and t2 must have the same bit-vector sort.
+    *)
+external mk_bvsdiv_no_overflow : context -> ast -> ast -> ast
+	= "camlidl_z3_Z3_mk_bvsdiv_no_overflow"
+
+(**
+       Summary: \[ [ mk_bvneg_no_overflow c t1 ] \]
+       Check that bit-wise negation does not overflow when 
+       t1 is interpreted as a signed bit-vector.
+       
+       The node t1 must have bit-vector sort.
+    *)
+external mk_bvneg_no_overflow : context -> ast -> ast
+	= "camlidl_z3_Z3_mk_bvneg_no_overflow"
+
+(**
+       Summary: \[ [ mk_bvmul_no_overflow c t1 t2 is_signed ] \]
+       Create a predicate that checks that the bit-wise multiplication
+       of t1 and t2 does not overflow.
+       
+       The nodes t1 and t2 must have the same bit-vector sort.
+    *)
+external mk_bvmul_no_overflow : context -> ast -> ast -> bool -> ast
+	= "camlidl_z3_Z3_mk_bvmul_no_overflow"
+
+(**
+       Summary: \[ [ mk_bvmul_no_underflow c t1 t2 ] \]
+       Create a predicate that checks that the bit-wise signed multiplication
+       of t1 and t2 does not underflow.
+       
+       The nodes t1 and t2 must have the same bit-vector sort.
+    *)
+external mk_bvmul_no_underflow : context -> ast -> ast -> ast
+	= "camlidl_z3_Z3_mk_bvmul_no_underflow"
+
+(**
        Summary: \[ [ mk_select c a i ] \]
        Array read.
 
-       The node a must have an array type {e [domain -> range] }, and i must have the type domain.
-       The type of the result is range.
+       The node a must have an array sort {e [domain -> range] }, and i must have the sort domain.
+       The sort of the result is range.
 
-       - {b See also}: {!Z3.mk_array_type}
+       - {b See also}: {!Z3.mk_array_sort}
        - {b See also}: {!Z3.mk_store}
     *)
 external mk_select : context -> ast -> ast -> ast
@@ -1077,20 +2050,132 @@ external mk_select : context -> ast -> ast -> ast
        Summary: \[ [ mk_store c a i v ] \]
        Array update.
        
-       The node a must have an array type {e [domain -> range] }, i must have type domain,
-       v must have type range. The type of the result is {e [domain -> range] }.
+       The node a must have an array sort {e [domain -> range] }, i must have sort domain,
+       v must have sort range. The sort of the result is {e [domain -> range] }.
        
-       - {b See also}: {!Z3.mk_array_type}
-       - {b See also}: {!Z3.mk_store}
+       - {b See also}: {!Z3.mk_array_sort}
+       - {b See also}: {!Z3.mk_select}
     *)
 external mk_store : context -> ast -> ast -> ast -> ast
 	= "camlidl_z3_Z3_mk_store"
+
+(** 
+        Summary: Create the constant array.
+
+        
+        
+        
+    *)
+external mk_const_array : context -> sort -> ast -> ast
+	= "camlidl_z3_Z3_mk_const_array"
+
+(**
+       Summary: \[ [ mk_map f n args ] \]
+       map f on the the argument arrays.
+       
+       The n nodes args must be of array sorts {e [domain_i -> range_i] }.
+       The function declaration f must have type {e  range_1 .. range_n -> range }.
+       v must have sort range. The sort of the result is {e [domain_i -> range] }.
+       
+       - {b See also}: {!Z3.mk_array_sort}
+       - {b See also}: {!Z3.mk_store}
+       - {b See also}: {!Z3.mk_select}
+    *)
+external mk_map : context -> func_decl -> int -> ast -> ast
+	= "camlidl_z3_Z3_mk_map"
+
+(** 
+        Summary: Access the array default value.
+        Produces the default range value, for arrays that can be represented as 
+        finite maps with a default range value.
+
+        
+        
+
+    *)
+external mk_array_default : context -> ast -> ast
+	= "camlidl_z3_Z3_mk_array_default"
+
+(**
+       {2 {L Sets}}
+    *)
+(**
+       Summary: Create Set type.
+    *)
+external mk_set_sort : context -> sort -> sort
+	= "camlidl_z3_Z3_mk_set_sort"
+
+(** 
+        Summary: Create the empty set.
+    *)
+external mk_empty_set : context -> sort -> ast
+	= "camlidl_z3_Z3_mk_empty_set"
+
+(** 
+        Summary: Create the full set.
+    *)
+external mk_full_set : context -> sort -> ast
+	= "camlidl_z3_Z3_mk_full_set"
+
+(**
+       Summary: Add an element to a set.
+       
+       The first argument must be a set, the second an element.
+    *)
+external mk_set_add : context -> ast -> ast -> ast
+	= "camlidl_z3_Z3_mk_set_add"
+
+(**
+       Summary: Remove an element to a set.
+       
+       The first argument must be a set, the second an element.
+    *)
+external mk_set_del : context -> ast -> ast -> ast
+	= "camlidl_z3_Z3_mk_set_del"
+
+(**
+       Summary: Take the union of a list of sets.
+    *)
+external mk_set_union : context -> ast array -> ast
+	= "camlidl_z3_Z3_mk_set_union"
+
+(**
+       Summary: Take the intersection of a list of sets.
+    *)
+external mk_set_intersect : context -> ast array -> ast
+	= "camlidl_z3_Z3_mk_set_intersect"
+
+(**
+       Summary: Take the set difference between two sets.
+    *)
+external mk_set_difference : context -> ast -> ast -> ast
+	= "camlidl_z3_Z3_mk_set_difference"
+
+(**
+       Summary: Take the complement of a set.
+    *)
+external mk_set_complement : context -> ast -> ast
+	= "camlidl_z3_Z3_mk_set_complement"
+
+(**
+       Summary: Check for set membership.
+       
+       The first argument should be an element type of the set.
+    *)
+external mk_set_member : context -> ast -> ast -> ast
+	= "camlidl_z3_Z3_mk_set_member"
+
+(**
+       Summary: Check for subsetness of sets.
+    *)
+external mk_set_subset : context -> ast -> ast -> ast
+	= "camlidl_z3_Z3_mk_set_subset"
 
 (**
        {2 {L Numerals}}
     *)
 (**
-       Summary: Create a numeral of a given type. 
+       Summary: Create a numeral of a given sort. 
 
        
        
@@ -1099,29 +2184,45 @@ external mk_store : context -> ast -> ast -> ast -> ast
        - {b See also}: {!Z3.mk_int}
        - {b See also}: {!Z3.mk_unsigned_int}
     *)
-external mk_numeral : context -> string -> type_ast -> ast
+external mk_numeral : context -> string -> sort -> ast
 	= "camlidl_z3_Z3_mk_numeral"
 
 (**
-       Summary: Create a numeral of a given type. 
+       Summary: Create a real from a fraction.
+
+       
+       
+       
+
+       - {b Precondition}: den != 0
+
+       - {b See also}: {!Z3.mk_numeral}
+       - {b See also}: {!Z3.mk_int}
+       - {b See also}: {!Z3.mk_unsigned_int}
+    *)
+external mk_real : context -> int -> int -> ast
+	= "camlidl_z3_Z3_mk_real"
+
+(**
+       Summary: Create a numeral of a given sort. 
        
        This function can be use to create numerals that fit in a machine integer.
        It is slightly faster than {!Z3.mk_numeral} since it is not necessary to parse a string.
 
        - {b See also}: {!Z3.mk_numeral}
     *)
-external mk_int : context -> int -> type_ast -> ast
+external mk_int : context -> int -> sort -> ast
 	= "camlidl_z3_Z3_mk_int"
 
 (**
-       Summary: Create a numeral of a given type. 
+       Summary: Create a numeral of a given sort. 
        
        This function can be use to create numerals that fit in a machine unsinged integer.
        It is slightly faster than {!Z3.mk_numeral} since it is not necessary to parse a string.
 
        - {b See also}: {!Z3.mk_numeral}
     *)
-external mk_unsigned_int : context -> int -> type_ast -> ast
+external mk_unsigned_int : context -> int -> sort -> ast
 	= "camlidl_z3_Z3_mk_unsigned_int"
 
 (**
@@ -1146,7 +2247,7 @@ external mk_unsigned_int : context -> int -> type_ast -> ast
        - {b See also}: {!Z3.mk_forall}
        - {b See also}: {!Z3.mk_exists}
     *)
-external mk_pattern : context -> ast array -> pattern_ast
+external mk_pattern : context -> ast array -> pattern
 	= "camlidl_z3_Z3_mk_pattern"
 
 (**
@@ -1176,7 +2277,7 @@ external mk_pattern : context -> ast array -> pattern_ast
        - {b See also}: {!Z3.mk_forall}
        - {b See also}: {!Z3.mk_exists}
     *)
-external mk_bound : context -> int -> type_ast -> ast
+external mk_bound : context -> int -> sort -> ast
 	= "camlidl_z3_Z3_mk_bound"
 
 (**
@@ -1184,7 +2285,7 @@ external mk_bound : context -> int -> type_ast -> ast
 
         [mk_forall c w p t n b] creates a forall formula, where
        [w] is the weight, [p] is an array of patterns, [t] is an array
-       with the types of the bound variables, [n] is an array with the
+       with the sorts of the bound variables, [n] is an array with the
        'names' of the bound variables, and [b] is the body of the
        quantifier. Quantifiers are associated with weights indicating
        the importance of using the quantifier during
@@ -1198,11 +2299,12 @@ external mk_bound : context -> int -> type_ast -> ast
        
        
        
+       
        - {b See also}: {!Z3.mk_pattern}
        - {b See also}: {!Z3.mk_bound}
        - {b See also}: {!Z3.mk_exists}
     *)
-external mk_forall : context -> int -> pattern_ast array -> type_ast array -> symbol array -> ast -> ast
+external mk_forall : context -> int -> pattern array -> sort array -> symbol array -> ast -> ast
 	= "camlidl_z3_Z3_mk_forall_bytecode" "camlidl_z3_Z3_mk_forall"
 
 (**
@@ -1212,7 +2314,7 @@ external mk_forall : context -> int -> pattern_ast array -> type_ast array -> sy
        - {b See also}: {!Z3.mk_bound}
        - {b See also}: {!Z3.mk_forall}
     *)
-external mk_exists : context -> int -> pattern_ast array -> type_ast array -> symbol array -> ast -> ast
+external mk_exists : context -> int -> pattern array -> sort array -> symbol array -> ast -> ast
 	= "camlidl_z3_Z3_mk_exists_bytecode" "camlidl_z3_Z3_mk_exists"
 
 (**
@@ -1233,12 +2335,67 @@ external mk_exists : context -> int -> pattern_ast array -> type_ast array -> sy
        - {b See also}: {!Z3.mk_forall}
        - {b See also}: {!Z3.mk_exists}
     *)
-external mk_quantifier : context -> bool -> int -> int -> pattern_ast -> int -> ast -> int -> type_ast -> symbol -> ast -> ast
+external mk_quantifier : context -> bool -> int -> pattern array -> sort array -> symbol array -> ast -> ast
 	= "camlidl_z3_Z3_mk_quantifier_bytecode" "camlidl_z3_Z3_mk_quantifier"
+
+(**
+       Summary: Create a universal quantifier using a list of constants that
+       will form the set of bound variables.
+
+       
+       
+              the quantifier during instantiation. By default, pass the weight 0.
+       
+       
+       
+       
+       
+       
+       - {b See also}: {!Z3.mk_pattern}
+       - {b See also}: {!Z3.mk_exists_const}
+
+    *)
+external mk_forall_const : context -> int -> app array -> pattern array -> ast -> ast
+	= "camlidl_z3_Z3_mk_forall_const"
+
+(**
+       Summary: Similar to {!Z3.mk_forall_const}.
+
+       Summary: Create an existential quantifier using a list of constants that
+       will form the set of bound variables.
+
+       
+       
+              the quantifier during instantiation. By default, pass the weight 0.
+       
+       
+       
+       
+       
+       
+       - {b See also}: {!Z3.mk_pattern}
+       - {b See also}: {!Z3.mk_forall_const}
+    *)
+external mk_exists_const : context -> int -> app array -> pattern array -> ast -> ast
+	= "camlidl_z3_Z3_mk_exists_const"
+
+(**
+       Summary: Create a universal or existential 
+       quantifier using a list of constants that
+       will form the set of bound variables.
+    *)
+external mk_quantifier_const : context -> bool -> int -> int -> app -> int -> pattern -> ast -> ast
+	= "camlidl_z3_Z3_mk_quantifier_const_bytecode" "camlidl_z3_Z3_mk_quantifier_const"
 
 (**
        {2 {L Accessors}}
     *)
+(**
+       Summary: Return true if the given expression t is well sorted.
+    *)
+external is_well_sorted : context -> ast -> bool
+	= "camlidl_z3_Z3_is_well_sorted"
+
 (**
        Summary: Return INT_SYMBOL if the symbol was constructed
        using {!Z3.mk_int_symbol}, and STRING_SYMBOL if the symbol
@@ -1274,201 +2431,18 @@ external get_symbol_string : context -> symbol -> string
 	= "camlidl_z3_Z3_get_symbol_string"
 
 (**
-       Summary: Return TRUE if the two given AST nodes are equal.
-    *)
-external is_eq : context -> ast -> ast -> bool
-	= "camlidl_z3_Z3_is_eq"
-
-(**
        Summary: Return the kind of the given AST.
     *)
 external get_ast_kind : context -> ast -> ast_kind
 	= "camlidl_z3_Z3_get_ast_kind"
 
 (**
-       Summary: Return TRUE if the given AST is an expression.
-
-       An expression is a constant, application, numeral, bound variable, or quantifier.
-    *)
-external is_expr : context -> ast -> bool
-	= "camlidl_z3_Z3_is_expr"
-
-(**
-       Summary: Return the declaration of a constant or function application.
-    *)
-external get_const_ast_decl : context -> const_ast -> const_decl_ast
-	= "camlidl_z3_Z3_get_const_ast_decl"
-
-(**
-       Summary: \[ [ get_const_ast_num_args c a ] \]
-       Return the number of argument of an application. If t
-       is an constant, then the number of arguments is 0.
-    *)
-external get_const_ast_num_args : context -> const_ast -> int
-	= "camlidl_z3_Z3_get_const_ast_num_args"
-
-(**
-       Summary: \[ [ get_const_ast_arg c a i ] \]
-       Return the i-th argument of the given application.
-       
-       - {b Precondition}: i < get_num_args c a
-    *)
-external get_const_ast_arg : context -> const_ast -> int -> ast
-	= "camlidl_z3_Z3_get_const_ast_arg"
-
-(**
-       Summary: Return the constant declaration name as a symbol. 
-    *)
-external get_decl_name : context -> const_decl_ast -> symbol
-	= "camlidl_z3_Z3_get_decl_name"
-
-(**
-       Summary: Return the type name as a symbol. 
-    *)
-external get_type_name : context -> type_ast -> symbol
-	= "camlidl_z3_Z3_get_type_name"
-
-(**
-       Summary: Return the type of an AST node.
-       
-       The AST node must be a constant, application, numeral, bound variable, or quantifier.
-
-       - {b See also}: {!Z3.is_expr}
-    *)
-external get_type : context -> ast -> type_ast
-	= "camlidl_z3_Z3_get_type"
-
-(**
-       Summary: Return the number of parameters of the given declaration.
-
-       - {b See also}: {!Z3.get_domain_size}
-    *)
-external get_domain_size : context -> const_decl_ast -> int
-	= "camlidl_z3_Z3_get_domain_size"
-
-(**
-       Summary: \[ [ get_domain c d i ] \]
-       Return the type of the i-th parameter of the given function declaration.
-       
-       - {b Precondition}: i < get_domain_size d
-
-       - {b See also}: {!Z3.get_domain_size}
-    *)
-external get_domain : context -> const_decl_ast -> int -> type_ast
-	= "camlidl_z3_Z3_get_domain"
-
-(**
-       Summary: \[ [ get_range c d ] \]
-       Return the range of the given declaration. 
-
-       If d is a constant (i.e., has zero arguments), then this
-       function returns the type of the constant.
-    *)
-external get_range : context -> const_decl_ast -> type_ast
-	= "camlidl_z3_Z3_get_range"
-
-(**
-       Summary: Return the type kind (e.g., array, tuple, int, bool, etc).
-
-       - {b See also}: {!Z3.type_kind}
-    *)
-external get_type_kind : context -> type_ast -> type_kind
-	= "camlidl_z3_Z3_get_type_kind"
-
-(**
-       Summary: \[ [ get_bv_type_size c t ] \]
-       Return the size of the given bit-vector type. 
-
-       - {b Precondition}: get_type_kind c t == BV_TYPE
-
-       - {b See also}: {!Z3.mk_bv_type}
-       - {b See also}: {!Z3.get_type_kind}
-    *)
-external get_bv_type_size : context -> type_ast -> int
-	= "camlidl_z3_Z3_get_bv_type_size"
-
-(**
-       Summary: \[ [ get_array_type_domain c t ] \]
-       Return the domain of the given array type.
-       
-       - {b Precondition}: get_type_kind c t == ARRAY_TYPE
-
-       - {b See also}: {!Z3.mk_array_type}
-       - {b See also}: {!Z3.get_type_kind}
-    *)
-external get_array_type_domain : context -> type_ast -> type_ast
-	= "camlidl_z3_Z3_get_array_type_domain"
-
-(**
-       Summary: \[ [ get_array_type_range c t ] \] 
-       Return the range of the given array type. 
-
-       - {b Precondition}: get_type_kind c t == ARRAY_TYPE
-
-       - {b See also}: {!Z3.mk_array_type}
-       - {b See also}: {!Z3.get_type_kind}
-    *)
-external get_array_type_range : context -> type_ast -> type_ast
-	= "camlidl_z3_Z3_get_array_type_range"
-
-(**
-       Summary: \[ [ get_tuple_type_mk_decl c t ] \]
-       Return the constructor declaration of the given tuple
-       type. 
-
-       - {b Precondition}: get_type_kind c t == TUPLE_TYPE
-
-       - {b See also}: {!Z3.mk_tuple_type}
-       - {b See also}: {!Z3.get_type_kind}
-    *)
-external get_tuple_type_mk_decl : context -> type_ast -> const_decl_ast
-	= "camlidl_z3_Z3_get_tuple_type_mk_decl"
-
-(**
-       Summary: \[ [ get_tuple_type_num_fields c t ] \]
-       Return the number of fields of the given tuple type. 
-
-       - {b Precondition}: get_type_kind c t == TUPLE_TYPE
-
-        - {b Remarks}: Consider using the function {!Z3.get_tuple_type}, which 
-       returns a tuple: tuple constructor, and an array of the tuple type fields. 
-
-       - {b See also}: {!Z3.mk_tuple_type}
-       - {b See also}: {!Z3.get_type_kind}
-    *)
-external get_tuple_type_num_fields : context -> type_ast -> int
-	= "camlidl_z3_Z3_get_tuple_type_num_fields"
-
-(**
-       Summary: \[ [ get_tuple_type_field_decl c t i ] \]
-       Return the i-th field declaration (i.e., projection function declaration)
-       of the given tuple type. 
-
-        - {b Remarks}: Consider using the function {!Z3.get_tuple_type}, which 
-       returns a tuple: tuple constructor, and an array of the tuple type fields. 
-
-       - {b Precondition}: get_type_kind t == TUPLE_TYPE
-       - {b Precondition}: i < get_tuple_type_num_fields c t i
-       
-       - {b See also}: {!Z3.mk_tuple_type}
-       - {b See also}: {!Z3.get_type_kind}
-    *)
-external get_tuple_type_field_decl : context -> type_ast -> int -> const_decl_ast
-	= "camlidl_z3_Z3_get_tuple_type_field_decl"
-
-(**
-       Summary: Return declaration kind corresponding to declaration.
-    *)
-external get_decl_kind : context -> const_decl_ast -> decl_kind
-	= "camlidl_z3_Z3_get_decl_kind"
-
-(**
        Summary: Return numeral value, as a string of a numeric constant term
 
-       - {b Precondition}: get_type a == NUMERAL_AST
+       - {b Precondition}: get_ast_kind c a == NUMERAL_AST
     *)
-external get_numeral_ast_value : context -> ast -> string
-	= "camlidl_z3_Z3_get_numeral_ast_value"
+external get_numeral_string : context -> ast -> string
+	= "camlidl_z3_Z3_get_numeral_string"
 
 (**
        Summary: Return numeral value, as a pair of 64 bit numbers if the representation fits.
@@ -1480,15 +2454,68 @@ external get_numeral_ast_value : context -> ast -> string
        
        Preturn TRUE if the numeral value fits in 64 bit numerals, FALSE otherwise.
 
-       - {b Precondition}: get_type a == NUMERAL_AST
+       - {b Precondition}: get_ast_kind a == NUMERAL_AST
     *)
-external get_numeral_ast_value_small : context -> ast -> bool * int64 * int64
-	= "camlidl_z3_Z3_get_numeral_ast_value_small"
+external get_numeral_small : context -> ast -> bool * int64 * int64
+	= "camlidl_z3_Z3_get_numeral_small"
+
+(**
+       Summary: \[ [ get_numeral_int c v ] \]
+       Similar to {!Z3.get_numeral_string}, but only succeeds if
+       the value can fit in a machine int. Return TRUE if the call succeeded.
+
+       - {b Precondition}: get_ast_kind c v == NUMERAL_AST
+      
+       - {b See also}: {!Z3.get_numeral_string}
+    *)
+external get_numeral_int : context -> ast -> bool * int
+	= "camlidl_z3_Z3_get_numeral_int"
+
+(**
+       Summary: \[ [ get_numeral_uint c v ] \]
+       Similar to {!Z3.get_numeral_string}, but only succeeds if
+       the value can fit in a machine unsigned int int. Return TRUE if the call succeeded.
+
+       - {b Precondition}: get_ast_kind c v == NUMERAL_AST
+      
+       - {b See also}: {!Z3.get_numeral_string}
+    *)
+external get_numeral_uint : context -> ast -> bool * int
+	= "camlidl_z3_Z3_get_numeral_uint"
+
+(**
+       Summary: Return L_TRUE if a is true, L_FALSE if it is false, and L_UNDEF otherwise.
+    *)
+external get_bool_value : context -> ast -> lbool
+	= "camlidl_z3_Z3_get_bool_value"
+
+(**
+       Summary: Return the declaration of a constant or function application.
+    *)
+external get_app_decl : context -> app -> func_decl
+	= "camlidl_z3_Z3_get_app_decl"
+
+(**
+       Summary: \[ [ get_app_num_args c a ] \]
+       Return the number of argument of an application. If t
+       is an constant, then the number of arguments is 0.
+    *)
+external get_app_num_args : context -> app -> int
+	= "camlidl_z3_Z3_get_app_num_args"
+
+(**
+       Summary: \[ [ get_app_arg c a i ] \]
+       Return the i-th argument of the given application.
+       
+       - {b Precondition}: i < get_num_args c a
+    *)
+external get_app_arg : context -> app -> int -> ast
+	= "camlidl_z3_Z3_get_app_arg"
 
 (**
        Summary: Return index of de-Brujin bound variable.
 
-       - {b Precondition}: get_type a == VAR_AST
+       - {b Precondition}: get_ast_kind a == VAR_AST
     *)
 external get_index_value : context -> ast -> int
 	= "camlidl_z3_Z3_get_index_value"
@@ -1496,7 +2523,7 @@ external get_index_value : context -> ast -> int
 (**
        Summary: Determine if quantifier is universal.
        
-       - {b Precondition}: get_type a == QUANTIFIER_AST
+       - {b Precondition}: get_ast_kind a == QUANTIFIER_AST
     *)
 external is_quantifier_forall : context -> ast -> bool
 	= "camlidl_z3_Z3_is_quantifier_forall"
@@ -1504,7 +2531,7 @@ external is_quantifier_forall : context -> ast -> bool
 (**
        Summary: Obtain weight of quantifier.
        
-       - {b Precondition}: get_type a == QUANTIFIER_AST
+       - {b Precondition}: get_ast_kind a == QUANTIFIER_AST
     *)
 external get_quantifier_weight : context -> ast -> int
 	= "camlidl_z3_Z3_get_quantifier_weight"
@@ -1512,7 +2539,7 @@ external get_quantifier_weight : context -> ast -> int
 (**
        Summary: Return number of patterns used in quantifier.
        
-       - {b Precondition}: get_type a == QUANTIFIER_AST
+       - {b Precondition}: get_ast_kind a == QUANTIFIER_AST
     *)
 external get_quantifier_num_patterns : context -> ast -> int
 	= "camlidl_z3_Z3_get_quantifier_num_patterns"
@@ -1520,31 +2547,31 @@ external get_quantifier_num_patterns : context -> ast -> int
 (**
        Summary: Return i'th pattern.
        
-       - {b Precondition}: get_type a == QUANTIFIER_AST
+       - {b Precondition}: get_ast_kind a == QUANTIFIER_AST
     *)
-external get_quantifier_pattern_ast : context -> ast -> int -> pattern_ast
+external get_quantifier_pattern_ast : context -> ast -> int -> pattern
 	= "camlidl_z3_Z3_get_quantifier_pattern_ast"
 
 (**
        Summary: Return symbol of the i'th bound variable.
        
-       - {b Precondition}: get_type a == QUANTIFIER_AST
+       - {b Precondition}: get_ast_kind a == QUANTIFIER_AST
     *)
 external get_quantifier_bound_name : context -> ast -> int -> symbol
 	= "camlidl_z3_Z3_get_quantifier_bound_name"
 
 (**
-       Summary: Return type of the i'th bound variable.
+       Summary: Return sort of the i'th bound variable.
        
-       - {b Precondition}: get_type a == QUANTIFIER_AST
+       - {b Precondition}: get_ast_kind a == QUANTIFIER_AST
     *)
-external get_quantifier_bound_type_ast : context -> ast -> int -> type_ast
-	= "camlidl_z3_Z3_get_quantifier_bound_type_ast"
+external get_quantifier_bound_sort : context -> ast -> int -> sort
+	= "camlidl_z3_Z3_get_quantifier_bound_sort"
 
 (**
        Summary: Return body of quantifier.
        
-       - {b Precondition}: get_type a == QUANTIFIER_AST
+       - {b Precondition}: get_ast_kind a == QUANTIFIER_AST
     *)
 external get_quantifier_body : context -> ast -> ast
 	= "camlidl_z3_Z3_get_quantifier_body"
@@ -1552,65 +2579,321 @@ external get_quantifier_body : context -> ast -> ast
 (**
        Summary: Return number of bound variables of quantifier.
        
-       - {b Precondition}: get_type a == QUANTIFIER_AST
+       - {b Precondition}: get_ast_kind a == QUANTIFIER_AST
     *)
 external get_quantifier_num_bound : context -> ast -> int
 	= "camlidl_z3_Z3_get_quantifier_num_bound"
 
+(**
+       Summary: Return the constant declaration name as a symbol. 
+    *)
+external get_decl_name : context -> func_decl -> symbol
+	= "camlidl_z3_Z3_get_decl_name"
+
+(**
+       Summary: Return the number of parameters associated with a declaration.
+    *)
+external get_decl_num_parameters : context -> func_decl -> int
+	= "camlidl_z3_Z3_get_decl_num_parameters"
+
+(**
+       Summary: Return the parameter type associated with a declaration.
+       
+       
+       
+       
+    *)
+external get_decl_parameter_kind : context -> func_decl -> int -> parameter_kind
+	= "camlidl_z3_Z3_get_decl_parameter_kind"
+
+(**
+       Summary: Return the integer value associated with an integer parameter.
+
+       - {b Precondition}: get_decl_parameter_kind c d idx == PARAMETER_INT
+    *)
+external get_decl_int_parameter : context -> func_decl -> int -> int
+	= "camlidl_z3_Z3_get_decl_int_parameter"
+
+(**
+       Summary: Return the double value associated with an double parameter.
+
+       - {b Precondition}: get_decl_parameter_kind c d idx == PARAMETER_DOUBLE
+    *)
+external get_decl_double_parameter : context -> func_decl -> int -> float
+	= "camlidl_z3_Z3_get_decl_double_parameter"
+
+(**
+       Summary: Return the double value associated with an double parameter.
+
+       - {b Precondition}: get_decl_parameter_kind c d idx == PARAMETER_SYMBOL
+    *)
+external get_decl_symbol_parameter : context -> func_decl -> int -> symbol
+	= "camlidl_z3_Z3_get_decl_symbol_parameter"
+
+(**
+       Summary: Return the sort value associated with a sort parameter.
+
+       - {b Precondition}: get_decl_parameter_kind c d idx == PARAMETER_SORT
+    *)
+external get_decl_sort_parameter : context -> func_decl -> int -> sort
+	= "camlidl_z3_Z3_get_decl_sort_parameter"
+
+(**
+       Summary: Return the expresson value associated with an expression parameter.
+
+       - {b Precondition}: get_decl_parameter_kind c d idx == PARAMETER_AST
+    *)
+external get_decl_ast_parameter : context -> func_decl -> int -> ast
+	= "camlidl_z3_Z3_get_decl_ast_parameter"
+
+(**
+       Summary: Return the expresson value associated with an expression parameter.
+
+       - {b Precondition}: get_decl_parameter_kind c d idx == PARAMETER_FUNC_DECL
+    *)
+external get_decl_func_decl_parameter : context -> func_decl -> int -> func_decl
+	= "camlidl_z3_Z3_get_decl_func_decl_parameter"
+
+(**
+       Summary: Return the rational value, as a string, associated with a rational parameter.
+
+       - {b Precondition}: get_decl_parameter_kind c d idx == PARAMETER_RATIONAL
+    *)
+external get_decl_rational_parameter : context -> func_decl -> int -> string
+	= "camlidl_z3_Z3_get_decl_rational_parameter"
+
+(**
+       Summary: Return the sort name as a symbol. 
+    *)
+external get_sort_name : context -> sort -> symbol
+	= "camlidl_z3_Z3_get_sort_name"
+
+(**
+       Summary: Return the sort of an AST node.
+       
+       The AST node must be a constant, application, numeral, bound variable, or quantifier.
+
+    *)
+external get_sort : context -> ast -> sort
+	= "camlidl_z3_Z3_get_sort"
+
+(**
+       Summary: Return the number of parameters of the given declaration.
+
+       - {b See also}: {!Z3.get_domain_size}
+    *)
+external get_domain_size : context -> func_decl -> int
+	= "camlidl_z3_Z3_get_domain_size"
+
+(**
+       Summary: \[ [ get_domain c d i ] \]
+       Return the sort of the i-th parameter of the given function declaration.
+       
+       - {b Precondition}: i < get_domain_size d
+
+       - {b See also}: {!Z3.get_domain_size}
+    *)
+external get_domain : context -> func_decl -> int -> sort
+	= "camlidl_z3_Z3_get_domain"
+
+(**
+       Summary: \[ [ get_range c d ] \]
+       Return the range of the given declaration. 
+
+       If d is a constant (i.e., has zero arguments), then this
+       function returns the sort of the constant.
+    *)
+external get_range : context -> func_decl -> sort
+	= "camlidl_z3_Z3_get_range"
+
+(**
+       Summary: Return the sort kind (e.g., array, tuple, int, bool, etc).
+
+       - {b See also}: {!Z3.sort_kind}
+    *)
+external get_sort_kind : context -> sort -> sort_kind
+	= "camlidl_z3_Z3_get_sort_kind"
+
+(**
+       Summary: \[ [ get_bv_sort_size c t ] \]
+       Return the size of the given bit-vector sort. 
+
+       - {b Precondition}: get_sort_kind c t == BV_SORT
+
+       - {b See also}: {!Z3.mk_bv_sort}
+       - {b See also}: {!Z3.get_sort_kind}
+    *)
+external get_bv_sort_size : context -> sort -> int
+	= "camlidl_z3_Z3_get_bv_sort_size"
+
+(**
+       Summary: \[ [ get_array_sort_domain c t ] \]
+       Return the domain of the given array sort.
+       
+       - {b Precondition}: get_sort_kind c t == ARRAY_SORT
+
+       - {b See also}: {!Z3.mk_array_sort}
+       - {b See also}: {!Z3.get_sort_kind}
+    *)
+external get_array_sort_domain : context -> sort -> sort
+	= "camlidl_z3_Z3_get_array_sort_domain"
+
+(**
+       Summary: \[ [ get_array_sort_range c t ] \] 
+       Return the range of the given array sort. 
+
+       - {b Precondition}: get_sort_kind c t == ARRAY_SORT
+
+       - {b See also}: {!Z3.mk_array_sort}
+       - {b See also}: {!Z3.get_sort_kind}
+    *)
+external get_array_sort_range : context -> sort -> sort
+	= "camlidl_z3_Z3_get_array_sort_range"
+
+(**
+       Summary: \[ [ get_tuple_sort_mk_decl c t ] \]
+       Return the constructor declaration of the given tuple
+       sort. 
+
+       - {b Precondition}: get_sort_kind c t == DATATYPE_SORT
+
+       - {b See also}: {!Z3.mk_tuple_sort}
+       - {b See also}: {!Z3.get_sort_kind}
+    *)
+external get_tuple_sort_mk_decl : context -> sort -> func_decl
+	= "camlidl_z3_Z3_get_tuple_sort_mk_decl"
+
+(**
+       Summary: Return declaration kind corresponding to declaration.
+    *)
+external get_decl_kind : context -> func_decl -> decl_kind
+	= "camlidl_z3_Z3_get_decl_kind"
+
+(**
+       Summary: \[ [ get_tuple_sort_num_fields c t ] \]
+       Return the number of fields of the given tuple sort. 
+
+       - {b Precondition}: get_sort_kind c t == DATATYPE_SORT
+
+        - {b Remarks}: Consider using the function {!Z3.get_tuple_sort}, which 
+       returns a tuple: tuple constructor, and an array of the tuple sort fields. 
+
+       - {b See also}: {!Z3.mk_tuple_sort}
+       - {b See also}: {!Z3.get_sort_kind}
+    *)
+external get_tuple_sort_num_fields : context -> sort -> int
+	= "camlidl_z3_Z3_get_tuple_sort_num_fields"
+
+(**
+       Summary: \[ [ get_tuple_sort_field_decl c t i ] \]
+       Return the i-th field declaration (i.e., projection function declaration)
+       of the given tuple sort. 
+
+        - {b Remarks}: Consider using the function {!Z3.get_tuple_sort}, which 
+       returns a tuple: tuple constructor, and an array of the tuple sort fields. 
+
+       - {b Precondition}: get_sort_kind t == DATATYPE_SORT
+       - {b Precondition}: i < get_tuple_sort_num_fields c t
+       
+       - {b See also}: {!Z3.mk_tuple_sort}
+       - {b See also}: {!Z3.get_sort_kind}
+    *)
+external get_tuple_sort_field_decl : context -> sort -> int -> func_decl
+	= "camlidl_z3_Z3_get_tuple_sort_field_decl"
+
+(** 
+        Summary: Return number of constructors for datatype.
+
+        - {b Precondition}: get_sort_kind t == DATATYPE_SORT
+
+        - {b See also}: {!Z3.get_datatype_sort_constructor}
+        - {b See also}: {!Z3.get_datatype_sort_recognizer}
+        - {b See also}: {!Z3.get_datatype_sort_constructor_accessor}
+
+    *)
+external get_datatype_sort_num_constructors : context -> sort -> int
+	= "camlidl_z3_Z3_get_datatype_sort_num_constructors"
+
+(** 
+        Summary: Return idx'th constructor.
+
+        - {b Precondition}: get_sort_kind t == DATATYPE_SORT
+        - {b Precondition}: idx < get_datatype_sort_num_constructors c t
+
+        - {b See also}: {!Z3.get_datatype_sort_num_constructors}
+        - {b See also}: {!Z3.get_datatype_sort_recognizer}
+        - {b See also}: {!Z3.get_datatype_sort_constructor_accessor}
+
+    *)
+external get_datatype_sort_constructor : context -> sort -> int -> func_decl
+	= "camlidl_z3_Z3_get_datatype_sort_constructor"
+
+(** 
+        Summary: Return idx'th recognizer.
+
+        - {b Precondition}: get_sort_kind t == DATATYPE_SORT
+        - {b Precondition}: idx < get_datatype_sort_num_constructors c t
+
+        - {b See also}: {!Z3.get_datatype_sort_num_constructors}
+        - {b See also}: {!Z3.get_datatype_sort_constructor}
+        - {b See also}: {!Z3.get_datatype_sort_constructor_accessor}
+
+    *)
+external get_datatype_sort_recognizer : context -> sort -> int -> func_decl
+	= "camlidl_z3_Z3_get_datatype_sort_recognizer"
+
+(** 
+        Summary: Return idx_a'th accessor for the idx_c'th constructor.
+
+        - {b Precondition}: get_sort_kind t == DATATYPE_SORT
+        - {b Precondition}: idx_c < get_datatype_sort_num_constructors c t
+        - {b Precondition}: idx_a < get_domain_size c get_datatype_sort_constructor c idx_c
+
+        - {b See also}: {!Z3.get_datatype_sort_num_constructors}
+        - {b See also}: {!Z3.get_datatype_sort_constructor}
+        - {b See also}: {!Z3.get_datatype_sort_recognizer}
+    *)
+external get_datatype_sort_constructor_accessor : context -> sort -> int -> int -> func_decl
+	= "camlidl_z3_Z3_get_datatype_sort_constructor_accessor"
+
 (** 
         Summary: Return number of terms in pattern.
     *)
-external get_pattern_num_terms : context -> pattern_ast -> int
+external get_pattern_num_terms : context -> pattern -> int
 	= "camlidl_z3_Z3_get_pattern_num_terms"
 
 (**
        Summary: Return i'th ast in pattern.
     *)
-external get_pattern_ast : context -> pattern_ast -> int -> ast
-	= "camlidl_z3_Z3_get_pattern_ast"
+external get_pattern : context -> pattern -> int -> ast
+	= "camlidl_z3_Z3_get_pattern"
+
+(** 
+        Summary: Interface to simplifier.
+
+        Provides an interface to the AST simplifier used by Z3.
+        It allows clients to piggyback on top of the AST simplifier
+        for their own term manipulation.
+    *)
+external simplify : context -> ast -> ast
+	= "camlidl_z3_Z3_simplify"
 
 (**
        {2 {L Coercions}}
     *)
 (**
-       Summary: Convert a TYPE_AST into an AST. This is just type casting.
+       Summary: Convert a APP_AST into an AST. This is just type casting.
     *)
-external type_ast_to_ast : context -> type_ast -> ast
-	= "camlidl_z3_Z3_type_ast_to_ast"
+external app_to_ast : context -> app -> ast
+	= "camlidl_z3_Z3_app_to_ast"
 
 (**
-       Summary: Convert a CONST_AST into an AST. This is just type casting.
-    *)
-external const_ast_to_ast : context -> const_ast -> ast
-	= "camlidl_z3_Z3_const_ast_to_ast"
-
-(**
-       Summary: Convert a CONST_DECL_AST into an AST. This is just type casting.
-    *)
-external const_decl_ast_to_ast : context -> const_decl_ast -> ast
-	= "camlidl_z3_Z3_const_decl_ast_to_ast"
-
-(**
-       Summary: Convert a PATTERN_AST into an AST. This is just type casting.
-    *)
-external pattern_ast_to_ast : context -> pattern_ast -> ast
-	= "camlidl_z3_Z3_pattern_ast_to_ast"
-
-(**
-       Summary: Convert an AST into a CONST_AST. This is just type casting.
+       Summary: Convert an AST into a APP_AST. This is just type casting.
        
-       - {b Warning}: This conversion is only safe if {!Z3.get_ast_kind} returns CONST_AST.
+       - {b Warning}: This conversion is only safe if {!Z3.get_ast_kind} returns app.
     *)
-external to_const_ast : context -> ast -> const_ast
-	= "camlidl_z3_Z3_to_const_ast"
-
-(**
-       Summary: Convert an AST into a NUMERAL_AST. This is just type casting.
-       
-       - {b Warning}: This conversion is only safe if {!Z3.get_ast_kind} returns NUMERAL_AST.
-    *)
-external to_numeral_ast : context -> ast -> numeral_ast
-	= "camlidl_z3_Z3_to_numeral_ast"
+external to_app : context -> ast -> app
+	= "camlidl_z3_Z3_to_app"
 
 (**
        {2 {L Constraints}}
@@ -1640,6 +2923,31 @@ external push : context -> unit
     *)
 external pop : context -> int -> unit
 	= "camlidl_z3_Z3_pop"
+
+(**
+       Summary: Retrieve the current scope level.
+       
+       It retrieves the number of scopes that have been pushed, but not yet popped.
+       
+       - {b See also}: {!Z3.push}
+       - {b See also}: {!Z3.pop}
+    *)
+external get_num_scopes : context -> int
+	= "camlidl_z3_Z3_get_num_scopes"
+
+(**
+       Summary: Persist AST through num_scopes pops.
+       
+       Normally, references to terms are no longer valid when 
+       popping scopes beyond the level where the terms are created.
+       If you want to reference a term below the scope where it
+       was created, use this method to specify how many pops
+       the term should survive.
+       The num_scopes should be at most equal to the number of
+       calls to push subtracted with the calls to pop.
+    *)
+external persist_ast : context -> ast -> int -> unit
+	= "camlidl_z3_Z3_persist_ast"
 
 (**
        Summary: Assert a constraing into the logical context.
@@ -1684,72 +2992,167 @@ external check : context -> lbool
 	= "camlidl_z3_Z3_check"
 
 (**
+       Summary: Check whether the given logical context and optional assumptions is consistent or not.
+
+       If the logical context is not unsatisfiable (i.e., the return value is different from L_FALSE),
+       a non-0 model argument is passed in,
+       and model construction is enabled (see {!Z3.mk_config}), then a model is stored in m. 
+       Otherwise, m is left unchanged.
+       The caller is responsible for deleting the model using the function {!Z3.del_model}.
+       
+       - {b Remarks}: If the model argument is non-0, then model construction must be enabled using configuration
+       parameters (See, {!Z3.mk_config}).
+
+       
+       
+       
+       
+       
+       
+       
+              The unsatisfiable core is a subset of the assumptions, so the array has the same size as the assumptions.
+              The core array is not populated if core_size is set to 0.
+              
+       - {b See also}: {!Z3.check}
+       - {b See also}: {!Z3.del_model}
+    *)
+external check_assumptions : context -> ast array -> int -> ast array -> lbool * model * ast * int * ast array
+	= "camlidl_z3_Z3_check_assumptions"
+
+(**
+       Summary: Retrieve congruence class representatives for terms.
+
+       The function can be used for relying on Z3 to identify equal terms under the current
+       set of assumptions. The array of terms and array of class identifiers should have
+       the same length. The class identifiers are numerals that are assigned to the same
+       value for their corresponding terms if the current context forces the terms to be
+       equal. You cannot deduce that terms corresponding to different numerals must be all different, 
+       (especially when using non-convex theories).
+       Since Z3 does not rely on exhaustive equality propagation, it is the case that that not 
+       all implied equalities are returned by this call.
+       Only implied equalities that follow from simple constraint and 
+       equality propagation is discovered. 
+
+       A side-effect of the function is a satisfiability check.
+       The function return L_FALSE if the current assertions are not satisfiable.
+
+       - {b See also}: {!Z3.check_and_get_model}
+       - {b See also}: {!Z3.check}
+    *)
+external get_implied_equalities : context -> ast array -> lbool * int array
+	= "camlidl_z3_Z3_get_implied_equalities"
+
+(**
        Summary: Delete a model object.
        
        - {b See also}: {!Z3.check_and_get_model}
     *)
-external del_model : model -> unit
+external del_model : context -> model -> unit
 	= "camlidl_z3_Z3_del_model"
 
-(** 
-        Summary: Interface to simplifier.
-
-        Provides an interface to the AST simplifier used by Z3.
-        It allows clients to piggyback on top of the AST simplifier
-        for their own term manipulation.
+(**
+       {2 {L Search control.}}
     *)
-external simplify : context -> ast -> ast
-	= "camlidl_z3_Z3_simplify"
+(**
+       Summary: Cancel an ongoing check.
+       
+       Notifies the current check to abort and return.
+       This method should be called from a different thread
+       than the one performing the check.
+    *)
+external soft_check_cancel : context -> unit
+	= "camlidl_z3_Z3_soft_check_cancel"
 
+(**
+       Summary: Retrieve reason for search failure.
+       
+       If a call to {!Z3.check} or {!Z3.check_and_get_model} returns L_UNDEF, 
+       use this facility to determine the more detailed cause of search failure.
+    *)
+external get_search_failure : context -> search_failure
+	= "camlidl_z3_Z3_get_search_failure"
+
+(**
+       {2 {L Labels.}}
+    *)
 (** 
         Summary: Retrieve the set of labels that were relevant in
         the context of the current satisfied context.
 
-        - {b See also}: {!Z3.del_labels}
-        - {b See also}: {!Z3.get_num_labels}
+        - {b See also}: {!Z3.del_literals}
+        - {b See also}: {!Z3.get_num_literals}
         - {b See also}: {!Z3.get_label_symbol}
+        - {b See also}: {!Z3.get_literal}
     *)
-external get_relevant_labels : context -> labels
+external get_relevant_labels : context -> literals
 	= "camlidl_z3_Z3_get_relevant_labels"
+
+(** 
+        Summary: Retrieve the set of literals that satisfy the current context.
+
+        - {b See also}: {!Z3.del_literals}
+        - {b See also}: {!Z3.get_num_literals}
+        - {b See also}: {!Z3.get_label_symbol}
+        - {b See also}: {!Z3.get_literal}
+    *)
+external get_relevant_literals : context -> literals
+	= "camlidl_z3_Z3_get_relevant_literals"
+
+(** 
+        Summary: Retrieve the set of literals that whose assignment were 
+        guess, but not propagated during the search.
+
+        - {b See also}: {!Z3.del_literals}
+        - {b See also}: {!Z3.get_num_literals}
+        - {b See also}: {!Z3.get_label_symbol}
+        - {b See also}: {!Z3.get_literal}
+    *)
+external get_guessed_literals : context -> literals
+	= "camlidl_z3_Z3_get_guessed_literals"
 
 (**
        Summary: Delete a labels context.
        
        - {b See also}: {!Z3.get_relevant_labels}
     *)
-external del_labels : context -> labels -> unit
-	= "camlidl_z3_Z3_del_labels"
+external del_literals : context -> literals -> unit
+	= "camlidl_z3_Z3_del_literals"
 
 (**
        Summary: Retrieve the number of label symbols that were returned.
        
        - {b See also}: {!Z3.get_relevant_labels}
     *)
-external get_num_labels : context -> labels -> int
-	= "camlidl_z3_Z3_get_num_labels"
+external get_num_literals : context -> literals -> int
+	= "camlidl_z3_Z3_get_num_literals"
 
 (**
        Summary: Retrieve label symbol at idx.
-
     *)
-external get_label_symbol : context -> labels -> int -> symbol
+external get_label_symbol : context -> literals -> int -> symbol
 	= "camlidl_z3_Z3_get_label_symbol"
+
+(**
+       Summary: Retrieve literal expression at idx.
+    *)
+external get_literal : context -> literals -> int -> ast
+	= "camlidl_z3_Z3_get_literal"
 
 (**
        Summary: Disable label.
        
        The disabled label is not going to be used when blocking the subsequent search.
 
-       - {b See also}: {!Z3.block_labels}
+       - {b See also}: {!Z3.block_literals}
     *)
-external disable_label : context -> labels -> int -> unit
-	= "camlidl_z3_Z3_disable_label"
+external disable_literal : context -> literals -> int -> unit
+	= "camlidl_z3_Z3_disable_literal"
 
 (**
        Summary: Block subsequent checks using the remaining enabled labels.
     *)
-external block_labels : context -> labels -> unit
-	= "camlidl_z3_Z3_block_labels"
+external block_literals : context -> literals -> unit
+	= "camlidl_z3_Z3_block_literals"
 
 (**
        {2 {L Model navigation}}
@@ -1772,195 +3175,36 @@ external get_model_num_constants : context -> model -> int
 
        - {b Precondition}: i < get_model_num_constants c m
 
-       - {b See also}: {!Z3.get_value}
+       - {b See also}: {!Z3.eval}
     *)
-external get_model_constant : context -> model -> int -> const_decl_ast
+external get_model_constant : context -> model -> int -> func_decl
 	= "camlidl_z3_Z3_get_model_constant"
 
 (**
-       Summary: Return the value of the given constant or application in the given model.
+       Summary: Return the value of the given constant or function 
+              in the given model.
        
-       - {b See also}: {!Z3.get_value_kind}
-       - {b See also}: {!Z3.get_value_type}
     *)
-external get_value : context -> model -> const_decl_ast -> value
-	= "camlidl_z3_Z3_get_value"
+external eval_func_decl : context -> model -> func_decl -> bool * ast
+	= "camlidl_z3_Z3_eval_func_decl"
 
 (**
-       Summary: Return the value type.
-       
-       - {b See also}: {!Z3.get_value}
+       Summary: \[ [ is_array_value c v ] \]
+       Determine whether the term encodes an array value.       
+       Return the number of entries mapping to non-default values of the array.
     *)
-external get_value_type : context -> value -> type_ast
-	= "camlidl_z3_Z3_get_value_type"
+external is_array_value : context -> ast -> bool * int
+	= "camlidl_z3_Z3_is_array_value"
 
 (**
-       Summary: Return the value kind (numeral, array, tuple, etc). 
-       
-       NUMERAL_VALUE stores the value of different types (int, real, bv, and uninterpreted).
-    *)
-external get_value_kind : context -> value -> value_kind
-	= "camlidl_z3_Z3_get_value_kind"
-
-(**
-       Summary: \[ [ get_numeral_value_string c v ] \]
-       Return a numeral value as a string. The representation is stored in decimal notation.
-
-       - {b Precondition}: get_value_kind c v == NUMERAL_VALUE
-       
-       
-       
-       
-
-       - {b See also}: {!Z3.get_value_kind}
-    *)
-external get_numeral_value_string : context -> value -> string
-	= "camlidl_z3_Z3_get_numeral_value_string"
-
-(**
-       Summary: \[ [ get_numeral_value_int c v ] \]
-       Similar to {!Z3.get_numeral_value_string}, but only succeeds if
-       the value can fit in a machine int. Return TRUE if the call succeeded.
-
-       - {b Precondition}: get_value_kind c v == NUMERAL_VALUE
-      
-       - {b See also}: {!Z3.get_numeral_value_string}
-    *)
-external get_numeral_value_int : context -> value -> bool * int
-	= "camlidl_z3_Z3_get_numeral_value_int"
-
-(**
-       Summary: \[ [ get_numeral_value_uint c v ] \]
-       Similar to {!Z3.get_numeral_value_string}, but only succeeds if
-       the value can fit in a machine unsigned int int. Return TRUE if the call succeeded.
-
-       - {b Precondition}: get_value_kind c v == NUMERAL_VALUE
-      
-       - {b See also}: {!Z3.get_numeral_value_string}
-    *)
-external get_numeral_value_uint : context -> value -> bool * int
-	= "camlidl_z3_Z3_get_numeral_value_uint"
-
-(**
-       Summary: \[ [ get_bool_value_bool c v ] \]
-       Return the value of v as a Boolean value.
-
-       - {b Precondition}: get_value_kind c v == BOOL_VALUE
-
-       - {b See also}: {!Z3.get_value_kind}
-    *)
-external get_bool_value_bool : context -> value -> bool
-	= "camlidl_z3_Z3_get_bool_value_bool"
-
-(**
-       Summary: \[ [ get_tuple_value_mk_decl c v ] \]
-       Return the constructor declaration of the given tuple
-       value. 
-
-        - {b Remarks}: Consider using {!Z3.get_tuple_value}. 
-       
-       - {b Precondition}: get_value_kind c v == TUPLE_VALUE
-
-       - {b See also}: {!Z3.get_value_kind}
-    *)
-external get_tuple_value_mk_decl : context -> value -> const_decl_ast
-	= "camlidl_z3_Z3_get_tuple_value_mk_decl"
-
-(**    
-       Summary: \[ [ get_tuple_value_num_fields c v ] \]
-       Return the number of fields of the given tuple value. 
-
-        - {b Remarks}: Consider using {!Z3.get_tuple_value}. 
-
-       - {b Precondition}: get_value_kind c t == TUPLE_VALUE
-
-       - {b See also}: {!Z3.get_value_kind}
-    *)
-external get_tuple_value_num_fields : context -> value -> int
-	= "camlidl_z3_Z3_get_tuple_value_num_fields"
-
-(**
-       Summary: \[ [ get_tuple_value_field c v i ] \]
-       Return the i-th field of the given tuple value.
-
-        - {b Remarks}: Consider using {!Z3.get_tuple_value}. 
-
-       - {b Precondition}: get_value_kind v == TUPLE_VALUE
-       - {b Precondition}: i < get_tuple_value_num_fields c v
-       
-       - {b See also}: {!Z3.get_value_kind}
-    *)
-external get_tuple_value_field : context -> value -> int -> value
-	= "camlidl_z3_Z3_get_tuple_value_field"
-
-(**
-       Summary: \[ [ get_array_value_size c v ] \]
+       Summary: \[ [ get_array_value c v ] \]
        An array values is represented as a dictionary plus a
-       default (else) value. This function returns the size of the
-       dictionary. 
+       default (else) value. This function returns the array graph.
 
-        - {b Remarks}: Consider using {!Z3.get_array_value}. 
-
-       - {b Precondition}: get_value_kind v == ARRAY_VALUE
-
-       - {b See also}: {!Z3.get_value_kind}
+       - {b Precondition}: TRUE == is_array_value c v &num_entries       
     *)
-external get_array_value_size : context -> value -> int
-	= "camlidl_z3_Z3_get_array_value_size"
-
-(**
-       Summary: \[ [ get_array_value_else c v ] \]
-       An array values is represented as a dictionary plus a
-       default (else) value. This function returns the default (else) value.
-
-        - {b Remarks}: Consider using {!Z3.get_array_value}. 
-       
-       - {b Precondition}: get_value_kind v == ARRAY_VALUE
-
-       - {b See also}: {!Z3.get_value_kind}
-    *)
-external get_array_value_else : context -> value -> value
-	= "camlidl_z3_Z3_get_array_value_else"
-
-(**
-       Summary: \[ [ get_array_value_entry_index c v i ] \]
-       An array values is represented as a dictionary plus a
-       default (else) value. Each dictionary entry is a pair (index, value).
-       This function return the i-th index of the array. 
-
-       If v contains an entry (index, value), then 
-       
-        {e v\[index\] = value}. 
-
-        - {b Remarks}: Consider using {!Z3.get_array_value}. 
-
-       - {b Precondition}: get_value_kind v == ARRAY_VALUE
-       - {b Precondition}: i < get_array_value_size c v
-
-       - {b See also}: {!Z3.get_value_kind}
-    *)
-external get_array_value_entry_index : context -> value -> int -> value
-	= "camlidl_z3_Z3_get_array_value_entry_index"
-
-(**
-       Summary: \[ [ get_array_value_entry_value c v i ] \]
-       An array values is represented as a dictionary plus a
-       default (else) value. Each dictionary entry is a pair (index, value).
-       This function return the i-th value of the array. 
-       
-       If v contains an entry (index, value), then 
-       
-        {e v\[index\] = value}. 
-
-        - {b Remarks}: Consider using {!Z3.get_array_value}. 
-
-       - {b Precondition}: get_value_kind v == ARRAY_VALUE
-       - {b Precondition}: i < get_array_value_size c v
-
-       - {b See also}: {!Z3.get_value_kind}
-    *)
-external get_array_value_entry_value : context -> value -> int -> value
-	= "camlidl_z3_Z3_get_array_value_entry_value"
+external get_array_value : context -> ast -> ast array -> ast array -> ast array * ast array * ast
+	= "camlidl_z3_Z3_get_array_value"
 
 (**
        Summary: Return the number of function interpretations in the given model.
@@ -1980,22 +3224,6 @@ external get_model_num_funcs : context -> model -> int
 	= "camlidl_z3_Z3_get_model_num_funcs"
 
 (**
-       Summary: \[ [ is_model_func_internal c m i ] \]
-       Return true if the i-th function in the model is \em internal.
-
-       Internal functions are created by Z3, and their interpretations
-       are not usually useful for users.
-
-        - {b Remarks}: Consider using {!Z3.get_model_funcs}. 
-
-       - {b Precondition}: i < get_model_num_funcs c m
-
-       - {b See also}: {!Z3.get_model_num_funcs}
-    *)
-external is_model_func_internal : context -> model -> int -> bool
-	= "camlidl_z3_Z3_is_model_func_internal"
-
-(**
        Summary: \[ [ get_model_func_decl c m i ] \]
        Return the declaration of the i-th function in the given model.
 
@@ -2005,7 +3233,7 @@ external is_model_func_internal : context -> model -> int -> bool
 
        - {b See also}: {!Z3.get_model_num_funcs}
     *)
-external get_model_func_decl : context -> model -> int -> const_decl_ast
+external get_model_func_decl : context -> model -> int -> func_decl
 	= "camlidl_z3_Z3_get_model_func_decl"
 
 (**
@@ -2023,7 +3251,7 @@ external get_model_func_decl : context -> model -> int -> const_decl_ast
        - {b See also}: {!Z3.get_model_func_entry_num_args}
        - {b See also}: {!Z3.get_model_func_entry_arg}
     *)
-external get_model_func_else : context -> model -> int -> value
+external get_model_func_else : context -> model -> int -> ast
 	= "camlidl_z3_Z3_get_model_func_else"
 
 (**
@@ -2088,7 +3316,7 @@ external get_model_func_entry_num_args : context -> model -> int -> int -> int
        - {b See also}: {!Z3.get_model_func_num_entries }
        - {b See also}: {!Z3.get_model_func_entry_num_args}
     *)
-external get_model_func_entry_arg : context -> model -> int -> int -> int -> value
+external get_model_func_entry_arg : context -> model -> int -> int -> int -> ast
 	= "camlidl_z3_Z3_get_model_func_entry_arg"
 
 (**
@@ -2110,7 +3338,7 @@ external get_model_func_entry_arg : context -> model -> int -> int -> int -> val
        - {b See also}: {!Z3.get_model_num_funcs}
        - {b See also}: {!Z3.get_model_func_num_entries }
     *)
-external get_model_func_entry_value : context -> model -> int -> int -> value
+external get_model_func_entry_value : context -> model -> int -> int -> ast
 	= "camlidl_z3_Z3_get_model_func_entry_value"
 
 (**
@@ -2123,41 +3351,26 @@ external get_model_func_entry_value : context -> model -> int -> int -> value
 
        - t contains a quantifier or bound variable. 
 
-       - the model m is partial, that is, it doesn't have a complete interpretation for free functions. That is, the option {e PARTIAL_MODELS=true } was used.
+       - the model m is partial, that is, it doesn't have a complete interpretation for free functions. 
+         That is, the option {e PARTIAL_MODELS=true } was used.
 
        - the evaluator doesn't have support for some interpreted operator.
 
-       - t is type incorrect (see {!Z3.type_check}).
+       - t is type incorrect.
 
        - The result of an intepreted operator in t is undefined (e.g. division by zero).
     *)
-external eval : context -> model -> ast -> bool * value
+external eval : context -> model -> ast -> bool * ast
 	= "camlidl_z3_Z3_eval"
 
 (**
-       {2 {L Timers}}
-    *)
-(**
-       Summary: \[ [ set_soft_timeout c t ] \]
-       Set a soft timeout in seconds. 
+       Summary: Evaluate declaration given values.
 
-       A soft timeout limits the amount of time spent in
-       {!Z3.check_and_get_model} and {!Z3.check}.  If a call to
-       {!Z3.check_and_get_model} or {!Z3.check} consumes more than t 
-       seconds, then it aborts and returns L_UNDEF.
-
-       - {b See also}: {!Z3.reset_soft_timeout}
-    *)
-external set_soft_timeout : context -> int -> unit
-	= "camlidl_z3_Z3_set_soft_timeout"
-
-(**
-       Summary: Disable soft timeouts.
-       
-       - {b See also}: {!Z3.set_soft_timeout}
-    *)
-external reset_soft_timeout : context -> unit
-	= "camlidl_z3_Z3_reset_soft_timeout"
+       Provides direct way to evaluate declarations
+       without going over terms.
+     *)
+external eval_decl : context -> model -> func_decl -> ast array -> bool * ast
+	= "camlidl_z3_Z3_eval_decl"
 
 (**
        {2 {L Interaction logging.}}
@@ -2169,6 +3382,16 @@ external open_log : context -> string -> bool
 	= "camlidl_z3_Z3_open_log"
 
 (**
+       Summary: Append user-defined string to interaction log.
+       
+       The interaction log is opened using open_log.
+       It contains the formulas that are checked using Z3.
+       You can use this command to append comments, for instance.
+    *)
+external append_log : context -> string -> unit
+	= "camlidl_z3_Z3_append_log"
+
+(**
        Summary: Close interaction log.
     *)
 external close_log : context -> unit
@@ -2178,14 +3401,44 @@ external close_log : context -> unit
        {2 {L String conversion}}
     *)
 (**
+       Summary: Select mode for the format used for pretty-printing AST nodes.
+
+       The default mode for pretty printing AST nodes is to produce
+       SMT-LIB style output where common subexpressions are printed 
+       at each occurrence. The mode is called PRINT_SMTLIB_FULL.
+       To print shared common subexpressions only once, 
+       use the PRINT_LOW_LEVEL mode.
+       To print in way that conforms to SMT-LIB standards and uses let
+       expressions to share common sub-expressions use PRINT_SMTLIB_COMPLIANT.
+
+       - {b See also}: {!Z3.ast_to_string}
+       - {b See also}: {!Z3.pattern_to_string}
+       - {b See also}: {!Z3.func_decl_to_string}
+
+    *)
+external set_ast_print_mode : context -> ast_print_mode -> unit
+	= "camlidl_z3_Z3_set_ast_print_mode"
+
+(**
        Summary: Convert the given AST node into a string.
 
        
        
        
+       - {b See also}: {!Z3.pattern_to_string}
+       - {b See also}: {!Z3.sort_to_string}
     *)
 external ast_to_string : context -> ast -> string
 	= "camlidl_z3_Z3_ast_to_string"
+
+external pattern_to_string : context -> pattern -> string
+	= "camlidl_z3_Z3_pattern_to_string"
+
+external sort_to_string : context -> sort -> string
+	= "camlidl_z3_Z3_sort_to_string"
+
+external func_decl_to_string : context -> func_decl -> string
+	= "camlidl_z3_Z3_func_decl_to_string"
 
 (**
        Summary: Convert the given model into a string.
@@ -2198,14 +3451,23 @@ external model_to_string : context -> model -> string
 	= "camlidl_z3_Z3_model_to_string"
 
 (**
-       Summary: Convert the given (model) value into a string.
+       Summary: Convert the given benchmark into SMT-LIB formatted string.
 
        
        
        
+
+       
+       
+       
+       
+       
+       
+       
+       
     *)
-external value_to_string : context -> value -> string
-	= "camlidl_z3_Z3_value_to_string"
+external benchmark_to_smtlib_string : context -> string -> string -> string -> string -> ast array -> ast -> string
+	= "camlidl_z3_Z3_benchmark_to_smtlib_string_bytecode" "camlidl_z3_Z3_benchmark_to_smtlib_string"
 
 (**
        Summary: Convert the given logical context into a string.
@@ -2221,28 +3483,53 @@ external context_to_string : context -> string
 	= "camlidl_z3_Z3_context_to_string"
 
 (**
+       Summary: Return runtime statistics as a string.
+       
+       This function is mainly used for debugging purposes. It displays
+       statistics of the search activity.
+
+       
+       
+       
+    *)
+external statistics_to_string : context -> string
+	= "camlidl_z3_Z3_statistics_to_string"
+
+(**
+       Summary: Extract satisfying assignment from context as a conjunction.
+       
+       This function can be used for debugging purposes. It returns a conjunction
+       of formulas that are assigned to true in the current context.
+       This conjunction will contain not only the assertions that are set to true
+       under the current assignment, but will also include additional literals
+       if there has been a call to {!Z3.check} or {!Z3.check_and_get_model}.       
+     *)
+external get_context_assignment : context -> ast
+	= "camlidl_z3_Z3_get_context_assignment"
+
+(**
        {2 {L Parser interface}}
     *)
 (**
-       Summary: \[ [ parse_smtlib_string c str type_names types decl_names decls ] \]
+       Summary: \[ [ parse_smtlib_string c str sort_names sorts decl_names decls ] \]
        Parse the given string using the SMT-LIB parser. 
               
-       The symbol table of the parser can be initialized using the given types and declarations. 
-       The symbols in the arrays type_names and decl_names don't need to match the names
-       of the types and declarations in the arrays types and decls. This is an useful feature
-       since we can use arbitrary names to reference types and declarations defined using the C API.
+       The symbol table of the parser can be initialized using the given sorts and declarations. 
+       The symbols in the arrays sort_names and decl_names don't need to match the names
+       of the sorts and declarations in the arrays sorts and decls. This is an useful feature
+       since we can use arbitrary names to reference sorts and declarations defined using the C API.
 
        The formulas, assumptions and declarations defined in str can be extracted using the functions:
        {!Z3.get_smtlib_num_formulas}, {!Z3.get_smtlib_formula}, {!Z3.get_smtlib_num_assumptions}, {!Z3.get_smtlib_assumption}, 
        {!Z3.get_smtlib_num_decls}, and {!Z3.get_smtlib_decl}.
      *)
-external parse_smtlib_string : context -> string -> symbol array -> type_ast array -> symbol array -> const_decl_ast array -> unit
+external parse_smtlib_string : context -> string -> symbol array -> sort array -> symbol array -> func_decl array -> unit
 	= "camlidl_z3_Z3_parse_smtlib_string_bytecode" "camlidl_z3_Z3_parse_smtlib_string"
 
 (**
        Summary: Similar to {!Z3.parse_smtlib_string}, but reads the benchmark from a file.
     *)
-external parse_smtlib_file : context -> string -> symbol array -> type_ast array -> symbol array -> const_decl_ast array -> unit
+external parse_smtlib_file : context -> string -> symbol array -> sort array -> symbol array -> func_decl array -> unit
 	= "camlidl_z3_Z3_parse_smtlib_file_bytecode" "camlidl_z3_Z3_parse_smtlib_file"
 
 (**
@@ -2287,8 +3574,45 @@ external get_smtlib_num_decls : context -> int
 
        - {b Precondition}: i < get_smtlib_num_decls c
     *)
-external get_smtlib_decl : context -> int -> const_decl_ast
+external get_smtlib_decl : context -> int -> func_decl
 	= "camlidl_z3_Z3_get_smtlib_decl"
+
+(**
+       Summary: Return the number of sorts parsed by {!Z3.parse_smtlib_string} or {!Z3.parse_smtlib_file}.
+    *)
+external get_smtlib_num_sorts : context -> int
+	= "camlidl_z3_Z3_get_smtlib_num_sorts"
+
+(**
+       Summary: \[ [ get_smtlib_sort c i ] \]
+       Return the i-th sort parsed by the last call to {!Z3.parse_smtlib_string} or {!Z3.parse_smtlib_file}.
+
+       - {b Precondition}: i < get_smtlib_num_sorts c
+    *)
+external get_smtlib_sort : context -> int -> sort
+	= "camlidl_z3_Z3_get_smtlib_sort"
+
+(**
+       Summary: \[ [ get_smtlib_error c ] \]
+       Retrieve that last error message information generated from parsing.
+    *)
+external get_smtlib_error : context -> string
+	= "camlidl_z3_Z3_get_smtlib_error"
+
+(**
+       Summary: \[ [ parse_z3_string c str ] \]
+       Parse the given string using the Z3 native parser.
+       
+       Return the conjunction of asserts made in the input.
+     *)
+external parse_z3_string : context -> string -> ast
+	= "camlidl_z3_Z3_parse_z3_string"
+
+(**
+       Summary: Similar to {!Z3.parse_z3_string}, but reads the benchmark from a file.
+    *)
+external parse_z3_file : context -> string -> ast
+	= "camlidl_z3_Z3_parse_z3_file"
 
 (**
        {2 {L Miscellaneous}}
@@ -2300,17 +3624,164 @@ external get_version : unit -> int * int * int * int
 	= "camlidl_z3_Z3_get_version"
 
 (**
-       Summary: \[ [ type_check c t ] \]
-       Return TRUE if t is type correct.
+       Summary: Reset all allocated resources. 
+
+       Use this facility on out-of memory errors. 
+       It allows discharging the previous state and resuming afresh.
+       Any pointers previously returned by the API
+       become invalid.
     *)
-external type_check : context -> ast -> bool
-	= "camlidl_z3_Z3_type_check"
+external reset_memory : unit -> unit
+	= "camlidl_z3_Z3_reset_memory"
+
+(** 
+        {2 {L External Theory Plugins}}
+    *)
+(**
+       Summary: Create an interpreted theory sort.
+    *)
+external theory_mk_sort : context -> theory -> symbol -> sort
+	= "camlidl_z3_Z3_theory_mk_sort"
 
 (**
-       Summary: Return the amount of memory allocated by Z3.
+       Summary: Create an interpreted theory constant value. Values are assumed to be different from each other.
     *)
-external get_allocation_size : unit -> int
-	= "camlidl_z3_Z3_get_allocation_size"
+external theory_mk_value : context -> theory -> symbol -> sort -> ast
+	= "camlidl_z3_Z3_theory_mk_value"
+
+(**
+       Summary: Create an interpreted constant for the given theory.
+    *)
+external theory_mk_constant : context -> theory -> symbol -> sort -> ast
+	= "camlidl_z3_Z3_theory_mk_constant"
+
+(**
+       Summary: Create an interpreted function declaration for the given theory.
+    *)
+external theory_mk_func_decl : context -> theory -> symbol -> sort array -> sort -> func_decl
+	= "camlidl_z3_Z3_theory_mk_func_decl"
+
+(**
+       Summary: Return the context where the given theory is installed.
+    *)
+external theory_get_context : theory -> context
+	= "camlidl_z3_Z3_theory_get_context"
+
+(**
+       Summary: Assert a theory axiom/lemmas during the search.
+       
+       An axiom added at search level n will remain in the logical context until 
+       level n is backtracked. 
+
+       The callbacks for push ({!Z3.set_push_callback}) and pop
+       ({!Z3.set_pop_callback}) can be used to track when the search
+       level is increased (i.e., new case-split) and decreased (i.e.,
+       case-split is backtracked).
+       
+       Z3 tracks the theory axioms asserted. So, multiple assertions of the same axiom are
+       ignored.
+    *)
+external theory_assert_axiom : theory -> ast -> unit
+	= "camlidl_z3_Z3_theory_assert_axiom"
+
+(**
+       Summary: Inform to the logical context that lhs and rhs have the same interpretation
+       in the model being built by theory t. If lhs = rhs is inconsistent with other theories,
+       then the logical context will backtrack.
+
+       For more information, see the paper "Model-Based Theory Combination" in the Z3 website.
+    *)
+external theory_assume_eq : theory -> ast -> ast -> unit
+	= "camlidl_z3_Z3_theory_assume_eq"
+
+(**
+       Summary: Enable/disable the simplification of theory axioms asserted using {!Z3.theory_assert_axiom}.
+       By default, the simplification of theory specific operators is disabled. 
+       That is, the reduce theory callbacks are not invoked for theory axioms.
+       The default behavior is useful when asserting axioms stating properties of theory operators.
+    *)
+external theory_enable_axiom_simplification : theory -> bool -> unit
+	= "camlidl_z3_Z3_theory_enable_axiom_simplification"
+
+(**
+       Summary: Return the root of the equivalence class containing n.
+    *)
+external theory_get_eqc_root : theory -> ast -> ast
+	= "camlidl_z3_Z3_theory_get_eqc_root"
+
+(**
+       Summary: Return the next element in the equivalence class containing n.
+
+       The elements in an equivalence class are organized in a circular list.
+       You can traverse the list by calling this function multiple times 
+       using the result from the previous call. This is illustrated in the
+       code snippet below.
+       {v 
+           ast curr = n;
+           do
+             curr = theory_get_eqc_next(theory, curr);
+           while (curr != n);
+        v}
+    *)
+external theory_get_eqc_next : theory -> ast -> ast
+	= "camlidl_z3_Z3_theory_get_eqc_next"
+
+(**
+       Summary: Return the number of parents of n that are operators of the given theory. 
+    *)
+external theory_get_num_parents : theory -> ast -> int
+	= "camlidl_z3_Z3_theory_get_num_parents"
+
+(**
+       Summary: Return the i-th parent of n. 
+       See {!Z3.theory_get_num_parents}. 
+    *)
+external theory_get_parent : theory -> ast -> int -> ast
+	= "camlidl_z3_Z3_theory_get_parent"
+
+(**
+       Summary: Return TRUE if n is an interpreted theory value.
+    *)
+external theory_is_value : theory -> ast -> bool
+	= "camlidl_z3_Z3_theory_is_value"
+
+(**
+       Summary: Return TRUE if d is an interpreted theory declaration.
+    *)
+external theory_is_decl : theory -> func_decl -> bool
+	= "camlidl_z3_Z3_theory_is_decl"
+
+(**
+       Summary: Return the number of expressions of the given theory in
+       the logical context. These are the expressions notified using the
+       callback {!Z3.set_new_elem_callback}.
+    *)
+external theory_get_num_elems : theory -> int
+	= "camlidl_z3_Z3_theory_get_num_elems"
+
+(**
+       Summary: Return the i-th elem of the given theory in the logical context.
+       
+       \see theory_get_num_elems
+    *)
+external theory_get_elem : theory -> int -> ast
+	= "camlidl_z3_Z3_theory_get_elem"
+
+(**
+       Summary: Return the number of theory applications in the logical
+       context. These are the expressions notified using the callback
+       {!Z3.set_new_app_callback}.
+    *)
+external theory_get_num_apps : theory -> int
+	= "camlidl_z3_Z3_theory_get_num_apps"
+
+(**
+       Summary: Return the i-th application of the given theory in the logical context.
+       
+       \see theory_get_num_apps
+    *)
+external theory_get_app : theory -> int -> ast
+	= "camlidl_z3_Z3_theory_get_app"
 
 
 
@@ -2322,37 +3793,60 @@ external get_allocation_size : unit -> int
 val mk_context_x: (string * string) array -> context;;
 
 (**
-  \[ [ get_const_ast_args c a ] \] is the array of arguments of an application. If [t] is a constant, then the array is empty.
+  \[ [ get_app_args c a ] \] is the array of arguments of an application. If [t] is a constant, then the array is empty.
 
-  - {b See also}: {!Z3.get_const_ast_num_args}
-  - {b See also}: {!Z3.get_const_ast_arg}
+  - {b See also}: {!Z3.get_app_num_args}
+  - {b See also}: {!Z3.get_app_arg}
 *)
-val get_const_ast_args:  context -> const_ast -> ast array
+val get_app_args:  context -> app -> ast array
 
 (**
-  \[ [ get_const_ast_args c d ] \] is the array of parameters of [d].
+  \[ [ get_app_args c d ] \] is the array of parameters of [d].
 
   - {b See also}: {!Z3.get_domain_size}
   - {b See also}: {!Z3.get_domain}
 *)
-val get_domains: context -> const_decl_ast -> type_ast array
+val get_domains: context -> func_decl -> sort array
 
 (**
-  \[ [ get_array_type c t ] \] is the domain and the range of [t].
+  \[ [ get_array_sort c t ] \] is the domain and the range of [t].
 
-  - {b See also}: {!Z3.get_array_type_domain}
-  - {b See also}: {!Z3.get_array_type_range}
+  - {b See also}: {!Z3.get_array_sort_domain}
+  - {b See also}: {!Z3.get_array_sort_range}
 *)
-val get_array_type: context -> type_ast -> type_ast * type_ast
+val get_array_sort: context -> sort -> sort * sort
 
 (**
-  \[ [ get_tuple_type c ty ] \] is the pair [(mk_decl, fields)] where [mk_decl] is the constructor declaration of [ty], and [fields] is the array of fields in [ty].
+  \[ [ get_tuple_sort c ty ] \] is the pair [(mk_decl, fields)] where [mk_decl] is the constructor declaration of [ty], and [fields] is the array of fields in [ty].
 
-  - {b See also}: {!Z3.get_tuple_type_mk_decl}
-  - {b See also}: {!Z3.get_tuple_type_num_fields}
-  - {b See also}: {!Z3.get_tuple_type_field_decl}
+  - {b See also}: {!Z3.get_tuple_sort_mk_decl}
+  - {b See also}: {!Z3.get_tuple_sort_num_fields}
+  - {b See also}: {!Z3.get_tuple_sort_field_decl}
 *)
-val get_tuple_type: context -> type_ast -> (const_decl_ast * const_decl_ast array)
+val get_tuple_sort: context -> sort -> (func_decl * func_decl array)
+
+(**
+  \[ [ datatype_constructor_refined ] \] is the refinement of a datatype constructor.
+  
+  It contains the constructor declaration, recognizer, and list of accessor functions.
+*)
+type datatype_constructor_refined = { 
+   constructor : func_decl; 
+   recognizer : func_decl; 
+   accessors : func_decl array 
+}
+
+(**
+  \[ [ get_datatype_sort c ty ] \] is the array of triples [(constructor, recognizer, fields)] where [constructor] is the constructor declaration of [ty], [recognizer] is the recognizer for the [constructor], and [fields] is the array of fields in [ty].
+
+  - {b See also}: {!Z3.get_datatype_sort_num_constructors}
+  - {b See also}: {!Z3.get_datatype_sort_constructor}
+  - {b See also}: {!Z3.get_datatype_sort_recognizer}
+  - {b See also}: {!Z3.get_datatype_sort_constructor_accessor}
+*)
+
+
+val get_datatype_sort: context -> sort -> datatype_constructor_refined array
 
 (**
   \[ [ get_model_constants c m ] \] is the array of constants in the model [m].
@@ -2360,25 +3854,8 @@ val get_tuple_type: context -> type_ast -> (const_decl_ast * const_decl_ast arra
   - {b See also}: {!Z3.get_model_num_constants}
   - {b See also}: {!Z3.get_model_constant}
 *)
-val get_model_constants: context -> model -> const_decl_ast array
+val get_model_constants: context -> model -> func_decl array
 
-(**
-  \[ [ get_tuple_value c v ] \] is the array of fields in the tuple [v].
-
-  - {b See also}: {!Z3.get_tuple_value_num_fields}
-  - {b See also}: {!Z3.get_tuple_value_field}
-*)
-val get_tuple_value: context -> value -> value array
-
-(**
-  \[ [ get_array_value c v ] \] is the pair [(dictionary, else)] where [dictionary] is the array of dictionary entries in [v], and [else] is the default (else) value of [v].
-
-  - {b See also}: {!Z3.get_array_value_size}
-  - {b See also}: {!Z3.get_array_value_entry_index}
-  - {b See also}: {!Z3.get_array_value_entry_value}
-  - {b See also}: {!Z3.get_array_value_else}
-*)
-val get_array_value: context -> value -> (value * value) array * value
 
 (**
   \[ [ get_model_func_entry c m i j ] \] is the [j]'th entry in the [i]'th function in the model [m].
@@ -2387,7 +3864,7 @@ val get_array_value: context -> value -> (value * value) array * value
   - {b See also}: {!Z3.get_model_func_entry_arg}
   - {b See also}: {!Z3.get_model_func_entry_value}
 *)
-val get_model_func_entry: context -> model -> int -> int -> (value array * value);;
+val get_model_func_entry: context -> model -> int -> int -> (ast array * ast);;
 
 (**
   \[ [ get_model_func_entries c m i ] \] is the array of entries in the [i]'th function in the model [m].
@@ -2395,22 +3872,20 @@ val get_model_func_entry: context -> model -> int -> int -> (value array * value
   - {b See also}: {!Z3.get_model_func_num_entries}
   - {b See also}: {!Z3.get_model_func_entry}
 *)
-val get_model_func_entries: context -> model -> int -> (value array * value) array;;
+val get_model_func_entries: context -> model -> int -> (ast array * ast) array;;
 
 (**
-  \[ [ get_model_funcs c m ] \] is the array of functions in the model [m]. Each function is represented by the quadruple [(internal, decl, entries, else)], where [internal] is true iff the function is internal to Z3, [decl] is the declaration name for the function, [entries] is the array of entries in the function, and [else] is the default (else) value for the function.
+  \[ [ get_model_funcs c m ] \] is the array of functions in the model [m]. Each function is represented by the triple [(decl, entries, else)], where [decl] is the declaration name for the function, [entries] is the array of entries in the function, and [else] is the default (else) value for the function.
 
   - {b See also}: {!Z3.get_model_num_funcs}
-  - {b See also}: {!Z3.is_model_func_internal}
   - {b See also}: {!Z3.get_model_func_decl}
   - {b See also}: {!Z3.get_model_func_entries}
   - {b See also}: {!Z3.get_model_func_else}
 *)
 val get_model_funcs: context -> model -> 
-  (bool * 
-   symbol *
-   (value array * value) array * 
-   value) array
+  (symbol *
+   (ast array * ast) array * 
+   ast) array
 
 (**
   \[ [ get_smtlib_formulas c ] \] is the array of formulas created by a preceding call to {!Z3.parse_smtlib_string} or {!Z3.parse_smtlib_file}.
@@ -2454,7 +3929,7 @@ val get_smtlib_assumptions: context -> ast array
   - {b See also}: {!Z3.get_smtlib_num_decls}
   - {b See also}: {!Z3.get_smtlib_decl}
 *)
-val get_smtlib_decls: context -> const_decl_ast array
+val get_smtlib_decls: context -> func_decl array
 
 (**
   \[ [ get_smtlib_parse_results c ] \] is the triple [(get_smtlib_formulas c, get_smtlib_assumptions c, get_smtlib_decls c)].
@@ -2470,7 +3945,7 @@ val get_smtlib_decls: context -> const_decl_ast array
   - {b See also}: {!Z3.get_smtlib_assumptions}
   - {b See also}: {!Z3.get_smtlib_decls}
 *)
-val get_smtlib_parse_results: context -> (ast array * ast array * const_decl_ast array)
+val get_smtlib_parse_results: context -> (ast array * ast array * func_decl array)
 
 (**
   \[ [ parse_smtlib_string_formula c ... ] \] calls [(parse_smtlib_string c ...)] and returns the single formula produced. 
@@ -2480,7 +3955,7 @@ val get_smtlib_parse_results: context -> (ast array * ast array * const_decl_ast
   - {b See also}: {!Z3.parse_smtlib_file_formula}
   - {b See also}: {!Z3.parse_smtlib_string_x}
 *)
-val parse_smtlib_string_formula: context -> string -> symbol array -> type_ast array -> symbol array -> const_decl_ast array -> ast
+val parse_smtlib_string_formula: context -> string -> symbol array -> sort array -> symbol array -> func_decl array -> ast
 
 (**
   \[ [ parse_smtlib_file_formula c ... ] \] calls [(parse_smtlib_file c ...)] and returns the single formula produced. 
@@ -2490,7 +3965,7 @@ val parse_smtlib_string_formula: context -> string -> symbol array -> type_ast a
   - {b See also}: {!Z3.parse_smtlib_file_formula}
   - {b See also}: {!Z3.parse_smtlib_file_x}
 *)
-val parse_smtlib_file_formula: context -> string -> symbol array -> type_ast array -> symbol array -> const_decl_ast array -> ast
+val parse_smtlib_file_formula: context -> string -> symbol array -> sort array -> symbol array -> func_decl array -> ast
 
 (**
   \[ [ parse_smtlib_string_x c ... ] \] is [(parse_smtlib_string c ...; get_smtlib_parse_results c)]
@@ -2501,7 +3976,7 @@ val parse_smtlib_file_formula: context -> string -> symbol array -> type_ast arr
   - {b See also}: {!Z3.parse_smtlib_string}
   - {b See also}: {!Z3.get_smtlib_parse_results}
 *)
-val parse_smtlib_string_x: context -> string -> symbol array -> type_ast array -> symbol array -> const_decl_ast array -> (ast array * ast array * const_decl_ast array)
+val parse_smtlib_string_x: context -> string -> symbol array -> sort array -> symbol array -> func_decl array -> (ast array * ast array * func_decl array)
 
 (**
   \[ [ parse_smtlib_file_x c ... ] \] is [(parse_smtlib_file c ...; get_smtlib_parse_results c)]
@@ -2512,7 +3987,7 @@ val parse_smtlib_string_x: context -> string -> symbol array -> type_ast array -
   - {b See also}: {!Z3.parse_smtlib_file}
   - {b See also}: {!Z3.get_smtlib_parse_results}
 *)
-val parse_smtlib_file_x: context -> string -> symbol array -> type_ast array -> symbol array -> const_decl_ast array -> (ast array * ast array * const_decl_ast array)
+val parse_smtlib_file_x: context -> string -> symbol array -> sort array -> symbol array -> func_decl array -> (ast array * ast array * func_decl array)
 
 (**
   \[ [ symbol_refined ] \] is the refinement of a {!Z3.symbol} .
@@ -2534,28 +4009,30 @@ type symbol_refined =
 val symbol_refine: context -> symbol -> symbol_refined;;
 
 (**
-  \[ [ type_refined ] \] is the refinement of a {!Z3.type_ast} .
+  \[ [ sort_refined ] \] is the refinement of a {!Z3.sort} .
 
-  - {b See also}: {!Z3.type_refine}
-  - {b See also}: {!Z3.get_type_kind}
+  - {b See also}: {!Z3.sort_refine}
+  - {b See also}: {!Z3.get_sort_kind}
 *)
-type type_refined =
-  | Type_uninterpreted of symbol
-  | Type_bool
-  | Type_int
-  | Type_real
-  | Type_bv of int
-  | Type_array of (type_ast * type_ast)
-  | Type_tuple of (const_decl_ast * const_decl_ast array)
-  | Type_unknown of symbol
+
+
+type sort_refined =
+  | Sort_uninterpreted of symbol
+  | Sort_bool
+  | Sort_int
+  | Sort_real
+  | Sort_bv of int
+  | Sort_array of (sort * sort)
+  | Sort_datatype of datatype_constructor_refined array
+  | Sort_unknown of symbol
 
 (**
-  \[ [ type_refine c t ] \] is the refined type of [t].
+  \[ [ sort_refine c t ] \] is the refined sort of [t].
 
-  - {b See also}:  {!Z3.type_refined}
-  - {b See also}: {!Z3.get_type_kind}
+  - {b See also}:  {!Z3.sort_refined}
+  - {b See also}: {!Z3.get_sort_kind}
 *)
-val type_refine: context -> type_ast -> type_refined;;
+val sort_refine: context -> sort -> sort_refined;;
 
 (**
   \[ [ binder_type ] \] is a universal or existential quantifier.
@@ -2581,10 +4058,10 @@ type numeral_refined =
   - {b See also}: {!Z3.term_refine}
 *)
 type term_refined = 
-  | Term_app        of decl_kind * const_decl_ast * ast array
-  | Term_quantifier of binder_type * int * ast array array * (symbol *type_ast) array * ast
-  | Term_numeral    of numeral_refined * type_ast
-  | Term_var        of int * type_ast
+  | Term_app        of decl_kind * func_decl * ast array
+  | Term_quantifier of binder_type * int * ast array array * (symbol * sort) array * ast
+  | Term_numeral    of numeral_refined * sort
+  | Term_var        of int * sort
 
 (**
   \[ [ term_refine c a ] \] is the refined term of [a].
@@ -2593,25 +4070,75 @@ type term_refined =
 *)
 val term_refine : context -> ast -> term_refined
 
-(**
-  \[ [ value_refined ] \] is the refinement of a {!Z3.value} .
+(** 
+  \[ [mk_theory c name ] \] create a custom theory.
 
-  - {b See also}: {!Z3.value_refine}
-  - {b See also}: {!Z3.get_value_kind}
 *)
-type value_refined =
-  | Value_bool of bool
-  | Value_numeral of string * type_ast
-  | Value_array of ((value * value) array * value)
-  | Value_tuple of value array
-  | Value_unknown;;
+val mk_theory : context -> string -> theory
 
 (**
-  \[ [ value_refine c v ] \] is the refined value of [v].
-
-  - {b See also}:  {!Z3.value_refined}
-  - {b See also}: {!Z3.get_value_kind}
+  \[ [set_delete_callback th cb] \] set callback when theory gets deleted.
 *)
-val value_refine: context -> value -> value_refined;;
+val set_delete_callback : theory -> (unit -> unit) -> unit
+
+(**
+  \[ [set_reduce_app_callback th cb] \] set callback for simplifying theory terms.
+*)
+val set_reduce_app_callback : theory -> (func_decl -> ast array -> ast option) -> unit
+
+(**
+  \[ [set_reduce_eq_callback th cb] \] set callback for simplifying equalities over theory terms.
+*)
+val set_reduce_eq_callback : theory -> (ast -> ast -> ast option) -> unit
+
+(**
+  \[ [set_reduce_distinct_callback th cb] \] set callback for simplifying disequalities over theory terms.
+*)
+val set_reduce_distinct_callback : theory -> (ast array -> ast option) -> unit
+
+(**
+  \[ [set_new_app_callback th cb] \] set callback for registering new application.
+*)
+val set_new_app_callback : theory -> (ast -> unit) -> unit
+
+(**
+  \[ [set_new_elem_callback th cb] \] set callback for registering new element.
+
+  - {b See also}: the help for the corresponding C API function.  
+*)
+val set_new_elem_callback : theory -> (ast -> unit) -> unit
+
+(**
+  \[ [set_init_search_callback th cb] \] set callback when Z3 starts searching for a satisfying assignment.
+*)
+val set_init_search_callback : theory -> (unit -> unit) -> unit
+
+(**
+  \[ [set_push_callback th cb] \] set callback for a logical context push.
+*)
+val set_push_callback : theory -> (unit -> unit) -> unit
+
+(**
+  \[ [set_pop_callback th cb] \] set callback for a logical context pop.
+*)
+val set_pop_callback : theory -> (unit -> unit) -> unit
+
+(**
+  \[ [set_restart_callback th cb] \] set callback for search restart.
+*)
+val set_restart_callback : theory -> (unit -> unit) -> unit
+
+val set_reset_callback : theory -> (unit -> unit) -> unit
+
+val set_final_check_callback : theory -> (unit -> bool) -> unit
+
+val set_new_eq_callback : theory -> (ast -> ast -> unit) -> unit
+
+val set_new_diseq_callback : theory -> (ast -> ast -> unit) -> unit
+
+val set_new_assignment_callback : theory -> (ast -> bool -> unit) -> unit
+
+val set_new_relevant_callback : theory -> (ast -> unit) -> unit
+
 
 
