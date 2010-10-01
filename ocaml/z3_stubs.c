@@ -17,6 +17,9 @@
 #include "z3.h"
 
 #pragma warning(disable:4090)
+#ifndef __int64
+#define __int64 long long
+#endif
 Z3_error_handler caml_z3_error_handler;
 void caml_z3_error_handler(Z3_error_code e) { static char buffer[128]; char * msg = Z3_get_error_msg(e); if (strlen(msg) > 100) { failwith("Z3: error message is too big"); } else { sprintf(buffer, "Z3: %s", msg); failwith(buffer); } }
 void camlidl_ml2c_z3_Z3_config(value _v1, Z3_config * _c2, camlidl_ctx _ctx)
@@ -45,6 +48,32 @@ value _v1;
   return _v1;
 }
 
+void camlidl_ml2c_z3_Z3_sort(value _v1, Z3_sort * _c2, camlidl_ctx _ctx)
+{
+  *_c2 = *((Z3_sort *) Bp_val(_v1));
+}
+
+value camlidl_c2ml_z3_Z3_sort(Z3_sort * _c2, camlidl_ctx _ctx)
+{
+value _v1;
+  _v1 = camlidl_alloc((sizeof(Z3_sort) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
+  *((Z3_sort *) Bp_val(_v1)) = *_c2;
+  return _v1;
+}
+
+void camlidl_ml2c_z3_Z3_func_decl(value _v1, Z3_func_decl * _c2, camlidl_ctx _ctx)
+{
+  *_c2 = *((Z3_func_decl *) Bp_val(_v1));
+}
+
+value camlidl_c2ml_z3_Z3_func_decl(Z3_func_decl * _c2, camlidl_ctx _ctx)
+{
+value _v1;
+  _v1 = camlidl_alloc((sizeof(Z3_func_decl) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
+  *((Z3_func_decl *) Bp_val(_v1)) = *_c2;
+  return _v1;
+}
+
 void camlidl_ml2c_z3_Z3_ast(value _v1, Z3_ast * _c2, camlidl_ctx _ctx)
 {
   *_c2 = *((Z3_ast *) Bp_val(_v1));
@@ -58,68 +87,29 @@ value _v1;
   return _v1;
 }
 
-void camlidl_ml2c_z3_Z3_type_ast(value _v1, Z3_type_ast * _c2, camlidl_ctx _ctx)
+void camlidl_ml2c_z3_Z3_app(value _v1, Z3_app * _c2, camlidl_ctx _ctx)
 {
-  *_c2 = *((Z3_type_ast *) Bp_val(_v1));
+  *_c2 = *((Z3_app *) Bp_val(_v1));
 }
 
-value camlidl_c2ml_z3_Z3_type_ast(Z3_type_ast * _c2, camlidl_ctx _ctx)
+value camlidl_c2ml_z3_Z3_app(Z3_app * _c2, camlidl_ctx _ctx)
 {
 value _v1;
-  _v1 = camlidl_alloc((sizeof(Z3_type_ast) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
-  *((Z3_type_ast *) Bp_val(_v1)) = *_c2;
+  _v1 = camlidl_alloc((sizeof(Z3_app) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
+  *((Z3_app *) Bp_val(_v1)) = *_c2;
   return _v1;
 }
 
-void camlidl_ml2c_z3_Z3_const_decl_ast(value _v1, Z3_const_decl_ast * _c2, camlidl_ctx _ctx)
+void camlidl_ml2c_z3_Z3_pattern(value _v1, Z3_pattern * _c2, camlidl_ctx _ctx)
 {
-  *_c2 = *((Z3_const_decl_ast *) Bp_val(_v1));
+  *_c2 = *((Z3_pattern *) Bp_val(_v1));
 }
 
-value camlidl_c2ml_z3_Z3_const_decl_ast(Z3_const_decl_ast * _c2, camlidl_ctx _ctx)
+value camlidl_c2ml_z3_Z3_pattern(Z3_pattern * _c2, camlidl_ctx _ctx)
 {
 value _v1;
-  _v1 = camlidl_alloc((sizeof(Z3_const_decl_ast) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
-  *((Z3_const_decl_ast *) Bp_val(_v1)) = *_c2;
-  return _v1;
-}
-
-void camlidl_ml2c_z3_Z3_const_ast(value _v1, Z3_const_ast * _c2, camlidl_ctx _ctx)
-{
-  *_c2 = *((Z3_const_ast *) Bp_val(_v1));
-}
-
-value camlidl_c2ml_z3_Z3_const_ast(Z3_const_ast * _c2, camlidl_ctx _ctx)
-{
-value _v1;
-  _v1 = camlidl_alloc((sizeof(Z3_const_ast) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
-  *((Z3_const_ast *) Bp_val(_v1)) = *_c2;
-  return _v1;
-}
-
-void camlidl_ml2c_z3_Z3_numeral_ast(value _v1, Z3_numeral_ast * _c2, camlidl_ctx _ctx)
-{
-  *_c2 = *((Z3_numeral_ast *) Bp_val(_v1));
-}
-
-value camlidl_c2ml_z3_Z3_numeral_ast(Z3_numeral_ast * _c2, camlidl_ctx _ctx)
-{
-value _v1;
-  _v1 = camlidl_alloc((sizeof(Z3_numeral_ast) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
-  *((Z3_numeral_ast *) Bp_val(_v1)) = *_c2;
-  return _v1;
-}
-
-void camlidl_ml2c_z3_Z3_pattern_ast(value _v1, Z3_pattern_ast * _c2, camlidl_ctx _ctx)
-{
-  *_c2 = *((Z3_pattern_ast *) Bp_val(_v1));
-}
-
-value camlidl_c2ml_z3_Z3_pattern_ast(Z3_pattern_ast * _c2, camlidl_ctx _ctx)
-{
-value _v1;
-  _v1 = camlidl_alloc((sizeof(Z3_pattern_ast) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
-  *((Z3_pattern_ast *) Bp_val(_v1)) = *_c2;
+  _v1 = camlidl_alloc((sizeof(Z3_pattern) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
+  *((Z3_pattern *) Bp_val(_v1)) = *_c2;
   return _v1;
 }
 
@@ -133,19 +123,6 @@ value camlidl_c2ml_z3_Z3_symbol(Z3_symbol * _c2, camlidl_ctx _ctx)
 value _v1;
   _v1 = camlidl_alloc((sizeof(Z3_symbol) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
   *((Z3_symbol *) Bp_val(_v1)) = *_c2;
-  return _v1;
-}
-
-void camlidl_ml2c_z3_Z3_value(value _v1, Z3_value * _c2, camlidl_ctx _ctx)
-{
-  *_c2 = *((Z3_value *) Bp_val(_v1));
-}
-
-value camlidl_c2ml_z3_Z3_value(Z3_value * _c2, camlidl_ctx _ctx)
-{
-value _v1;
-  _v1 = camlidl_alloc((sizeof(Z3_value) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
-  *((Z3_value *) Bp_val(_v1)) = *_c2;
   return _v1;
 }
 
@@ -175,16 +152,68 @@ value _v1;
   return _v1;
 }
 
-void camlidl_ml2c_z3_Z3_labels(value _v1, Z3_labels * _c2, camlidl_ctx _ctx)
+void camlidl_ml2c_z3_Z3_literals(value _v1, Z3_literals * _c2, camlidl_ctx _ctx)
 {
-  *_c2 = *((Z3_labels *) Bp_val(_v1));
+  *_c2 = *((Z3_literals *) Bp_val(_v1));
 }
 
-value camlidl_c2ml_z3_Z3_labels(Z3_labels * _c2, camlidl_ctx _ctx)
+value camlidl_c2ml_z3_Z3_literals(Z3_literals * _c2, camlidl_ctx _ctx)
 {
 value _v1;
-  _v1 = camlidl_alloc((sizeof(Z3_labels) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
-  *((Z3_labels *) Bp_val(_v1)) = *_c2;
+  _v1 = camlidl_alloc((sizeof(Z3_literals) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
+  *((Z3_literals *) Bp_val(_v1)) = *_c2;
+  return _v1;
+}
+
+void camlidl_ml2c_z3_Z3_constructor(value _v1, Z3_constructor * _c2, camlidl_ctx _ctx)
+{
+  *_c2 = *((Z3_constructor *) Bp_val(_v1));
+}
+
+value camlidl_c2ml_z3_Z3_constructor(Z3_constructor * _c2, camlidl_ctx _ctx)
+{
+value _v1;
+  _v1 = camlidl_alloc((sizeof(Z3_constructor) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
+  *((Z3_constructor *) Bp_val(_v1)) = *_c2;
+  return _v1;
+}
+
+void camlidl_ml2c_z3_Z3_constructor_list(value _v1, Z3_constructor_list * _c2, camlidl_ctx _ctx)
+{
+  *_c2 = *((Z3_constructor_list *) Bp_val(_v1));
+}
+
+value camlidl_c2ml_z3_Z3_constructor_list(Z3_constructor_list * _c2, camlidl_ctx _ctx)
+{
+value _v1;
+  _v1 = camlidl_alloc((sizeof(Z3_constructor_list) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
+  *((Z3_constructor_list *) Bp_val(_v1)) = *_c2;
+  return _v1;
+}
+
+void camlidl_ml2c_z3_Z3_theory(value _v1, Z3_theory * _c2, camlidl_ctx _ctx)
+{
+  *_c2 = *((Z3_theory *) Bp_val(_v1));
+}
+
+value camlidl_c2ml_z3_Z3_theory(Z3_theory * _c2, camlidl_ctx _ctx)
+{
+value _v1;
+  _v1 = camlidl_alloc((sizeof(Z3_theory) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
+  *((Z3_theory *) Bp_val(_v1)) = *_c2;
+  return _v1;
+}
+
+void camlidl_ml2c_z3_Z3_theory_data(value _v1, Z3_theory_data * _c2, camlidl_ctx _ctx)
+{
+  *_c2 = *((Z3_theory_data *) Bp_val(_v1));
+}
+
+value camlidl_c2ml_z3_Z3_theory_data(Z3_theory_data * _c2, camlidl_ctx _ctx)
+{
+value _v1;
+  _v1 = camlidl_alloc((sizeof(Z3_theory_data) + sizeof(value) - 1) / sizeof(value), Abstract_tag);
+  *((Z3_theory_data *) Bp_val(_v1)) = *_c2;
   return _v1;
 }
 
@@ -232,53 +261,72 @@ value _v1;
   return _v1;
 }
 
-int camlidl_transl_table_z3_enum_3[8] = {
-  Z3_UNINTERPRETED_TYPE,
-  Z3_BOOL_TYPE,
-  Z3_INT_TYPE,
-  Z3_REAL_TYPE,
-  Z3_BV_TYPE,
-  Z3_ARRAY_TYPE,
-  Z3_TUPLE_TYPE,
-  Z3_UNKNOWN_TYPE,
+int camlidl_transl_table_z3_enum_3[7] = {
+  Z3_PARAMETER_INT,
+  Z3_PARAMETER_DOUBLE,
+  Z3_PARAMETER_RATIONAL,
+  Z3_PARAMETER_SYMBOL,
+  Z3_PARAMETER_SORT,
+  Z3_PARAMETER_AST,
+  Z3_PARAMETER_FUNC_DECL,
 };
 
-void camlidl_ml2c_z3_Z3_type_kind(value _v1, Z3_type_kind * _c2, camlidl_ctx _ctx)
+void camlidl_ml2c_z3_Z3_parameter_kind(value _v1, Z3_parameter_kind * _c2, camlidl_ctx _ctx)
 {
   (*_c2) = camlidl_transl_table_z3_enum_3[Int_val(_v1)];
 }
 
-value camlidl_c2ml_z3_Z3_type_kind(Z3_type_kind * _c2, camlidl_ctx _ctx)
+value camlidl_c2ml_z3_Z3_parameter_kind(Z3_parameter_kind * _c2, camlidl_ctx _ctx)
 {
 value _v1;
-  _v1 = camlidl_find_enum((*_c2), camlidl_transl_table_z3_enum_3, 8, "typedef Z3_type_kind: bad enum  value");
+  _v1 = camlidl_find_enum((*_c2), camlidl_transl_table_z3_enum_3, 7, "typedef Z3_parameter_kind: bad enum  value");
   return _v1;
 }
 
 int camlidl_transl_table_z3_enum_4[8] = {
+  Z3_UNINTERPRETED_SORT,
+  Z3_BOOL_SORT,
+  Z3_INT_SORT,
+  Z3_REAL_SORT,
+  Z3_BV_SORT,
+  Z3_ARRAY_SORT,
+  Z3_DATATYPE_SORT,
+  Z3_UNKNOWN_SORT,
+};
+
+void camlidl_ml2c_z3_Z3_sort_kind(value _v1, Z3_sort_kind * _c2, camlidl_ctx _ctx)
+{
+  (*_c2) = camlidl_transl_table_z3_enum_4[Int_val(_v1)];
+}
+
+value camlidl_c2ml_z3_Z3_sort_kind(Z3_sort_kind * _c2, camlidl_ctx _ctx)
+{
+value _v1;
+  _v1 = camlidl_find_enum((*_c2), camlidl_transl_table_z3_enum_4, 8, "typedef Z3_sort_kind: bad enum  value");
+  return _v1;
+}
+
+int camlidl_transl_table_z3_enum_5[5] = {
   Z3_NUMERAL_AST,
-  Z3_CONST_DECL_AST,
-  Z3_CONST_AST,
-  Z3_TYPE_AST,
+  Z3_APP_AST,
   Z3_VAR_AST,
-  Z3_PATTERN_AST,
   Z3_QUANTIFIER_AST,
   Z3_UNKNOWN_AST,
 };
 
 void camlidl_ml2c_z3_Z3_ast_kind(value _v1, Z3_ast_kind * _c2, camlidl_ctx _ctx)
 {
-  (*_c2) = camlidl_transl_table_z3_enum_4[Int_val(_v1)];
+  (*_c2) = camlidl_transl_table_z3_enum_5[Int_val(_v1)];
 }
 
 value camlidl_c2ml_z3_Z3_ast_kind(Z3_ast_kind * _c2, camlidl_ctx _ctx)
 {
 value _v1;
-  _v1 = camlidl_find_enum((*_c2), camlidl_transl_table_z3_enum_4, 8, "typedef Z3_ast_kind: bad enum  value");
+  _v1 = camlidl_find_enum((*_c2), camlidl_transl_table_z3_enum_5, 5, "typedef Z3_ast_kind: bad enum  value");
   return _v1;
 }
 
-int camlidl_transl_table_z3_enum_5[80] = {
+int camlidl_transl_table_z3_enum_6[127] = {
   Z3_OP_TRUE,
   Z3_OP_FALSE,
   Z3_OP_EQ,
@@ -290,6 +338,8 @@ int camlidl_transl_table_z3_enum_5[80] = {
   Z3_OP_XOR,
   Z3_OP_NOT,
   Z3_OP_IMPLIES,
+  Z3_OP_OEQ,
+  Z3_OP_ANUM,
   Z3_OP_LE,
   Z3_OP_GE,
   Z3_OP_LT,
@@ -302,16 +352,20 @@ int camlidl_transl_table_z3_enum_5[80] = {
   Z3_OP_IDIV,
   Z3_OP_REM,
   Z3_OP_MOD,
+  Z3_OP_TO_REAL,
+  Z3_OP_TO_INT,
+  Z3_OP_IS_INT,
   Z3_OP_STORE,
   Z3_OP_SELECT,
   Z3_OP_CONST_ARRAY,
+  Z3_OP_ARRAY_MAP,
   Z3_OP_ARRAY_DEFAULT,
-  Z3_OP_STORE_ITE,
   Z3_OP_SET_UNION,
   Z3_OP_SET_INTERSECT,
   Z3_OP_SET_DIFFERENCE,
   Z3_OP_SET_COMPLEMENT,
   Z3_OP_SET_SUBSET,
+  Z3_OP_BNUM,
   Z3_OP_BIT1,
   Z3_OP_BIT0,
   Z3_OP_BNEG,
@@ -358,38 +412,105 @@ int camlidl_transl_table_z3_enum_5[80] = {
   Z3_OP_ROTATE_RIGHT,
   Z3_OP_INT2BV,
   Z3_OP_BV2INT,
+  Z3_OP_CARRY,
+  Z3_OP_XOR3,
+  Z3_OP_PR_UNDEF,
+  Z3_OP_PR_TRUE,
+  Z3_OP_PR_ASSERTED,
+  Z3_OP_PR_GOAL,
+  Z3_OP_PR_MODUS_PONENS,
+  Z3_OP_PR_REFLEXIVITY,
+  Z3_OP_PR_SYMMETRY,
+  Z3_OP_PR_TRANSITIVITY,
+  Z3_OP_PR_TRANSITIVITY_STAR,
+  Z3_OP_PR_MONOTONICITY,
+  Z3_OP_PR_QUANT_INTRO,
+  Z3_OP_PR_DISTRIBUTIVITY,
+  Z3_OP_PR_AND_ELIM,
+  Z3_OP_PR_NOT_OR_ELIM,
+  Z3_OP_PR_REWRITE,
+  Z3_OP_PR_REWRITE_STAR,
+  Z3_OP_PR_PULL_QUANT,
+  Z3_OP_PR_PULL_QUANT_STAR,
+  Z3_OP_PR_PUSH_QUANT,
+  Z3_OP_PR_ELIM_UNUSED_VARS,
+  Z3_OP_PR_DER,
+  Z3_OP_PR_QUANT_INST,
+  Z3_OP_PR_HYPOTHESIS,
+  Z3_OP_PR_LEMMA,
+  Z3_OP_PR_UNIT_RESOLUTION,
+  Z3_OP_PR_IFF_TRUE,
+  Z3_OP_PR_IFF_FALSE,
+  Z3_OP_PR_COMMUTATIVITY,
+  Z3_OP_PR_DEF_AXIOM,
+  Z3_OP_PR_DEF_INTRO,
+  Z3_OP_PR_APPLY_DEF,
+  Z3_OP_PR_IFF_OEQ,
+  Z3_OP_PR_NNF_POS,
+  Z3_OP_PR_NNF_NEG,
+  Z3_OP_PR_NNF_STAR,
+  Z3_OP_PR_CNF_STAR,
+  Z3_OP_PR_SKOLEMIZE,
+  Z3_OP_PR_MODUS_PONENS_OEQ,
+  Z3_OP_PR_TH_LEMMA,
   Z3_OP_UNINTERPRETED,
 };
 
 void camlidl_ml2c_z3_Z3_decl_kind(value _v1, Z3_decl_kind * _c2, camlidl_ctx _ctx)
 {
-  (*_c2) = camlidl_transl_table_z3_enum_5[Int_val(_v1)];
+  (*_c2) = camlidl_transl_table_z3_enum_6[Int_val(_v1)];
 }
 
 value camlidl_c2ml_z3_Z3_decl_kind(Z3_decl_kind * _c2, camlidl_ctx _ctx)
 {
 value _v1;
-  _v1 = camlidl_find_enum((*_c2), camlidl_transl_table_z3_enum_5, 80, "typedef Z3_decl_kind: bad enum  value");
+  _v1 = camlidl_find_enum((*_c2), camlidl_transl_table_z3_enum_6, 127, "typedef Z3_decl_kind: bad enum  value");
   return _v1;
 }
 
-int camlidl_transl_table_z3_enum_6[5] = {
-  Z3_BOOL_VALUE,
-  Z3_NUMERAL_VALUE,
-  Z3_ARRAY_VALUE,
-  Z3_TUPLE_VALUE,
-  Z3_UNKNOWN_VALUE,
+int camlidl_transl_table_z3_enum_7[8] = {
+  Z3_NO_FAILURE,
+  Z3_UNKNOWN,
+  Z3_TIMEOUT,
+  Z3_MEMOUT_WATERMARK,
+  Z3_CANCELED,
+  Z3_NUM_CONFLICTS,
+  Z3_THEORY,
+  Z3_QUANTIFIERS,
 };
 
-void camlidl_ml2c_z3_Z3_value_kind(value _v1, Z3_value_kind * _c2, camlidl_ctx _ctx)
+void camlidl_ml2c_z3_Z3_search_failure(value _v1, Z3_search_failure * _c2, camlidl_ctx _ctx)
 {
-  (*_c2) = camlidl_transl_table_z3_enum_6[Int_val(_v1)];
+  (*_c2) = camlidl_transl_table_z3_enum_7[Int_val(_v1)];
 }
 
-value camlidl_c2ml_z3_Z3_value_kind(Z3_value_kind * _c2, camlidl_ctx _ctx)
+value camlidl_c2ml_z3_Z3_search_failure(Z3_search_failure * _c2, camlidl_ctx _ctx)
 {
 value _v1;
-  _v1 = camlidl_find_enum((*_c2), camlidl_transl_table_z3_enum_6, 5, "typedef Z3_value_kind: bad enum  value");
+  _v1 = camlidl_find_enum((*_c2), camlidl_transl_table_z3_enum_7, 8, "typedef Z3_search_failure: bad enum  value");
+  return _v1;
+}
+
+int camlidl_transl_table_z3_enum_8[3] = {
+  Z3_PRINT_SMTLIB_FULL,
+  Z3_PRINT_LOW_LEVEL,
+  Z3_PRINT_SMTLIB_COMPLIANT,
+};
+
+void camlidl_ml2c_z3_Z3_ast_print_mode(value _v1, Z3_ast_print_mode * _c2, camlidl_ctx _ctx)
+{
+  (*_c2) = camlidl_transl_table_z3_enum_8[Int_val(_v1)];
+}
+
+value camlidl_c2ml_z3_Z3_ast_print_mode(Z3_ast_print_mode * _c2, camlidl_ctx _ctx)
+{
+value _v1;
+  switch((*_c2)) {
+  case Z3_PRINT_SMTLIB_FULL: _v1 = Val_int(0); break;
+  case Z3_PRINT_LOW_LEVEL: _v1 = Val_int(1); break;
+  case Z3_PRINT_SMTLIB_COMPLIANT: _v1 = Val_int(2); break;
+  default: invalid_argument("typedef Z3_ast_print_mode: bad enum  value");
+  }
   return _v1;
 }
 
@@ -522,50 +643,29 @@ value camlidl_z3_Z3_trace_off(
   return Val_unit;
 }
 
-value camlidl_z3_Z3_enable_arithmetic(
-	value _v_c)
+value camlidl_z3_Z3_toggle_warning_messages(
+	value _v_enabled)
 {
-  Z3_context c; /*in*/
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  Z3_enable_arithmetic(c);
-  camlidl_free(_ctx);
+  int enabled; /*in*/
+  enabled = Int_val(_v_enabled);
+  Z3_toggle_warning_messages(enabled);
   return Val_unit;
 }
 
-value camlidl_z3_Z3_enable_bv(
-	value _v_c)
+value camlidl_z3_Z3_update_param_value(
+	value _v_c,
+	value _v_param_id,
+	value _v_param_value)
 {
   Z3_context c; /*in*/
+  char const *param_id; /*in*/
+  char const *param_value; /*in*/
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  Z3_enable_bv(c);
-  camlidl_free(_ctx);
-  return Val_unit;
-}
-
-value camlidl_z3_Z3_enable_arrays(
-	value _v_c)
-{
-  Z3_context c; /*in*/
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  Z3_enable_arrays(c);
-  camlidl_free(_ctx);
-  return Val_unit;
-}
-
-value camlidl_z3_Z3_enable_tuples(
-	value _v_c)
-{
-  Z3_context c; /*in*/
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  Z3_enable_tuples(c);
+  param_id = String_val(_v_param_id);
+  param_value = String_val(_v_param_value);
+  Z3_update_param_value(c, param_id, param_value);
   camlidl_free(_ctx);
   return Val_unit;
 }
@@ -608,128 +708,150 @@ value camlidl_z3_Z3_mk_string_symbol(
   return _vres;
 }
 
-value camlidl_z3_Z3_mk_uninterpreted_type(
+value camlidl_z3_Z3_is_eq_sort(
+	value _v_c,
+	value _v_s1,
+	value _v_s2)
+{
+  Z3_context c; /*in*/
+  Z3_sort s1; /*in*/
+  Z3_sort s2; /*in*/
+  int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_s1, &s1, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_s2, &s2, _ctx);
+  _res = Z3_is_eq_sort(c, s1, s2);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_uninterpreted_sort(
 	value _v_c,
 	value _v_s)
 {
   Z3_context c; /*in*/
   Z3_symbol s; /*in*/
-  Z3_type_ast _res;
+  Z3_sort _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   camlidl_ml2c_z3_Z3_symbol(_v_s, &s, _ctx);
-  _res = Z3_mk_uninterpreted_type(c, s);
-  _vres = camlidl_c2ml_z3_Z3_type_ast(&_res, _ctx);
+  _res = Z3_mk_uninterpreted_sort(c, s);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_mk_bool_type(
+value camlidl_z3_Z3_mk_bool_sort(
 	value _v_c)
 {
   Z3_context c; /*in*/
-  Z3_type_ast _res;
+  Z3_sort _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  _res = Z3_mk_bool_type(c);
-  _vres = camlidl_c2ml_z3_Z3_type_ast(&_res, _ctx);
+  _res = Z3_mk_bool_sort(c);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_mk_int_type(
+value camlidl_z3_Z3_mk_int_sort(
 	value _v_c)
 {
   Z3_context c; /*in*/
-  Z3_type_ast _res;
+  Z3_sort _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  _res = Z3_mk_int_type(c);
-  _vres = camlidl_c2ml_z3_Z3_type_ast(&_res, _ctx);
+  _res = Z3_mk_int_sort(c);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_mk_real_type(
+value camlidl_z3_Z3_mk_real_sort(
 	value _v_c)
 {
   Z3_context c; /*in*/
-  Z3_type_ast _res;
+  Z3_sort _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  _res = Z3_mk_real_type(c);
-  _vres = camlidl_c2ml_z3_Z3_type_ast(&_res, _ctx);
+  _res = Z3_mk_real_sort(c);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_mk_bv_type(
+value camlidl_z3_Z3_mk_bv_sort(
 	value _v_c,
 	value _v_sz)
 {
   Z3_context c; /*in*/
   unsigned int sz; /*in*/
-  Z3_type_ast _res;
+  Z3_sort _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   sz = Int_val(_v_sz);
-  _res = Z3_mk_bv_type(c, sz);
-  _vres = camlidl_c2ml_z3_Z3_type_ast(&_res, _ctx);
+  _res = Z3_mk_bv_sort(c, sz);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_mk_array_type(
+value camlidl_z3_Z3_mk_array_sort(
 	value _v_c,
 	value _v_domain,
 	value _v_range)
 {
   Z3_context c; /*in*/
-  Z3_type_ast domain; /*in*/
-  Z3_type_ast range; /*in*/
-  Z3_type_ast _res;
+  Z3_sort domain; /*in*/
+  Z3_sort range; /*in*/
+  Z3_sort _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_type_ast(_v_domain, &domain, _ctx);
-  camlidl_ml2c_z3_Z3_type_ast(_v_range, &range, _ctx);
-  _res = Z3_mk_array_type(c, domain, range);
-  _vres = camlidl_c2ml_z3_Z3_type_ast(&_res, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_domain, &domain, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_range, &range, _ctx);
+  _res = Z3_mk_array_sort(c, domain, range);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_mk_tuple_type(
+value camlidl_z3_Z3_mk_tuple_sort(
 	value _v_c,
 	value _v_mk_tuple_name,
 	value _v_field_names,
-	value _v_field_types)
+	value _v_field_sorts)
 {
   Z3_context c; /*in*/
   Z3_symbol mk_tuple_name; /*in*/
   unsigned int num_fields; /*in*/
   Z3_symbol const *field_names; /*in*/
-  Z3_type_ast const *field_types; /*in*/
-  Z3_const_decl_ast *mk_tuple_decl; /*out*/
-  Z3_const_decl_ast *proj_decl; /*out*/
-  Z3_type_ast _res;
+  Z3_sort const *field_sorts; /*in*/
+  Z3_func_decl *mk_tuple_decl; /*out*/
+  Z3_func_decl *proj_decl; /*out*/
+  Z3_sort _res;
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   mlsize_t _c1;
@@ -738,7 +860,7 @@ value camlidl_z3_Z3_mk_tuple_type(
   mlsize_t _c4;
   mlsize_t _c5;
   value _v6;
-  Z3_const_decl_ast _c7;
+  Z3_func_decl _c7;
   mlsize_t _c8;
   value _v9;
   value _vresult;
@@ -753,23 +875,23 @@ value camlidl_z3_Z3_mk_tuple_type(
     camlidl_ml2c_z3_Z3_symbol(_v3, &field_names[_c2], _ctx);
   }
   num_fields = _c1;
-  _c4 = Wosize_val(_v_field_types);
-  field_types = camlidl_malloc(_c4 * sizeof(Z3_type_ast const ), _ctx);
+  _c4 = Wosize_val(_v_field_sorts);
+  field_sorts = camlidl_malloc(_c4 * sizeof(Z3_sort const ), _ctx);
   for (_c5 = 0; _c5 < _c4; _c5++) {
-    _v6 = Field(_v_field_types, _c5);
-    camlidl_ml2c_z3_Z3_type_ast(_v6, &field_types[_c5], _ctx);
+    _v6 = Field(_v_field_sorts, _c5);
+    camlidl_ml2c_z3_Z3_sort(_v6, &field_sorts[_c5], _ctx);
   }
   num_fields = _c4;
   mk_tuple_decl = &_c7;
-  proj_decl = camlidl_malloc(num_fields * sizeof(Z3_const_decl_ast ), _ctx);
-  _res = Z3_mk_tuple_type(c, mk_tuple_name, num_fields, field_names, field_types, mk_tuple_decl, proj_decl);
+  proj_decl = camlidl_malloc(num_fields * sizeof(Z3_func_decl ), _ctx);
+  _res = Z3_mk_tuple_sort(c, mk_tuple_name, num_fields, field_names, field_sorts, mk_tuple_decl, proj_decl);
   Begin_roots_block(_vres, 3)
-    _vres[0] = camlidl_c2ml_z3_Z3_type_ast(&_res, _ctx);
-    _vres[1] = camlidl_c2ml_z3_Z3_const_decl_ast(&*mk_tuple_decl, _ctx);
+    _vres[0] = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
+    _vres[1] = camlidl_c2ml_z3_Z3_func_decl(&*mk_tuple_decl, _ctx);
     _vres[2] = camlidl_alloc(num_fields, 0);
     Begin_root(_vres[2])
       for (_c8 = 0; _c8 < num_fields; _c8++) {
-        _v9 = camlidl_c2ml_z3_Z3_const_decl_ast(&proj_decl[_c8], _ctx);
+        _v9 = camlidl_c2ml_z3_Z3_func_decl(&proj_decl[_c8], _ctx);
         modify(&Field(_vres[2], _c8), _v9);
       }
     End_roots()
@@ -782,7 +904,402 @@ value camlidl_z3_Z3_mk_tuple_type(
   return _vresult;
 }
 
-value camlidl_z3_Z3_mk_func_decl(
+value camlidl_z3_Z3_mk_enumeration_sort(
+	value _v_c,
+	value _v_name,
+	value _v_enum_names)
+{
+  Z3_context c; /*in*/
+  Z3_symbol name; /*in*/
+  unsigned int n; /*in*/
+  Z3_symbol const *enum_names; /*in*/
+  Z3_func_decl *enum_consts; /*out*/
+  Z3_func_decl *enum_testers; /*out*/
+  Z3_sort _res;
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  mlsize_t _c4;
+  value _v5;
+  mlsize_t _c6;
+  value _v7;
+  value _vresult;
+  value _vres[3] = { 0, 0, 0, };
+
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_symbol(_v_name, &name, _ctx);
+  _c1 = Wosize_val(_v_enum_names);
+  enum_names = camlidl_malloc(_c1 * sizeof(Z3_symbol const ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_enum_names, _c2);
+    camlidl_ml2c_z3_Z3_symbol(_v3, &enum_names[_c2], _ctx);
+  }
+  n = _c1;
+  enum_consts = camlidl_malloc(n * sizeof(Z3_func_decl ), _ctx);
+  enum_testers = camlidl_malloc(n * sizeof(Z3_func_decl ), _ctx);
+  _res = Z3_mk_enumeration_sort(c, name, n, enum_names, enum_consts, enum_testers);
+  Begin_roots_block(_vres, 3)
+    _vres[0] = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
+    _vres[1] = camlidl_alloc(n, 0);
+    Begin_root(_vres[1])
+      for (_c4 = 0; _c4 < n; _c4++) {
+        _v5 = camlidl_c2ml_z3_Z3_func_decl(&enum_consts[_c4], _ctx);
+        modify(&Field(_vres[1], _c4), _v5);
+      }
+    End_roots()
+    _vres[2] = camlidl_alloc(n, 0);
+    Begin_root(_vres[2])
+      for (_c6 = 0; _c6 < n; _c6++) {
+        _v7 = camlidl_c2ml_z3_Z3_func_decl(&enum_testers[_c6], _ctx);
+        modify(&Field(_vres[2], _c6), _v7);
+      }
+    End_roots()
+    _vresult = camlidl_alloc_small(3, 0);
+    Field(_vresult, 0) = _vres[0];
+    Field(_vresult, 1) = _vres[1];
+    Field(_vresult, 2) = _vres[2];
+  End_roots()
+  camlidl_free(_ctx);
+  return _vresult;
+}
+
+value camlidl_z3_Z3_mk_list_sort(
+	value _v_c,
+	value _v_name,
+	value _v_elem_sort)
+{
+  Z3_context c; /*in*/
+  Z3_symbol name; /*in*/
+  Z3_sort elem_sort; /*in*/
+  Z3_func_decl *nil_decl; /*out*/
+  Z3_func_decl *is_nil_decl; /*out*/
+  Z3_func_decl *cons_decl; /*out*/
+  Z3_func_decl *is_cons_decl; /*out*/
+  Z3_func_decl *head_decl; /*out*/
+  Z3_func_decl *tail_decl; /*out*/
+  Z3_sort _res;
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  Z3_func_decl _c1;
+  Z3_func_decl _c2;
+  Z3_func_decl _c3;
+  Z3_func_decl _c4;
+  Z3_func_decl _c5;
+  Z3_func_decl _c6;
+  value _vresult;
+  value _vres[7] = { 0, 0, 0, 0, 0, 0, 0, };
+
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_symbol(_v_name, &name, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_elem_sort, &elem_sort, _ctx);
+  nil_decl = &_c1;
+  is_nil_decl = &_c2;
+  cons_decl = &_c3;
+  is_cons_decl = &_c4;
+  head_decl = &_c5;
+  tail_decl = &_c6;
+  _res = Z3_mk_list_sort(c, name, elem_sort, nil_decl, is_nil_decl, cons_decl, is_cons_decl, head_decl, tail_decl);
+  Begin_roots_block(_vres, 7)
+    _vres[0] = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
+    _vres[1] = camlidl_c2ml_z3_Z3_func_decl(&*nil_decl, _ctx);
+    _vres[2] = camlidl_c2ml_z3_Z3_func_decl(&*is_nil_decl, _ctx);
+    _vres[3] = camlidl_c2ml_z3_Z3_func_decl(&*cons_decl, _ctx);
+    _vres[4] = camlidl_c2ml_z3_Z3_func_decl(&*is_cons_decl, _ctx);
+    _vres[5] = camlidl_c2ml_z3_Z3_func_decl(&*head_decl, _ctx);
+    _vres[6] = camlidl_c2ml_z3_Z3_func_decl(&*tail_decl, _ctx);
+    _vresult = camlidl_alloc_small(7, 0);
+    { mlsize_t _c7;
+      for (_c7 = 0; _c7 < 7; _c7++) Field(_vresult, _c7) = _vres[_c7];
+    }
+  End_roots()
+  camlidl_free(_ctx);
+  return _vresult;
+}
+
+value camlidl_z3_Z3_mk_constructor(
+	value _v_c,
+	value _v_name,
+	value _v_recognizer,
+	value _v_field_names,
+	value _v_sorts,
+	value _v_sort_refs)
+{
+  Z3_context c; /*in*/
+  Z3_symbol name; /*in*/
+  Z3_symbol recognizer; /*in*/
+  unsigned int num_fields; /*in*/
+  Z3_symbol const *field_names; /*in*/
+  Z3_sort const *sorts; /*in*/
+  unsigned int *sort_refs; /*in*/
+  Z3_constructor _res;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  mlsize_t _c4;
+  mlsize_t _c5;
+  value _v6;
+  mlsize_t _c7;
+  mlsize_t _c8;
+  value _v9;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_symbol(_v_name, &name, _ctx);
+  camlidl_ml2c_z3_Z3_symbol(_v_recognizer, &recognizer, _ctx);
+  _c1 = Wosize_val(_v_field_names);
+  field_names = camlidl_malloc(_c1 * sizeof(Z3_symbol const ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_field_names, _c2);
+    camlidl_ml2c_z3_Z3_symbol(_v3, &field_names[_c2], _ctx);
+  }
+  num_fields = _c1;
+  _c4 = Wosize_val(_v_sorts);
+  sorts = camlidl_malloc(_c4 * sizeof(Z3_sort const ), _ctx);
+  for (_c5 = 0; _c5 < _c4; _c5++) {
+    _v6 = Field(_v_sorts, _c5);
+    camlidl_ml2c_z3_Z3_sort(_v6, &sorts[_c5], _ctx);
+  }
+  num_fields = _c4;
+  _c7 = Wosize_val(_v_sort_refs);
+  sort_refs = camlidl_malloc(_c7 * sizeof(unsigned int ), _ctx);
+  for (_c8 = 0; _c8 < _c7; _c8++) {
+    _v9 = Field(_v_sort_refs, _c8);
+    sort_refs[_c8] = Int_val(_v9);
+  }
+  num_fields = _c7;
+  _res = Z3_mk_constructor(c, name, recognizer, num_fields, field_names, sorts, sort_refs);
+  _vres = camlidl_c2ml_z3_Z3_constructor(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_constructor_bytecode(value * argv, int argn)
+{
+  return camlidl_z3_Z3_mk_constructor(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5]);
+}
+
+value camlidl_z3_Z3_query_constructor(
+	value _v_c,
+	value _v_constr,
+	value _v_num_fields)
+{
+  Z3_context c; /*in*/
+  Z3_constructor constr; /*in*/
+  unsigned int num_fields; /*in*/
+  Z3_func_decl *constructor; /*out*/
+  Z3_func_decl *tester; /*out*/
+  Z3_func_decl *accessors; /*out*/
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  Z3_func_decl _c1;
+  Z3_func_decl _c2;
+  mlsize_t _c3;
+  value _v4;
+  value _vresult;
+  value _vres[3] = { 0, 0, 0, };
+
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_constructor(_v_constr, &constr, _ctx);
+  num_fields = Int_val(_v_num_fields);
+  constructor = &_c1;
+  tester = &_c2;
+  accessors = camlidl_malloc(num_fields * sizeof(Z3_func_decl ), _ctx);
+  Z3_query_constructor(c, constr, num_fields, constructor, tester, accessors);
+  Begin_roots_block(_vres, 3)
+    _vres[0] = camlidl_c2ml_z3_Z3_func_decl(&*constructor, _ctx);
+    _vres[1] = camlidl_c2ml_z3_Z3_func_decl(&*tester, _ctx);
+    _vres[2] = camlidl_alloc(num_fields, 0);
+    Begin_root(_vres[2])
+      for (_c3 = 0; _c3 < num_fields; _c3++) {
+        _v4 = camlidl_c2ml_z3_Z3_func_decl(&accessors[_c3], _ctx);
+        modify(&Field(_vres[2], _c3), _v4);
+      }
+    End_roots()
+    _vresult = camlidl_alloc_small(3, 0);
+    Field(_vresult, 0) = _vres[0];
+    Field(_vresult, 1) = _vres[1];
+    Field(_vresult, 2) = _vres[2];
+  End_roots()
+  camlidl_free(_ctx);
+  return _vresult;
+}
+
+value camlidl_z3_Z3_del_constructor(
+	value _v_c,
+	value _v_constr)
+{
+  Z3_context c; /*in*/
+  Z3_constructor constr; /*in*/
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_constructor(_v_constr, &constr, _ctx);
+  Z3_del_constructor(c, constr);
+  camlidl_free(_ctx);
+  return Val_unit;
+}
+
+value camlidl_z3_Z3_mk_datatype(
+	value _v_c,
+	value _v_name,
+	value _v_constructors)
+{
+  Z3_context c; /*in*/
+  Z3_symbol name; /*in*/
+  unsigned int num_constructors; /*in*/
+  Z3_constructor *constructors; /*in,out*/
+  Z3_sort _res;
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  mlsize_t _c4;
+  value _v5;
+  value _vresult;
+  value _vres[2] = { 0, 0, };
+
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_symbol(_v_name, &name, _ctx);
+  _c1 = Wosize_val(_v_constructors);
+  constructors = camlidl_malloc(_c1 * sizeof(Z3_constructor ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_constructors, _c2);
+    camlidl_ml2c_z3_Z3_constructor(_v3, &constructors[_c2], _ctx);
+  }
+  num_constructors = _c1;
+  _res = Z3_mk_datatype(c, name, num_constructors, constructors);
+  Begin_roots_block(_vres, 2)
+    _vres[0] = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
+    _vres[1] = camlidl_alloc(num_constructors, 0);
+    Begin_root(_vres[1])
+      for (_c4 = 0; _c4 < num_constructors; _c4++) {
+        _v5 = camlidl_c2ml_z3_Z3_constructor(&constructors[_c4], _ctx);
+        modify(&Field(_vres[1], _c4), _v5);
+      }
+    End_roots()
+    _vresult = camlidl_alloc_small(2, 0);
+    Field(_vresult, 0) = _vres[0];
+    Field(_vresult, 1) = _vres[1];
+  End_roots()
+  camlidl_free(_ctx);
+  return _vresult;
+}
+
+value camlidl_z3_Z3_mk_constructor_list(
+	value _v_c,
+	value _v_constructors)
+{
+  Z3_context c; /*in*/
+  unsigned int num_constructors; /*in*/
+  Z3_constructor *constructors; /*in*/
+  Z3_constructor_list _res;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  _c1 = Wosize_val(_v_constructors);
+  constructors = camlidl_malloc(_c1 * sizeof(Z3_constructor ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_constructors, _c2);
+    camlidl_ml2c_z3_Z3_constructor(_v3, &constructors[_c2], _ctx);
+  }
+  num_constructors = _c1;
+  _res = Z3_mk_constructor_list(c, num_constructors, constructors);
+  _vres = camlidl_c2ml_z3_Z3_constructor_list(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_del_constructor_list(
+	value _v_c,
+	value _v_clist)
+{
+  Z3_context c; /*in*/
+  Z3_constructor_list clist; /*in*/
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_constructor_list(_v_clist, &clist, _ctx);
+  Z3_del_constructor_list(c, clist);
+  camlidl_free(_ctx);
+  return Val_unit;
+}
+
+value camlidl_z3_Z3_mk_datatypes(
+	value _v_c,
+	value _v_sort_names,
+	value _v_constructor_lists)
+{
+  Z3_context c; /*in*/
+  unsigned int num_sorts; /*in*/
+  Z3_symbol *sort_names; /*in*/
+  Z3_sort *sorts; /*out*/
+  Z3_constructor_list *constructor_lists; /*in,out*/
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  mlsize_t _c4;
+  mlsize_t _c5;
+  value _v6;
+  mlsize_t _c7;
+  value _v8;
+  mlsize_t _c9;
+  value _v10;
+  value _vresult;
+  value _vres[2] = { 0, 0, };
+
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  _c1 = Wosize_val(_v_sort_names);
+  sort_names = camlidl_malloc(_c1 * sizeof(Z3_symbol ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_sort_names, _c2);
+    camlidl_ml2c_z3_Z3_symbol(_v3, &sort_names[_c2], _ctx);
+  }
+  num_sorts = _c1;
+  _c4 = Wosize_val(_v_constructor_lists);
+  constructor_lists = camlidl_malloc(_c4 * sizeof(Z3_constructor_list ), _ctx);
+  for (_c5 = 0; _c5 < _c4; _c5++) {
+    _v6 = Field(_v_constructor_lists, _c5);
+    camlidl_ml2c_z3_Z3_constructor_list(_v6, &constructor_lists[_c5], _ctx);
+  }
+  num_sorts = _c4;
+  sorts = camlidl_malloc(num_sorts * sizeof(Z3_sort ), _ctx);
+  Z3_mk_datatypes(c, num_sorts, sort_names, sorts, constructor_lists);
+  Begin_roots_block(_vres, 2)
+    _vres[0] = camlidl_alloc(num_sorts, 0);
+    Begin_root(_vres[0])
+      for (_c7 = 0; _c7 < num_sorts; _c7++) {
+        _v8 = camlidl_c2ml_z3_Z3_sort(&sorts[_c7], _ctx);
+        modify(&Field(_vres[0], _c7), _v8);
+      }
+    End_roots()
+    _vres[1] = camlidl_alloc(num_sorts, 0);
+    Begin_root(_vres[1])
+      for (_c9 = 0; _c9 < num_sorts; _c9++) {
+        _v10 = camlidl_c2ml_z3_Z3_constructor_list(&constructor_lists[_c9], _ctx);
+        modify(&Field(_vres[1], _c9), _v10);
+      }
+    End_roots()
+    _vresult = camlidl_alloc_small(2, 0);
+    Field(_vresult, 0) = _vres[0];
+    Field(_vresult, 1) = _vres[1];
+  End_roots()
+  camlidl_free(_ctx);
+  return _vresult;
+}
+
+value camlidl_z3_Z3_mk_injective_function(
 	value _v_c,
 	value _v_s,
 	value _v_domain,
@@ -791,9 +1308,9 @@ value camlidl_z3_Z3_mk_func_decl(
   Z3_context c; /*in*/
   Z3_symbol s; /*in*/
   unsigned int domain_size; /*in*/
-  Z3_type_ast const *domain; /*in*/
-  Z3_type_ast range; /*in*/
-  Z3_const_decl_ast _res;
+  Z3_sort const *domain; /*in*/
+  Z3_sort range; /*in*/
+  Z3_func_decl _res;
   mlsize_t _c1;
   mlsize_t _c2;
   value _v3;
@@ -804,15 +1321,94 @@ value camlidl_z3_Z3_mk_func_decl(
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   camlidl_ml2c_z3_Z3_symbol(_v_s, &s, _ctx);
   _c1 = Wosize_val(_v_domain);
-  domain = camlidl_malloc(_c1 * sizeof(Z3_type_ast const ), _ctx);
+  domain = camlidl_malloc(_c1 * sizeof(Z3_sort const ), _ctx);
   for (_c2 = 0; _c2 < _c1; _c2++) {
     _v3 = Field(_v_domain, _c2);
-    camlidl_ml2c_z3_Z3_type_ast(_v3, &domain[_c2], _ctx);
+    camlidl_ml2c_z3_Z3_sort(_v3, &domain[_c2], _ctx);
   }
   domain_size = _c1;
-  camlidl_ml2c_z3_Z3_type_ast(_v_range, &range, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_range, &range, _ctx);
+  _res = Z3_mk_injective_function(c, s, domain_size, domain, range);
+  _vres = camlidl_c2ml_z3_Z3_func_decl(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_is_eq_ast(
+	value _v_c,
+	value _v_t1,
+	value _v_t2)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast t2; /*in*/
+  int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t2, &t2, _ctx);
+  _res = Z3_is_eq_ast(c, t1, t2);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_is_eq_func_decl(
+	value _v_c,
+	value _v_f1,
+	value _v_f2)
+{
+  Z3_context c; /*in*/
+  Z3_func_decl f1; /*in*/
+  Z3_func_decl f2; /*in*/
+  int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_f1, &f1, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_f2, &f2, _ctx);
+  _res = Z3_is_eq_func_decl(c, f1, f2);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_func_decl(
+	value _v_c,
+	value _v_s,
+	value _v_domain,
+	value _v_range)
+{
+  Z3_context c; /*in*/
+  Z3_symbol s; /*in*/
+  unsigned int domain_size; /*in*/
+  Z3_sort const *domain; /*in*/
+  Z3_sort range; /*in*/
+  Z3_func_decl _res;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_symbol(_v_s, &s, _ctx);
+  _c1 = Wosize_val(_v_domain);
+  domain = camlidl_malloc(_c1 * sizeof(Z3_sort const ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_domain, _c2);
+    camlidl_ml2c_z3_Z3_sort(_v3, &domain[_c2], _ctx);
+  }
+  domain_size = _c1;
+  camlidl_ml2c_z3_Z3_sort(_v_range, &range, _ctx);
   _res = Z3_mk_func_decl(c, s, domain_size, domain, range);
-  _vres = camlidl_c2ml_z3_Z3_const_decl_ast(&_res, _ctx);
+  _vres = camlidl_c2ml_z3_Z3_func_decl(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
@@ -823,7 +1419,7 @@ value camlidl_z3_Z3_mk_app(
 	value _v_args)
 {
   Z3_context c; /*in*/
-  Z3_const_decl_ast d; /*in*/
+  Z3_func_decl d; /*in*/
   unsigned int num_args; /*in*/
   Z3_ast const *args; /*in*/
   Z3_ast _res;
@@ -835,7 +1431,7 @@ value camlidl_z3_Z3_mk_app(
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_const_decl_ast(_v_d, &d, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
   _c1 = Wosize_val(_v_args);
   args = camlidl_malloc(_c1 * sizeof(Z3_ast const ), _ctx);
   for (_c2 = 0; _c2 < _c1; _c2++) {
@@ -856,7 +1452,7 @@ value camlidl_z3_Z3_mk_const(
 {
   Z3_context c; /*in*/
   Z3_symbol s; /*in*/
-  Z3_type_ast ty; /*in*/
+  Z3_sort ty; /*in*/
   Z3_ast _res;
   value _vres;
 
@@ -864,7 +1460,7 @@ value camlidl_z3_Z3_mk_const(
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   camlidl_ml2c_z3_Z3_symbol(_v_s, &s, _ctx);
-  camlidl_ml2c_z3_Z3_type_ast(_v_ty, &ty, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_ty, &ty, _ctx);
   _res = Z3_mk_const(c, s, ty);
   _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
@@ -905,9 +1501,9 @@ value camlidl_z3_Z3_mk_fresh_func_decl(
   Z3_context c; /*in*/
   char const *prefix; /*in*/
   unsigned int domain_size; /*in*/
-  Z3_type_ast const *domain; /*in*/
-  Z3_type_ast range; /*in*/
-  Z3_const_decl_ast _res;
+  Z3_sort const *domain; /*in*/
+  Z3_sort range; /*in*/
+  Z3_func_decl _res;
   mlsize_t _c1;
   mlsize_t _c2;
   value _v3;
@@ -918,15 +1514,15 @@ value camlidl_z3_Z3_mk_fresh_func_decl(
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   prefix = String_val(_v_prefix);
   _c1 = Wosize_val(_v_domain);
-  domain = camlidl_malloc(_c1 * sizeof(Z3_type_ast const ), _ctx);
+  domain = camlidl_malloc(_c1 * sizeof(Z3_sort const ), _ctx);
   for (_c2 = 0; _c2 < _c1; _c2++) {
     _v3 = Field(_v_domain, _c2);
-    camlidl_ml2c_z3_Z3_type_ast(_v3, &domain[_c2], _ctx);
+    camlidl_ml2c_z3_Z3_sort(_v3, &domain[_c2], _ctx);
   }
   domain_size = _c1;
-  camlidl_ml2c_z3_Z3_type_ast(_v_range, &range, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_range, &range, _ctx);
   _res = Z3_mk_fresh_func_decl(c, prefix, domain_size, domain, range);
-  _vres = camlidl_c2ml_z3_Z3_const_decl_ast(&_res, _ctx);
+  _vres = camlidl_c2ml_z3_Z3_func_decl(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
@@ -938,7 +1534,7 @@ value camlidl_z3_Z3_mk_fresh_const(
 {
   Z3_context c; /*in*/
   char const *prefix; /*in*/
-  Z3_type_ast ty; /*in*/
+  Z3_sort ty; /*in*/
   Z3_ast _res;
   value _vres;
 
@@ -946,7 +1542,7 @@ value camlidl_z3_Z3_mk_fresh_const(
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   prefix = String_val(_v_prefix);
-  camlidl_ml2c_z3_Z3_type_ast(_v_ty, &ty, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_ty, &ty, _ctx);
   _res = Z3_mk_fresh_const(c, prefix, ty);
   _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
@@ -1291,6 +1887,91 @@ value camlidl_z3_Z3_mk_sub(
   return _vres;
 }
 
+value camlidl_z3_Z3_mk_unary_minus(
+	value _v_c,
+	value _v_arg)
+{
+  Z3_context c; /*in*/
+  Z3_ast arg; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_arg, &arg, _ctx);
+  _res = Z3_mk_unary_minus(c, arg);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_div(
+	value _v_c,
+	value _v_arg1,
+	value _v_arg2)
+{
+  Z3_context c; /*in*/
+  Z3_ast arg1; /*in*/
+  Z3_ast arg2; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_arg1, &arg1, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_arg2, &arg2, _ctx);
+  _res = Z3_mk_div(c, arg1, arg2);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_mod(
+	value _v_c,
+	value _v_arg1,
+	value _v_arg2)
+{
+  Z3_context c; /*in*/
+  Z3_ast arg1; /*in*/
+  Z3_ast arg2; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_arg1, &arg1, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_arg2, &arg2, _ctx);
+  _res = Z3_mk_mod(c, arg1, arg2);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_rem(
+	value _v_c,
+	value _v_arg1,
+	value _v_arg2)
+{
+  Z3_context c; /*in*/
+  Z3_ast arg1; /*in*/
+  Z3_ast arg2; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_arg1, &arg1, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_arg2, &arg2, _ctx);
+  _res = Z3_mk_rem(c, arg1, arg2);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
 value camlidl_z3_Z3_mk_lt(
 	value _v_c,
 	value _v_t1,
@@ -1379,6 +2060,63 @@ value camlidl_z3_Z3_mk_ge(
   return _vres;
 }
 
+value camlidl_z3_Z3_mk_int2real(
+	value _v_c,
+	value _v_t1)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  _res = Z3_mk_int2real(c, t1);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_real2int(
+	value _v_c,
+	value _v_t1)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  _res = Z3_mk_real2int(c, t1);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_is_int(
+	value _v_c,
+	value _v_t1)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  _res = Z3_mk_is_int(c, t1);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
 value camlidl_z3_Z3_mk_bvnot(
 	value _v_c,
 	value _v_t1)
@@ -1393,6 +2131,44 @@ value camlidl_z3_Z3_mk_bvnot(
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
   _res = Z3_mk_bvnot(c, t1);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_bvredand(
+	value _v_c,
+	value _v_t1)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  _res = Z3_mk_bvredand(c, t1);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_bvredor(
+	value _v_c,
+	value _v_t1)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  _res = Z3_mk_bvredor(c, t1);
   _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
@@ -1992,6 +2768,28 @@ value camlidl_z3_Z3_mk_zero_ext(
   return _vres;
 }
 
+value camlidl_z3_Z3_mk_repeat(
+	value _v_c,
+	value _v_i,
+	value _v_t1)
+{
+  Z3_context c; /*in*/
+  unsigned int i; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  i = Int_val(_v_i);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  _res = Z3_mk_repeat(c, i, t1);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
 value camlidl_z3_Z3_mk_bvshl(
 	value _v_c,
 	value _v_t1,
@@ -2102,6 +2900,232 @@ value camlidl_z3_Z3_mk_rotate_right(
   return _vres;
 }
 
+value camlidl_z3_Z3_mk_int2bv(
+	value _v_c,
+	value _v_n,
+	value _v_t1)
+{
+  Z3_context c; /*in*/
+  unsigned int n; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  n = Int_val(_v_n);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  _res = Z3_mk_int2bv(c, n, t1);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_bv2int(
+	value _v_c,
+	value _v_t1,
+	value _v_is_signed)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  int is_signed; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  is_signed = Int_val(_v_is_signed);
+  _res = Z3_mk_bv2int(c, t1, is_signed);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_bvadd_no_overflow(
+	value _v_c,
+	value _v_t1,
+	value _v_t2,
+	value _v_is_signed)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast t2; /*in*/
+  int is_signed; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t2, &t2, _ctx);
+  is_signed = Int_val(_v_is_signed);
+  _res = Z3_mk_bvadd_no_overflow(c, t1, t2, is_signed);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_bvadd_no_underflow(
+	value _v_c,
+	value _v_t1,
+	value _v_t2)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast t2; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t2, &t2, _ctx);
+  _res = Z3_mk_bvadd_no_underflow(c, t1, t2);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_bvsub_no_overflow(
+	value _v_c,
+	value _v_t1,
+	value _v_t2)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast t2; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t2, &t2, _ctx);
+  _res = Z3_mk_bvsub_no_overflow(c, t1, t2);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_bvsub_no_underflow(
+	value _v_c,
+	value _v_t1,
+	value _v_t2,
+	value _v_is_signed)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast t2; /*in*/
+  int is_signed; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t2, &t2, _ctx);
+  is_signed = Int_val(_v_is_signed);
+  _res = Z3_mk_bvsub_no_underflow(c, t1, t2, is_signed);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_bvsdiv_no_overflow(
+	value _v_c,
+	value _v_t1,
+	value _v_t2)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast t2; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t2, &t2, _ctx);
+  _res = Z3_mk_bvsdiv_no_overflow(c, t1, t2);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_bvneg_no_overflow(
+	value _v_c,
+	value _v_t1)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  _res = Z3_mk_bvneg_no_overflow(c, t1);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_bvmul_no_overflow(
+	value _v_c,
+	value _v_t1,
+	value _v_t2,
+	value _v_is_signed)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast t2; /*in*/
+  int is_signed; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t2, &t2, _ctx);
+  is_signed = Int_val(_v_is_signed);
+  _res = Z3_mk_bvmul_no_overflow(c, t1, t2, is_signed);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_bvmul_no_underflow(
+	value _v_c,
+	value _v_t1,
+	value _v_t2)
+{
+  Z3_context c; /*in*/
+  Z3_ast t1; /*in*/
+  Z3_ast t2; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t2, &t2, _ctx);
+  _res = Z3_mk_bvmul_no_underflow(c, t1, t2);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
 value camlidl_z3_Z3_mk_select(
 	value _v_c,
 	value _v_a,
@@ -2149,6 +3173,318 @@ value camlidl_z3_Z3_mk_store(
   return _vres;
 }
 
+value camlidl_z3_Z3_mk_const_array(
+	value _v_c,
+	value _v_domain,
+	value _v_v)
+{
+  Z3_context c; /*in*/
+  Z3_sort domain; /*in*/
+  Z3_ast v; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_domain, &domain, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_v, &v, _ctx);
+  _res = Z3_mk_const_array(c, domain, v);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_map(
+	value _v_c,
+	value _v_f,
+	value _v_n,
+	value _v_args)
+{
+  Z3_context c; /*in*/
+  Z3_func_decl f; /*in*/
+  unsigned int n; /*in*/
+  Z3_ast const *args; /*in*/
+  Z3_ast _res;
+  Z3_ast _c1;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_f, &f, _ctx);
+  n = Int_val(_v_n);
+  args = &_c1;
+  camlidl_ml2c_z3_Z3_ast(_v_args, &_c1, _ctx);
+  _res = Z3_mk_map(c, f, n, args);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_array_default(
+	value _v_c,
+	value _v_array)
+{
+  Z3_context c; /*in*/
+  Z3_ast array; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_array, &array, _ctx);
+  _res = Z3_mk_array_default(c, array);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_set_sort(
+	value _v_c,
+	value _v_ty)
+{
+  Z3_context c; /*in*/
+  Z3_sort ty; /*in*/
+  Z3_sort _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_ty, &ty, _ctx);
+  _res = Z3_mk_set_sort(c, ty);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_empty_set(
+	value _v_c,
+	value _v_domain)
+{
+  Z3_context c; /*in*/
+  Z3_sort domain; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_domain, &domain, _ctx);
+  _res = Z3_mk_empty_set(c, domain);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_full_set(
+	value _v_c,
+	value _v_domain)
+{
+  Z3_context c; /*in*/
+  Z3_sort domain; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_domain, &domain, _ctx);
+  _res = Z3_mk_full_set(c, domain);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_set_add(
+	value _v_c,
+	value _v_set,
+	value _v_elem)
+{
+  Z3_context c; /*in*/
+  Z3_ast set; /*in*/
+  Z3_ast elem; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_set, &set, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_elem, &elem, _ctx);
+  _res = Z3_mk_set_add(c, set, elem);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_set_del(
+	value _v_c,
+	value _v_set,
+	value _v_elem)
+{
+  Z3_context c; /*in*/
+  Z3_ast set; /*in*/
+  Z3_ast elem; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_set, &set, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_elem, &elem, _ctx);
+  _res = Z3_mk_set_del(c, set, elem);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_set_union(
+	value _v_c,
+	value _v_args)
+{
+  Z3_context c; /*in*/
+  unsigned int num_args; /*in*/
+  Z3_ast const *args; /*in*/
+  Z3_ast _res;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  _c1 = Wosize_val(_v_args);
+  args = camlidl_malloc(_c1 * sizeof(Z3_ast const ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_args, _c2);
+    camlidl_ml2c_z3_Z3_ast(_v3, &args[_c2], _ctx);
+  }
+  num_args = _c1;
+  _res = Z3_mk_set_union(c, num_args, args);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_set_intersect(
+	value _v_c,
+	value _v_args)
+{
+  Z3_context c; /*in*/
+  unsigned int num_args; /*in*/
+  Z3_ast const *args; /*in*/
+  Z3_ast _res;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  _c1 = Wosize_val(_v_args);
+  args = camlidl_malloc(_c1 * sizeof(Z3_ast const ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_args, _c2);
+    camlidl_ml2c_z3_Z3_ast(_v3, &args[_c2], _ctx);
+  }
+  num_args = _c1;
+  _res = Z3_mk_set_intersect(c, num_args, args);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_set_difference(
+	value _v_c,
+	value _v_arg1,
+	value _v_arg2)
+{
+  Z3_context c; /*in*/
+  Z3_ast arg1; /*in*/
+  Z3_ast arg2; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_arg1, &arg1, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_arg2, &arg2, _ctx);
+  _res = Z3_mk_set_difference(c, arg1, arg2);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_set_complement(
+	value _v_c,
+	value _v_arg)
+{
+  Z3_context c; /*in*/
+  Z3_ast arg; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_arg, &arg, _ctx);
+  _res = Z3_mk_set_complement(c, arg);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_set_member(
+	value _v_c,
+	value _v_elem,
+	value _v_set)
+{
+  Z3_context c; /*in*/
+  Z3_ast elem; /*in*/
+  Z3_ast set; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_elem, &elem, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_set, &set, _ctx);
+  _res = Z3_mk_set_member(c, elem, set);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_set_subset(
+	value _v_c,
+	value _v_arg1,
+	value _v_arg2)
+{
+  Z3_context c; /*in*/
+  Z3_ast arg1; /*in*/
+  Z3_ast arg2; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_arg1, &arg1, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_arg2, &arg2, _ctx);
+  _res = Z3_mk_set_subset(c, arg1, arg2);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
 value camlidl_z3_Z3_mk_numeral(
 	value _v_c,
 	value _v_numeral,
@@ -2156,7 +3492,7 @@ value camlidl_z3_Z3_mk_numeral(
 {
   Z3_context c; /*in*/
   char const *numeral; /*in*/
-  Z3_type_ast ty; /*in*/
+  Z3_sort ty; /*in*/
   Z3_ast _res;
   value _vres;
 
@@ -2164,8 +3500,30 @@ value camlidl_z3_Z3_mk_numeral(
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   numeral = String_val(_v_numeral);
-  camlidl_ml2c_z3_Z3_type_ast(_v_ty, &ty, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_ty, &ty, _ctx);
   _res = Z3_mk_numeral(c, numeral, ty);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_real(
+	value _v_c,
+	value _v_num,
+	value _v_den)
+{
+  Z3_context c; /*in*/
+  int num; /*in*/
+  int den; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  num = Int_val(_v_num);
+  den = Int_val(_v_den);
+  _res = Z3_mk_real(c, num, den);
   _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
@@ -2178,7 +3536,7 @@ value camlidl_z3_Z3_mk_int(
 {
   Z3_context c; /*in*/
   int v; /*in*/
-  Z3_type_ast ty; /*in*/
+  Z3_sort ty; /*in*/
   Z3_ast _res;
   value _vres;
 
@@ -2186,7 +3544,7 @@ value camlidl_z3_Z3_mk_int(
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   v = Int_val(_v_v);
-  camlidl_ml2c_z3_Z3_type_ast(_v_ty, &ty, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_ty, &ty, _ctx);
   _res = Z3_mk_int(c, v, ty);
   _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
@@ -2200,7 +3558,7 @@ value camlidl_z3_Z3_mk_unsigned_int(
 {
   Z3_context c; /*in*/
   unsigned int v; /*in*/
-  Z3_type_ast ty; /*in*/
+  Z3_sort ty; /*in*/
   Z3_ast _res;
   value _vres;
 
@@ -2208,7 +3566,7 @@ value camlidl_z3_Z3_mk_unsigned_int(
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   v = Int_val(_v_v);
-  camlidl_ml2c_z3_Z3_type_ast(_v_ty, &ty, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_ty, &ty, _ctx);
   _res = Z3_mk_unsigned_int(c, v, ty);
   _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
@@ -2222,7 +3580,7 @@ value camlidl_z3_Z3_mk_pattern(
   Z3_context c; /*in*/
   unsigned int num_patterns; /*in*/
   Z3_ast const *terms; /*in*/
-  Z3_pattern_ast _res;
+  Z3_pattern _res;
   mlsize_t _c1;
   mlsize_t _c2;
   value _v3;
@@ -2239,7 +3597,7 @@ value camlidl_z3_Z3_mk_pattern(
   }
   num_patterns = _c1;
   _res = Z3_mk_pattern(c, num_patterns, terms);
-  _vres = camlidl_c2ml_z3_Z3_pattern_ast(&_res, _ctx);
+  _vres = camlidl_c2ml_z3_Z3_pattern(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
@@ -2251,7 +3609,7 @@ value camlidl_z3_Z3_mk_bound(
 {
   Z3_context c; /*in*/
   unsigned int index; /*in*/
-  Z3_type_ast ty; /*in*/
+  Z3_sort ty; /*in*/
   Z3_ast _res;
   value _vres;
 
@@ -2259,7 +3617,7 @@ value camlidl_z3_Z3_mk_bound(
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   index = Int_val(_v_index);
-  camlidl_ml2c_z3_Z3_type_ast(_v_ty, &ty, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_ty, &ty, _ctx);
   _res = Z3_mk_bound(c, index, ty);
   _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
@@ -2270,16 +3628,16 @@ value camlidl_z3_Z3_mk_forall(
 	value _v_c,
 	value _v_weight,
 	value _v_patterns,
-	value _v_types,
+	value _v_sorts,
 	value _v_decl_names,
 	value _v_body)
 {
   Z3_context c; /*in*/
   unsigned int weight; /*in*/
   unsigned int num_patterns; /*in*/
-  Z3_pattern_ast const *patterns; /*in*/
+  Z3_pattern const *patterns; /*in*/
   unsigned int num_decls; /*in*/
-  Z3_type_ast const *types; /*in*/
+  Z3_sort const *sorts; /*in*/
   Z3_symbol const *decl_names; /*in*/
   Z3_ast body; /*in*/
   Z3_ast _res;
@@ -2299,17 +3657,17 @@ value camlidl_z3_Z3_mk_forall(
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   weight = Int_val(_v_weight);
   _c1 = Wosize_val(_v_patterns);
-  patterns = camlidl_malloc(_c1 * sizeof(Z3_pattern_ast const ), _ctx);
+  patterns = camlidl_malloc(_c1 * sizeof(Z3_pattern const ), _ctx);
   for (_c2 = 0; _c2 < _c1; _c2++) {
     _v3 = Field(_v_patterns, _c2);
-    camlidl_ml2c_z3_Z3_pattern_ast(_v3, &patterns[_c2], _ctx);
+    camlidl_ml2c_z3_Z3_pattern(_v3, &patterns[_c2], _ctx);
   }
   num_patterns = _c1;
-  _c4 = Wosize_val(_v_types);
-  types = camlidl_malloc(_c4 * sizeof(Z3_type_ast const ), _ctx);
+  _c4 = Wosize_val(_v_sorts);
+  sorts = camlidl_malloc(_c4 * sizeof(Z3_sort const ), _ctx);
   for (_c5 = 0; _c5 < _c4; _c5++) {
-    _v6 = Field(_v_types, _c5);
-    camlidl_ml2c_z3_Z3_type_ast(_v6, &types[_c5], _ctx);
+    _v6 = Field(_v_sorts, _c5);
+    camlidl_ml2c_z3_Z3_sort(_v6, &sorts[_c5], _ctx);
   }
   num_decls = _c4;
   _c7 = Wosize_val(_v_decl_names);
@@ -2320,7 +3678,7 @@ value camlidl_z3_Z3_mk_forall(
   }
   num_decls = _c7;
   camlidl_ml2c_z3_Z3_ast(_v_body, &body, _ctx);
-  _res = Z3_mk_forall(c, weight, num_patterns, patterns, num_decls, types, decl_names, body);
+  _res = Z3_mk_forall(c, weight, num_patterns, patterns, num_decls, sorts, decl_names, body);
   _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
@@ -2335,16 +3693,16 @@ value camlidl_z3_Z3_mk_exists(
 	value _v_c,
 	value _v_weight,
 	value _v_patterns,
-	value _v_types,
+	value _v_sorts,
 	value _v_decl_names,
 	value _v_body)
 {
   Z3_context c; /*in*/
   unsigned int weight; /*in*/
   unsigned int num_patterns; /*in*/
-  Z3_pattern_ast const *patterns; /*in*/
+  Z3_pattern const *patterns; /*in*/
   unsigned int num_decls; /*in*/
-  Z3_type_ast const *types; /*in*/
+  Z3_sort const *sorts; /*in*/
   Z3_symbol const *decl_names; /*in*/
   Z3_ast body; /*in*/
   Z3_ast _res;
@@ -2364,17 +3722,17 @@ value camlidl_z3_Z3_mk_exists(
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   weight = Int_val(_v_weight);
   _c1 = Wosize_val(_v_patterns);
-  patterns = camlidl_malloc(_c1 * sizeof(Z3_pattern_ast const ), _ctx);
+  patterns = camlidl_malloc(_c1 * sizeof(Z3_pattern const ), _ctx);
   for (_c2 = 0; _c2 < _c1; _c2++) {
     _v3 = Field(_v_patterns, _c2);
-    camlidl_ml2c_z3_Z3_pattern_ast(_v3, &patterns[_c2], _ctx);
+    camlidl_ml2c_z3_Z3_pattern(_v3, &patterns[_c2], _ctx);
   }
   num_patterns = _c1;
-  _c4 = Wosize_val(_v_types);
-  types = camlidl_malloc(_c4 * sizeof(Z3_type_ast const ), _ctx);
+  _c4 = Wosize_val(_v_sorts);
+  sorts = camlidl_malloc(_c4 * sizeof(Z3_sort const ), _ctx);
   for (_c5 = 0; _c5 < _c4; _c5++) {
-    _v6 = Field(_v_types, _c5);
-    camlidl_ml2c_z3_Z3_type_ast(_v6, &types[_c5], _ctx);
+    _v6 = Field(_v_sorts, _c5);
+    camlidl_ml2c_z3_Z3_sort(_v6, &sorts[_c5], _ctx);
   }
   num_decls = _c4;
   _c7 = Wosize_val(_v_decl_names);
@@ -2385,7 +3743,7 @@ value camlidl_z3_Z3_mk_exists(
   }
   num_decls = _c7;
   camlidl_ml2c_z3_Z3_ast(_v_body, &body, _ctx);
-  _res = Z3_mk_exists(c, weight, num_patterns, patterns, num_decls, types, decl_names, body);
+  _res = Z3_mk_exists(c, weight, num_patterns, patterns, num_decls, sorts, decl_names, body);
   _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
@@ -2400,12 +3758,8 @@ value camlidl_z3_Z3_mk_quantifier(
 	value _v_c,
 	value _v_is_forall,
 	value _v_weight,
-	value _v_num_patterns,
 	value _v_patterns,
-	value _v_num_no_patterns,
-	value _v_no_patterns,
-	value _v_num_decls,
-	value _v_types,
+	value _v_sorts,
 	value _v_decl_names,
 	value _v_body)
 {
@@ -2413,18 +3767,21 @@ value camlidl_z3_Z3_mk_quantifier(
   int is_forall; /*in*/
   unsigned int weight; /*in*/
   unsigned int num_patterns; /*in*/
-  Z3_pattern_ast const *patterns; /*in*/
-  unsigned int num_no_patterns; /*in*/
-  Z3_ast const *no_patterns; /*in*/
+  Z3_pattern const *patterns; /*in*/
   unsigned int num_decls; /*in*/
-  Z3_type_ast const *types; /*in*/
+  Z3_sort const *sorts; /*in*/
   Z3_symbol const *decl_names; /*in*/
   Z3_ast body; /*in*/
   Z3_ast _res;
-  Z3_pattern_ast _c1;
-  Z3_ast _c2;
-  Z3_type_ast _c3;
-  Z3_symbol _c4;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  mlsize_t _c4;
+  mlsize_t _c5;
+  value _v6;
+  mlsize_t _c7;
+  mlsize_t _c8;
+  value _v9;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
@@ -2432,19 +3789,29 @@ value camlidl_z3_Z3_mk_quantifier(
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   is_forall = Int_val(_v_is_forall);
   weight = Int_val(_v_weight);
-  num_patterns = Int_val(_v_num_patterns);
-  patterns = &_c1;
-  camlidl_ml2c_z3_Z3_pattern_ast(_v_patterns, &_c1, _ctx);
-  num_no_patterns = Int_val(_v_num_no_patterns);
-  no_patterns = &_c2;
-  camlidl_ml2c_z3_Z3_ast(_v_no_patterns, &_c2, _ctx);
-  num_decls = Int_val(_v_num_decls);
-  types = &_c3;
-  camlidl_ml2c_z3_Z3_type_ast(_v_types, &_c3, _ctx);
-  decl_names = &_c4;
-  camlidl_ml2c_z3_Z3_symbol(_v_decl_names, &_c4, _ctx);
+  _c1 = Wosize_val(_v_patterns);
+  patterns = camlidl_malloc(_c1 * sizeof(Z3_pattern const ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_patterns, _c2);
+    camlidl_ml2c_z3_Z3_pattern(_v3, &patterns[_c2], _ctx);
+  }
+  num_patterns = _c1;
+  _c4 = Wosize_val(_v_sorts);
+  sorts = camlidl_malloc(_c4 * sizeof(Z3_sort const ), _ctx);
+  for (_c5 = 0; _c5 < _c4; _c5++) {
+    _v6 = Field(_v_sorts, _c5);
+    camlidl_ml2c_z3_Z3_sort(_v6, &sorts[_c5], _ctx);
+  }
+  num_decls = _c4;
+  _c7 = Wosize_val(_v_decl_names);
+  decl_names = camlidl_malloc(_c7 * sizeof(Z3_symbol const ), _ctx);
+  for (_c8 = 0; _c8 < _c7; _c8++) {
+    _v9 = Field(_v_decl_names, _c8);
+    camlidl_ml2c_z3_Z3_symbol(_v9, &decl_names[_c8], _ctx);
+  }
+  num_decls = _c7;
   camlidl_ml2c_z3_Z3_ast(_v_body, &body, _ctx);
-  _res = Z3_mk_quantifier(c, is_forall, weight, num_patterns, patterns, num_no_patterns, no_patterns, num_decls, types, decl_names, body);
+  _res = Z3_mk_quantifier(c, is_forall, weight, num_patterns, patterns, num_decls, sorts, decl_names, body);
   _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
@@ -2452,7 +3819,168 @@ value camlidl_z3_Z3_mk_quantifier(
 
 value camlidl_z3_Z3_mk_quantifier_bytecode(value * argv, int argn)
 {
-  return camlidl_z3_Z3_mk_quantifier(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7], argv[8], argv[9], argv[10]);
+  return camlidl_z3_Z3_mk_quantifier(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]);
+}
+
+value camlidl_z3_Z3_mk_forall_const(
+	value _v_c,
+	value _v_weight,
+	value _v_bound,
+	value _v_patterns,
+	value _v_body)
+{
+  Z3_context c; /*in*/
+  unsigned int weight; /*in*/
+  unsigned int num_bound; /*in*/
+  Z3_app const *bound; /*in*/
+  unsigned int num_patterns; /*in*/
+  Z3_pattern const *patterns; /*in*/
+  Z3_ast body; /*in*/
+  Z3_ast _res;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  mlsize_t _c4;
+  mlsize_t _c5;
+  value _v6;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  weight = Int_val(_v_weight);
+  _c1 = Wosize_val(_v_bound);
+  bound = camlidl_malloc(_c1 * sizeof(Z3_app const ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_bound, _c2);
+    camlidl_ml2c_z3_Z3_app(_v3, &bound[_c2], _ctx);
+  }
+  num_bound = _c1;
+  _c4 = Wosize_val(_v_patterns);
+  patterns = camlidl_malloc(_c4 * sizeof(Z3_pattern const ), _ctx);
+  for (_c5 = 0; _c5 < _c4; _c5++) {
+    _v6 = Field(_v_patterns, _c5);
+    camlidl_ml2c_z3_Z3_pattern(_v6, &patterns[_c5], _ctx);
+  }
+  num_patterns = _c4;
+  camlidl_ml2c_z3_Z3_ast(_v_body, &body, _ctx);
+  _res = Z3_mk_forall_const(c, weight, num_bound, bound, num_patterns, patterns, body);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_exists_const(
+	value _v_c,
+	value _v_weight,
+	value _v_bound,
+	value _v_patterns,
+	value _v_body)
+{
+  Z3_context c; /*in*/
+  unsigned int weight; /*in*/
+  unsigned int num_bound; /*in*/
+  Z3_app const *bound; /*in*/
+  unsigned int num_patterns; /*in*/
+  Z3_pattern const *patterns; /*in*/
+  Z3_ast body; /*in*/
+  Z3_ast _res;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  mlsize_t _c4;
+  mlsize_t _c5;
+  value _v6;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  weight = Int_val(_v_weight);
+  _c1 = Wosize_val(_v_bound);
+  bound = camlidl_malloc(_c1 * sizeof(Z3_app const ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_bound, _c2);
+    camlidl_ml2c_z3_Z3_app(_v3, &bound[_c2], _ctx);
+  }
+  num_bound = _c1;
+  _c4 = Wosize_val(_v_patterns);
+  patterns = camlidl_malloc(_c4 * sizeof(Z3_pattern const ), _ctx);
+  for (_c5 = 0; _c5 < _c4; _c5++) {
+    _v6 = Field(_v_patterns, _c5);
+    camlidl_ml2c_z3_Z3_pattern(_v6, &patterns[_c5], _ctx);
+  }
+  num_patterns = _c4;
+  camlidl_ml2c_z3_Z3_ast(_v_body, &body, _ctx);
+  _res = Z3_mk_exists_const(c, weight, num_bound, bound, num_patterns, patterns, body);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_quantifier_const(
+	value _v_c,
+	value _v_is_forall,
+	value _v_weight,
+	value _v_num_bound,
+	value _v_bound,
+	value _v_num_patterns,
+	value _v_patterns,
+	value _v_body)
+{
+  Z3_context c; /*in*/
+  int is_forall; /*in*/
+  unsigned int weight; /*in*/
+  unsigned int num_bound; /*in*/
+  Z3_app const *bound; /*in*/
+  unsigned int num_patterns; /*in*/
+  Z3_pattern const *patterns; /*in*/
+  Z3_ast body; /*in*/
+  Z3_ast _res;
+  Z3_app _c1;
+  Z3_pattern _c2;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  is_forall = Int_val(_v_is_forall);
+  weight = Int_val(_v_weight);
+  num_bound = Int_val(_v_num_bound);
+  bound = &_c1;
+  camlidl_ml2c_z3_Z3_app(_v_bound, &_c1, _ctx);
+  num_patterns = Int_val(_v_num_patterns);
+  patterns = &_c2;
+  camlidl_ml2c_z3_Z3_pattern(_v_patterns, &_c2, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_body, &body, _ctx);
+  _res = Z3_mk_quantifier_const(c, is_forall, weight, num_bound, bound, num_patterns, patterns, body);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_mk_quantifier_const_bytecode(value * argv, int argn)
+{
+  return camlidl_z3_Z3_mk_quantifier_const(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7]);
+}
+
+value camlidl_z3_Z3_is_well_sorted(
+	value _v_c,
+	value _v_t)
+{
+  Z3_context c; /*in*/
+  Z3_ast t; /*in*/
+  int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_t, &t, _ctx);
+  _res = Z3_is_well_sorted(c, t);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
 }
 
 value camlidl_z3_Z3_get_symbol_kind(
@@ -2512,28 +4040,6 @@ value camlidl_z3_Z3_get_symbol_string(
   return _vres;
 }
 
-value camlidl_z3_Z3_is_eq(
-	value _v_c,
-	value _v_t1,
-	value _v_t2)
-{
-  Z3_context c; /*in*/
-  Z3_ast t1; /*in*/
-  Z3_ast t2; /*in*/
-  int _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_ast(_v_t1, &t1, _ctx);
-  camlidl_ml2c_z3_Z3_ast(_v_t2, &t2, _ctx);
-  _res = Z3_is_eq(c, t1, t2);
-  _vres = Val_int(_res);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
 value camlidl_z3_Z3_get_ast_kind(
 	value _v_c,
 	value _v_a)
@@ -2553,358 +4059,7 @@ value camlidl_z3_Z3_get_ast_kind(
   return _vres;
 }
 
-value camlidl_z3_Z3_is_expr(
-	value _v_c,
-	value _v_a)
-{
-  Z3_context c; /*in*/
-  Z3_ast a; /*in*/
-  int _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_ast(_v_a, &a, _ctx);
-  _res = Z3_is_expr(c, a);
-  _vres = Val_int(_res);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_const_ast_decl(
-	value _v_c,
-	value _v_a)
-{
-  Z3_context c; /*in*/
-  Z3_const_ast a; /*in*/
-  Z3_const_decl_ast _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_const_ast(_v_a, &a, _ctx);
-  _res = Z3_get_const_ast_decl(c, a);
-  _vres = camlidl_c2ml_z3_Z3_const_decl_ast(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_const_ast_num_args(
-	value _v_c,
-	value _v_a)
-{
-  Z3_context c; /*in*/
-  Z3_const_ast a; /*in*/
-  unsigned int _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_const_ast(_v_a, &a, _ctx);
-  _res = Z3_get_const_ast_num_args(c, a);
-  _vres = Val_int(_res);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_const_ast_arg(
-	value _v_c,
-	value _v_a,
-	value _v_i)
-{
-  Z3_context c; /*in*/
-  Z3_const_ast a; /*in*/
-  unsigned int i; /*in*/
-  Z3_ast _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_const_ast(_v_a, &a, _ctx);
-  i = Int_val(_v_i);
-  _res = Z3_get_const_ast_arg(c, a, i);
-  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_decl_name(
-	value _v_c,
-	value _v_d)
-{
-  Z3_context c; /*in*/
-  Z3_const_decl_ast d; /*in*/
-  Z3_symbol _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_const_decl_ast(_v_d, &d, _ctx);
-  _res = Z3_get_decl_name(c, d);
-  _vres = camlidl_c2ml_z3_Z3_symbol(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_type_name(
-	value _v_c,
-	value _v_d)
-{
-  Z3_context c; /*in*/
-  Z3_type_ast d; /*in*/
-  Z3_symbol _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_type_ast(_v_d, &d, _ctx);
-  _res = Z3_get_type_name(c, d);
-  _vres = camlidl_c2ml_z3_Z3_symbol(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_type(
-	value _v_c,
-	value _v_a)
-{
-  Z3_context c; /*in*/
-  Z3_ast a; /*in*/
-  Z3_type_ast _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_ast(_v_a, &a, _ctx);
-  _res = Z3_get_type(c, a);
-  _vres = camlidl_c2ml_z3_Z3_type_ast(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_domain_size(
-	value _v_c,
-	value _v_d)
-{
-  Z3_context c; /*in*/
-  Z3_const_decl_ast d; /*in*/
-  unsigned int _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_const_decl_ast(_v_d, &d, _ctx);
-  _res = Z3_get_domain_size(c, d);
-  _vres = Val_int(_res);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_domain(
-	value _v_c,
-	value _v_d,
-	value _v_i)
-{
-  Z3_context c; /*in*/
-  Z3_const_decl_ast d; /*in*/
-  unsigned int i; /*in*/
-  Z3_type_ast _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_const_decl_ast(_v_d, &d, _ctx);
-  i = Int_val(_v_i);
-  _res = Z3_get_domain(c, d, i);
-  _vres = camlidl_c2ml_z3_Z3_type_ast(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_range(
-	value _v_c,
-	value _v_d)
-{
-  Z3_context c; /*in*/
-  Z3_const_decl_ast d; /*in*/
-  Z3_type_ast _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_const_decl_ast(_v_d, &d, _ctx);
-  _res = Z3_get_range(c, d);
-  _vres = camlidl_c2ml_z3_Z3_type_ast(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_type_kind(
-	value _v_c,
-	value _v_t)
-{
-  Z3_context c; /*in*/
-  Z3_type_ast t; /*in*/
-  Z3_type_kind _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_type_ast(_v_t, &t, _ctx);
-  _res = Z3_get_type_kind(c, t);
-  _vres = camlidl_c2ml_z3_Z3_type_kind(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_bv_type_size(
-	value _v_c,
-	value _v_t)
-{
-  Z3_context c; /*in*/
-  Z3_type_ast t; /*in*/
-  unsigned int _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_type_ast(_v_t, &t, _ctx);
-  _res = Z3_get_bv_type_size(c, t);
-  _vres = Val_int(_res);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_array_type_domain(
-	value _v_c,
-	value _v_t)
-{
-  Z3_context c; /*in*/
-  Z3_type_ast t; /*in*/
-  Z3_type_ast _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_type_ast(_v_t, &t, _ctx);
-  _res = Z3_get_array_type_domain(c, t);
-  _vres = camlidl_c2ml_z3_Z3_type_ast(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_array_type_range(
-	value _v_c,
-	value _v_t)
-{
-  Z3_context c; /*in*/
-  Z3_type_ast t; /*in*/
-  Z3_type_ast _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_type_ast(_v_t, &t, _ctx);
-  _res = Z3_get_array_type_range(c, t);
-  _vres = camlidl_c2ml_z3_Z3_type_ast(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_tuple_type_mk_decl(
-	value _v_c,
-	value _v_t)
-{
-  Z3_context c; /*in*/
-  Z3_type_ast t; /*in*/
-  Z3_const_decl_ast _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_type_ast(_v_t, &t, _ctx);
-  _res = Z3_get_tuple_type_mk_decl(c, t);
-  _vres = camlidl_c2ml_z3_Z3_const_decl_ast(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_tuple_type_num_fields(
-	value _v_c,
-	value _v_t)
-{
-  Z3_context c; /*in*/
-  Z3_type_ast t; /*in*/
-  unsigned int _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_type_ast(_v_t, &t, _ctx);
-  _res = Z3_get_tuple_type_num_fields(c, t);
-  _vres = Val_int(_res);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_tuple_type_field_decl(
-	value _v_c,
-	value _v_t,
-	value _v_i)
-{
-  Z3_context c; /*in*/
-  Z3_type_ast t; /*in*/
-  unsigned int i; /*in*/
-  Z3_const_decl_ast _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_type_ast(_v_t, &t, _ctx);
-  i = Int_val(_v_i);
-  _res = Z3_get_tuple_type_field_decl(c, t, i);
-  _vres = camlidl_c2ml_z3_Z3_const_decl_ast(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_decl_kind(
-	value _v_c,
-	value _v_d)
-{
-  Z3_context c; /*in*/
-  Z3_const_decl_ast d; /*in*/
-  Z3_decl_kind _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_const_decl_ast(_v_d, &d, _ctx);
-  _res = Z3_get_decl_kind(c, d);
-  _vres = camlidl_c2ml_z3_Z3_decl_kind(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_numeral_ast_value(
+value camlidl_z3_Z3_get_numeral_string(
 	value _v_c,
 	value _v_a)
 {
@@ -2917,37 +4072,37 @@ value camlidl_z3_Z3_get_numeral_ast_value(
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   camlidl_ml2c_z3_Z3_ast(_v_a, &a, _ctx);
-  _res = Z3_get_numeral_ast_value(c, a);
+  _res = Z3_get_numeral_string(c, a);
   _vres = copy_string(_res);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_get_numeral_ast_value_small(
+value camlidl_z3_Z3_get_numeral_small(
 	value _v_c,
 	value _v_a)
 {
   Z3_context c; /*in*/
   Z3_ast a; /*in*/
-  int64 *n; /*out*/
-  int64 *d; /*out*/
+  __int64 *num; /*out*/
+  __int64 *den; /*out*/
   int _res;
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
-  int64 _c1;
-  int64 _c2;
+  __int64 _c1;
+  __int64 _c2;
   value _vresult;
   value _vres[3] = { 0, 0, 0, };
 
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   camlidl_ml2c_z3_Z3_ast(_v_a, &a, _ctx);
-  n = &_c1;
-  d = &_c2;
-  _res = Z3_get_numeral_ast_value_small(c, a, n, d);
+  num = &_c1;
+  den = &_c2;
+  _res = Z3_get_numeral_small(c, a, num, den);
   Begin_roots_block(_vres, 3)
     _vres[0] = Val_int(_res);
-    _vres[1] = copy_int64(*n);
-    _vres[2] = copy_int64(*d);
+    _vres[1] = copy_int64(*num);
+    _vres[2] = copy_int64(*den);
     _vresult = camlidl_alloc_small(3, 0);
     Field(_vresult, 0) = _vres[0];
     Field(_vresult, 1) = _vres[1];
@@ -2955,6 +4110,143 @@ value camlidl_z3_Z3_get_numeral_ast_value_small(
   End_roots()
   camlidl_free(_ctx);
   return _vresult;
+}
+
+value camlidl_z3_Z3_get_numeral_int(
+	value _v_c,
+	value _v_v)
+{
+  Z3_context c; /*in*/
+  Z3_ast v; /*in*/
+  int *i; /*out*/
+  int _res;
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  int _c1;
+  value _vresult;
+  value _vres[2] = { 0, 0, };
+
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_v, &v, _ctx);
+  i = &_c1;
+  _res = Z3_get_numeral_int(c, v, i);
+  Begin_roots_block(_vres, 2)
+    _vres[0] = Val_int(_res);
+    _vres[1] = Val_int(*i);
+    _vresult = camlidl_alloc_small(2, 0);
+    Field(_vresult, 0) = _vres[0];
+    Field(_vresult, 1) = _vres[1];
+  End_roots()
+  camlidl_free(_ctx);
+  return _vresult;
+}
+
+value camlidl_z3_Z3_get_numeral_uint(
+	value _v_c,
+	value _v_v)
+{
+  Z3_context c; /*in*/
+  Z3_ast v; /*in*/
+  unsigned int *u; /*out*/
+  int _res;
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  unsigned int _c1;
+  value _vresult;
+  value _vres[2] = { 0, 0, };
+
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_v, &v, _ctx);
+  u = &_c1;
+  _res = Z3_get_numeral_uint(c, v, u);
+  Begin_roots_block(_vres, 2)
+    _vres[0] = Val_int(_res);
+    _vres[1] = Val_int(*u);
+    _vresult = camlidl_alloc_small(2, 0);
+    Field(_vresult, 0) = _vres[0];
+    Field(_vresult, 1) = _vres[1];
+  End_roots()
+  camlidl_free(_ctx);
+  return _vresult;
+}
+
+value camlidl_z3_Z3_get_bool_value(
+	value _v_c,
+	value _v_a)
+{
+  Z3_context c; /*in*/
+  Z3_ast a; /*in*/
+  Z3_lbool _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_a, &a, _ctx);
+  _res = Z3_get_bool_value(c, a);
+  _vres = camlidl_c2ml_z3_Z3_lbool(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_app_decl(
+	value _v_c,
+	value _v_a)
+{
+  Z3_context c; /*in*/
+  Z3_app a; /*in*/
+  Z3_func_decl _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_app(_v_a, &a, _ctx);
+  _res = Z3_get_app_decl(c, a);
+  _vres = camlidl_c2ml_z3_Z3_func_decl(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_app_num_args(
+	value _v_c,
+	value _v_a)
+{
+  Z3_context c; /*in*/
+  Z3_app a; /*in*/
+  unsigned int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_app(_v_a, &a, _ctx);
+  _res = Z3_get_app_num_args(c, a);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_app_arg(
+	value _v_c,
+	value _v_a,
+	value _v_i)
+{
+  Z3_context c; /*in*/
+  Z3_app a; /*in*/
+  unsigned int i; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_app(_v_a, &a, _ctx);
+  i = Int_val(_v_i);
+  _res = Z3_get_app_arg(c, a, i);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
 }
 
 value camlidl_z3_Z3_get_index_value(
@@ -3041,7 +4333,7 @@ value camlidl_z3_Z3_get_quantifier_pattern_ast(
   Z3_context c; /*in*/
   Z3_ast a; /*in*/
   unsigned int i; /*in*/
-  Z3_pattern_ast _res;
+  Z3_pattern _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
@@ -3050,7 +4342,7 @@ value camlidl_z3_Z3_get_quantifier_pattern_ast(
   camlidl_ml2c_z3_Z3_ast(_v_a, &a, _ctx);
   i = Int_val(_v_i);
   _res = Z3_get_quantifier_pattern_ast(c, a, i);
-  _vres = camlidl_c2ml_z3_Z3_pattern_ast(&_res, _ctx);
+  _vres = camlidl_c2ml_z3_Z3_pattern(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
@@ -3077,7 +4369,7 @@ value camlidl_z3_Z3_get_quantifier_bound_name(
   return _vres;
 }
 
-value camlidl_z3_Z3_get_quantifier_bound_type_ast(
+value camlidl_z3_Z3_get_quantifier_bound_sort(
 	value _v_c,
 	value _v_a,
 	value _v_i)
@@ -3085,7 +4377,7 @@ value camlidl_z3_Z3_get_quantifier_bound_type_ast(
   Z3_context c; /*in*/
   Z3_ast a; /*in*/
   unsigned int i; /*in*/
-  Z3_type_ast _res;
+  Z3_sort _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
@@ -3093,8 +4385,8 @@ value camlidl_z3_Z3_get_quantifier_bound_type_ast(
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   camlidl_ml2c_z3_Z3_ast(_v_a, &a, _ctx);
   i = Int_val(_v_i);
-  _res = Z3_get_quantifier_bound_type_ast(c, a, i);
-  _vres = camlidl_c2ml_z3_Z3_type_ast(&_res, _ctx);
+  _res = Z3_get_quantifier_bound_sort(c, a, i);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
@@ -3137,32 +4429,161 @@ value camlidl_z3_Z3_get_quantifier_num_bound(
   return _vres;
 }
 
-value camlidl_z3_Z3_get_pattern_num_terms(
+value camlidl_z3_Z3_get_decl_name(
 	value _v_c,
-	value _v_p)
+	value _v_d)
 {
   Z3_context c; /*in*/
-  Z3_pattern_ast p; /*in*/
+  Z3_func_decl d; /*in*/
+  Z3_symbol _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  _res = Z3_get_decl_name(c, d);
+  _vres = camlidl_c2ml_z3_Z3_symbol(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_decl_num_parameters(
+	value _v_c,
+	value _v_d)
+{
+  Z3_context c; /*in*/
+  Z3_func_decl d; /*in*/
   unsigned int _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_pattern_ast(_v_p, &p, _ctx);
-  _res = Z3_get_pattern_num_terms(c, p);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  _res = Z3_get_decl_num_parameters(c, d);
   _vres = Val_int(_res);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_get_pattern_ast(
+value camlidl_z3_Z3_get_decl_parameter_kind(
 	value _v_c,
-	value _v_p,
+	value _v_d,
 	value _v_idx)
 {
   Z3_context c; /*in*/
-  Z3_pattern_ast p; /*in*/
+  Z3_func_decl d; /*in*/
+  unsigned int idx; /*in*/
+  Z3_parameter_kind _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  idx = Int_val(_v_idx);
+  _res = Z3_get_decl_parameter_kind(c, d, idx);
+  _vres = camlidl_c2ml_z3_Z3_parameter_kind(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_decl_int_parameter(
+	value _v_c,
+	value _v_d,
+	value _v_idx)
+{
+  Z3_context c; /*in*/
+  Z3_func_decl d; /*in*/
+  unsigned int idx; /*in*/
+  int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  idx = Int_val(_v_idx);
+  _res = Z3_get_decl_int_parameter(c, d, idx);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_decl_double_parameter(
+	value _v_c,
+	value _v_d,
+	value _v_idx)
+{
+  Z3_context c; /*in*/
+  Z3_func_decl d; /*in*/
+  unsigned int idx; /*in*/
+  double _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  idx = Int_val(_v_idx);
+  _res = Z3_get_decl_double_parameter(c, d, idx);
+  _vres = copy_double(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_decl_symbol_parameter(
+	value _v_c,
+	value _v_d,
+	value _v_idx)
+{
+  Z3_context c; /*in*/
+  Z3_func_decl d; /*in*/
+  unsigned int idx; /*in*/
+  Z3_symbol _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  idx = Int_val(_v_idx);
+  _res = Z3_get_decl_symbol_parameter(c, d, idx);
+  _vres = camlidl_c2ml_z3_Z3_symbol(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_decl_sort_parameter(
+	value _v_c,
+	value _v_d,
+	value _v_idx)
+{
+  Z3_context c; /*in*/
+  Z3_func_decl d; /*in*/
+  unsigned int idx; /*in*/
+  Z3_sort _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  idx = Int_val(_v_idx);
+  _res = Z3_get_decl_sort_parameter(c, d, idx);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_decl_ast_parameter(
+	value _v_c,
+	value _v_d,
+	value _v_idx)
+{
+  Z3_context c; /*in*/
+  Z3_func_decl d; /*in*/
   unsigned int idx; /*in*/
   Z3_ast _res;
   value _vres;
@@ -3170,124 +4591,493 @@ value camlidl_z3_Z3_get_pattern_ast(
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_pattern_ast(_v_p, &p, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
   idx = Int_val(_v_idx);
-  _res = Z3_get_pattern_ast(c, p, idx);
+  _res = Z3_get_decl_ast_parameter(c, d, idx);
   _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_type_ast_to_ast(
+value camlidl_z3_Z3_get_decl_func_decl_parameter(
 	value _v_c,
-	value _v_a)
+	value _v_d,
+	value _v_idx)
 {
   Z3_context c; /*in*/
-  Z3_type_ast a; /*in*/
-  Z3_ast _res;
+  Z3_func_decl d; /*in*/
+  unsigned int idx; /*in*/
+  Z3_func_decl _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_type_ast(_v_a, &a, _ctx);
-  _res = Z3_type_ast_to_ast(c, a);
-  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  idx = Int_val(_v_idx);
+  _res = Z3_get_decl_func_decl_parameter(c, d, idx);
+  _vres = camlidl_c2ml_z3_Z3_func_decl(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_const_ast_to_ast(
+value camlidl_z3_Z3_get_decl_rational_parameter(
 	value _v_c,
-	value _v_a)
+	value _v_d,
+	value _v_idx)
 {
   Z3_context c; /*in*/
-  Z3_const_ast a; /*in*/
-  Z3_ast _res;
+  Z3_func_decl d; /*in*/
+  unsigned int idx; /*in*/
+  char const *_res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_const_ast(_v_a, &a, _ctx);
-  _res = Z3_const_ast_to_ast(c, a);
-  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  idx = Int_val(_v_idx);
+  _res = Z3_get_decl_rational_parameter(c, d, idx);
+  _vres = copy_string(_res);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_const_decl_ast_to_ast(
+value camlidl_z3_Z3_get_sort_name(
 	value _v_c,
-	value _v_a)
+	value _v_d)
 {
   Z3_context c; /*in*/
-  Z3_const_decl_ast a; /*in*/
-  Z3_ast _res;
+  Z3_sort d; /*in*/
+  Z3_symbol _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_const_decl_ast(_v_a, &a, _ctx);
-  _res = Z3_const_decl_ast_to_ast(c, a);
-  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_d, &d, _ctx);
+  _res = Z3_get_sort_name(c, d);
+  _vres = camlidl_c2ml_z3_Z3_symbol(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_pattern_ast_to_ast(
+value camlidl_z3_Z3_get_sort(
+	value _v_c,
+	value _v_a)
+{
+  Z3_context c; /*in*/
+  Z3_ast a; /*in*/
+  Z3_sort _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_a, &a, _ctx);
+  _res = Z3_get_sort(c, a);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_domain_size(
+	value _v_c,
+	value _v_d)
+{
+  Z3_context c; /*in*/
+  Z3_func_decl d; /*in*/
+  unsigned int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  _res = Z3_get_domain_size(c, d);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_domain(
+	value _v_c,
+	value _v_d,
+	value _v_i)
+{
+  Z3_context c; /*in*/
+  Z3_func_decl d; /*in*/
+  unsigned int i; /*in*/
+  Z3_sort _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  i = Int_val(_v_i);
+  _res = Z3_get_domain(c, d, i);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_range(
+	value _v_c,
+	value _v_d)
+{
+  Z3_context c; /*in*/
+  Z3_func_decl d; /*in*/
+  Z3_sort _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  _res = Z3_get_range(c, d);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_sort_kind(
+	value _v_c,
+	value _v_t)
+{
+  Z3_context c; /*in*/
+  Z3_sort t; /*in*/
+  Z3_sort_kind _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_t, &t, _ctx);
+  _res = Z3_get_sort_kind(c, t);
+  _vres = camlidl_c2ml_z3_Z3_sort_kind(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_bv_sort_size(
+	value _v_c,
+	value _v_t)
+{
+  Z3_context c; /*in*/
+  Z3_sort t; /*in*/
+  unsigned int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_t, &t, _ctx);
+  _res = Z3_get_bv_sort_size(c, t);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_array_sort_domain(
+	value _v_c,
+	value _v_t)
+{
+  Z3_context c; /*in*/
+  Z3_sort t; /*in*/
+  Z3_sort _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_t, &t, _ctx);
+  _res = Z3_get_array_sort_domain(c, t);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_array_sort_range(
+	value _v_c,
+	value _v_t)
+{
+  Z3_context c; /*in*/
+  Z3_sort t; /*in*/
+  Z3_sort _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_t, &t, _ctx);
+  _res = Z3_get_array_sort_range(c, t);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_tuple_sort_mk_decl(
+	value _v_c,
+	value _v_t)
+{
+  Z3_context c; /*in*/
+  Z3_sort t; /*in*/
+  Z3_func_decl _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_t, &t, _ctx);
+  _res = Z3_get_tuple_sort_mk_decl(c, t);
+  _vres = camlidl_c2ml_z3_Z3_func_decl(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_decl_kind(
+	value _v_c,
+	value _v_d)
+{
+  Z3_context c; /*in*/
+  Z3_func_decl d; /*in*/
+  Z3_decl_kind _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  _res = Z3_get_decl_kind(c, d);
+  _vres = camlidl_c2ml_z3_Z3_decl_kind(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_tuple_sort_num_fields(
+	value _v_c,
+	value _v_t)
+{
+  Z3_context c; /*in*/
+  Z3_sort t; /*in*/
+  unsigned int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_t, &t, _ctx);
+  _res = Z3_get_tuple_sort_num_fields(c, t);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_tuple_sort_field_decl(
+	value _v_c,
+	value _v_t,
+	value _v_i)
+{
+  Z3_context c; /*in*/
+  Z3_sort t; /*in*/
+  unsigned int i; /*in*/
+  Z3_func_decl _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_t, &t, _ctx);
+  i = Int_val(_v_i);
+  _res = Z3_get_tuple_sort_field_decl(c, t, i);
+  _vres = camlidl_c2ml_z3_Z3_func_decl(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_datatype_sort_num_constructors(
+	value _v_c,
+	value _v_t)
+{
+  Z3_context c; /*in*/
+  Z3_sort t; /*in*/
+  unsigned int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_t, &t, _ctx);
+  _res = Z3_get_datatype_sort_num_constructors(c, t);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_datatype_sort_constructor(
+	value _v_c,
+	value _v_t,
+	value _v_idx)
+{
+  Z3_context c; /*in*/
+  Z3_sort t; /*in*/
+  unsigned int idx; /*in*/
+  Z3_func_decl _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_t, &t, _ctx);
+  idx = Int_val(_v_idx);
+  _res = Z3_get_datatype_sort_constructor(c, t, idx);
+  _vres = camlidl_c2ml_z3_Z3_func_decl(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_datatype_sort_recognizer(
+	value _v_c,
+	value _v_t,
+	value _v_idx)
+{
+  Z3_context c; /*in*/
+  Z3_sort t; /*in*/
+  unsigned int idx; /*in*/
+  Z3_func_decl _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_t, &t, _ctx);
+  idx = Int_val(_v_idx);
+  _res = Z3_get_datatype_sort_recognizer(c, t, idx);
+  _vres = camlidl_c2ml_z3_Z3_func_decl(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_datatype_sort_constructor_accessor(
+	value _v_c,
+	value _v_t,
+	value _v_idx_c,
+	value _v_idx_a)
+{
+  Z3_context c; /*in*/
+  Z3_sort t; /*in*/
+  unsigned int idx_c; /*in*/
+  unsigned int idx_a; /*in*/
+  Z3_func_decl _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_t, &t, _ctx);
+  idx_c = Int_val(_v_idx_c);
+  idx_a = Int_val(_v_idx_a);
+  _res = Z3_get_datatype_sort_constructor_accessor(c, t, idx_c, idx_a);
+  _vres = camlidl_c2ml_z3_Z3_func_decl(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_pattern_num_terms(
 	value _v_c,
 	value _v_p)
 {
   Z3_context c; /*in*/
-  Z3_pattern_ast p; /*in*/
+  Z3_pattern p; /*in*/
+  unsigned int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_pattern(_v_p, &p, _ctx);
+  _res = Z3_get_pattern_num_terms(c, p);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_pattern(
+	value _v_c,
+	value _v_p,
+	value _v_idx)
+{
+  Z3_context c; /*in*/
+  Z3_pattern p; /*in*/
+  unsigned int idx; /*in*/
   Z3_ast _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_pattern_ast(_v_p, &p, _ctx);
-  _res = Z3_pattern_ast_to_ast(c, p);
+  camlidl_ml2c_z3_Z3_pattern(_v_p, &p, _ctx);
+  idx = Int_val(_v_idx);
+  _res = Z3_get_pattern(c, p, idx);
   _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_to_const_ast(
+value camlidl_z3_Z3_simplify(
 	value _v_c,
 	value _v_a)
 {
   Z3_context c; /*in*/
   Z3_ast a; /*in*/
-  Z3_const_ast _res;
+  Z3_ast _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   camlidl_ml2c_z3_Z3_ast(_v_a, &a, _ctx);
-  _res = Z3_to_const_ast(c, a);
-  _vres = camlidl_c2ml_z3_Z3_const_ast(&_res, _ctx);
+  _res = Z3_simplify(c, a);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_to_numeral_ast(
+value camlidl_z3_Z3_app_to_ast(
+	value _v_c,
+	value _v_a)
+{
+  Z3_context c; /*in*/
+  Z3_app a; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_app(_v_a, &a, _ctx);
+  _res = Z3_app_to_ast(c, a);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_to_app(
 	value _v_c,
 	value _v_a)
 {
   Z3_context c; /*in*/
   Z3_ast a; /*in*/
-  Z3_numeral_ast _res;
+  Z3_app _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   camlidl_ml2c_z3_Z3_ast(_v_a, &a, _ctx);
-  _res = Z3_to_numeral_ast(c, a);
-  _vres = camlidl_c2ml_z3_Z3_numeral_ast(&_res, _ctx);
+  _res = Z3_to_app(c, a);
+  _vres = camlidl_c2ml_z3_Z3_app(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
@@ -3315,6 +5105,40 @@ value camlidl_z3_Z3_pop(
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   num_scopes = Int_val(_v_num_scopes);
   Z3_pop(c, num_scopes);
+  camlidl_free(_ctx);
+  return Val_unit;
+}
+
+value camlidl_z3_Z3_get_num_scopes(
+	value _v_c)
+{
+  Z3_context c; /*in*/
+  unsigned int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  _res = Z3_get_num_scopes(c);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_persist_ast(
+	value _v_c,
+	value _v_a,
+	value _v_num_scopes)
+{
+  Z3_context c; /*in*/
+  Z3_ast a; /*in*/
+  unsigned int num_scopes; /*in*/
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_a, &a, _ctx);
+  num_scopes = Int_val(_v_num_scopes);
+  Z3_persist_ast(c, a, num_scopes);
   camlidl_free(_ctx);
   return Val_unit;
 }
@@ -3376,33 +5200,160 @@ value camlidl_z3_Z3_check(
   return _vres;
 }
 
+value camlidl_z3_Z3_check_assumptions(
+	value _v_c,
+	value _v_assumptions,
+	value _v_core_size,
+	value _v_core)
+{
+  Z3_context c; /*in*/
+  unsigned int num_assumptions; /*in*/
+  Z3_ast *assumptions; /*in*/
+  Z3_model *m; /*out*/
+  Z3_ast *proof; /*out*/
+  unsigned int *core_size; /*in,out*/
+  Z3_ast *core; /*in,out*/
+  Z3_lbool _res;
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  unsigned int _c4;
+  mlsize_t _c5;
+  mlsize_t _c6;
+  value _v7;
+  Z3_model _c8;
+  Z3_ast _c9;
+  mlsize_t _c10;
+  value _v11;
+  value _vresult;
+  value _vres[5] = { 0, 0, 0, 0, 0, };
+
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  _c1 = Wosize_val(_v_assumptions);
+  assumptions = camlidl_malloc(_c1 * sizeof(Z3_ast ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_assumptions, _c2);
+    camlidl_ml2c_z3_Z3_ast(_v3, &assumptions[_c2], _ctx);
+  }
+  num_assumptions = _c1;
+  core_size = &_c4;
+  _c4 = Int_val(_v_core_size);
+  _c5 = Wosize_val(_v_core);
+  core = camlidl_malloc(_c5 * sizeof(Z3_ast ), _ctx);
+  for (_c6 = 0; _c6 < _c5; _c6++) {
+    _v7 = Field(_v_core, _c6);
+    camlidl_ml2c_z3_Z3_ast(_v7, &core[_c6], _ctx);
+  }
+  num_assumptions = _c5;
+  m = &_c8;
+  proof = &_c9;
+  _res = Z3_check_assumptions(c, num_assumptions, assumptions, m, proof, core_size, core);
+  Begin_roots_block(_vres, 5)
+    _vres[0] = camlidl_c2ml_z3_Z3_lbool(&_res, _ctx);
+    _vres[1] = camlidl_c2ml_z3_Z3_model(&*m, _ctx);
+    _vres[2] = camlidl_c2ml_z3_Z3_ast(&*proof, _ctx);
+    _vres[3] = Val_int(*core_size);
+    _vres[4] = camlidl_alloc(num_assumptions, 0);
+    Begin_root(_vres[4])
+      for (_c10 = 0; _c10 < num_assumptions; _c10++) {
+        _v11 = camlidl_c2ml_z3_Z3_ast(&core[_c10], _ctx);
+        modify(&Field(_vres[4], _c10), _v11);
+      }
+    End_roots()
+    _vresult = camlidl_alloc_small(5, 0);
+    { mlsize_t _c12;
+      for (_c12 = 0; _c12 < 5; _c12++) Field(_vresult, _c12) = _vres[_c12];
+    }
+  End_roots()
+  camlidl_free(_ctx);
+  return _vresult;
+}
+
+value camlidl_z3_Z3_get_implied_equalities(
+	value _v_c,
+	value _v_terms)
+{
+  Z3_context c; /*in*/
+  unsigned int num_terms; /*in*/
+  Z3_ast *terms; /*in*/
+  unsigned int *class_ids; /*out*/
+  Z3_lbool _res;
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  mlsize_t _c4;
+  value _v5;
+  value _vresult;
+  value _vres[2] = { 0, 0, };
+
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  _c1 = Wosize_val(_v_terms);
+  terms = camlidl_malloc(_c1 * sizeof(Z3_ast ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_terms, _c2);
+    camlidl_ml2c_z3_Z3_ast(_v3, &terms[_c2], _ctx);
+  }
+  num_terms = _c1;
+  class_ids = camlidl_malloc(num_terms * sizeof(unsigned int ), _ctx);
+  _res = Z3_get_implied_equalities(c, num_terms, terms, class_ids);
+  Begin_roots_block(_vres, 2)
+    _vres[0] = camlidl_c2ml_z3_Z3_lbool(&_res, _ctx);
+    _vres[1] = camlidl_alloc(num_terms, 0);
+    for (_c4 = 0; _c4 < num_terms; _c4++) {
+      _v5 = Val_int(class_ids[_c4]);
+      modify(&Field(_vres[1], _c4), _v5);
+    }
+    _vresult = camlidl_alloc_small(2, 0);
+    Field(_vresult, 0) = _vres[0];
+    Field(_vresult, 1) = _vres[1];
+  End_roots()
+  camlidl_free(_ctx);
+  return _vresult;
+}
+
 value camlidl_z3_Z3_del_model(
+	value _v_c,
 	value _v_m)
 {
+  Z3_context c; /*in*/
   Z3_model m; /*in*/
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   camlidl_ml2c_z3_Z3_model(_v_m, &m, _ctx);
-  Z3_del_model(m);
+  Z3_del_model(c, m);
   camlidl_free(_ctx);
   return Val_unit;
 }
 
-value camlidl_z3_Z3_simplify(
-	value _v_c,
-	value _v_a)
+value camlidl_z3_Z3_soft_check_cancel(
+	value _v_c)
 {
   Z3_context c; /*in*/
-  Z3_ast a; /*in*/
-  Z3_ast _res;
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  Z3_soft_check_cancel(c);
+  camlidl_free(_ctx);
+  return Val_unit;
+}
+
+value camlidl_z3_Z3_get_search_failure(
+	value _v_c)
+{
+  Z3_context c; /*in*/
+  Z3_search_failure _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_ast(_v_a, &a, _ctx);
-  _res = Z3_simplify(c, a);
-  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  _res = Z3_get_search_failure(c);
+  _vres = camlidl_c2ml_z3_Z3_search_failure(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
@@ -3411,47 +5362,79 @@ value camlidl_z3_Z3_get_relevant_labels(
 	value _v_c)
 {
   Z3_context c; /*in*/
-  Z3_labels _res;
+  Z3_literals _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   _res = Z3_get_relevant_labels(c);
-  _vres = camlidl_c2ml_z3_Z3_labels(&_res, _ctx);
+  _vres = camlidl_c2ml_z3_Z3_literals(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_del_labels(
+value camlidl_z3_Z3_get_relevant_literals(
+	value _v_c)
+{
+  Z3_context c; /*in*/
+  Z3_literals _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  _res = Z3_get_relevant_literals(c);
+  _vres = camlidl_c2ml_z3_Z3_literals(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_guessed_literals(
+	value _v_c)
+{
+  Z3_context c; /*in*/
+  Z3_literals _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  _res = Z3_get_guessed_literals(c);
+  _vres = camlidl_c2ml_z3_Z3_literals(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_del_literals(
 	value _v_c,
 	value _v_lbls)
 {
   Z3_context c; /*in*/
-  Z3_labels lbls; /*in*/
+  Z3_literals lbls; /*in*/
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_labels(_v_lbls, &lbls, _ctx);
-  Z3_del_labels(c, lbls);
+  camlidl_ml2c_z3_Z3_literals(_v_lbls, &lbls, _ctx);
+  Z3_del_literals(c, lbls);
   camlidl_free(_ctx);
   return Val_unit;
 }
 
-value camlidl_z3_Z3_get_num_labels(
+value camlidl_z3_Z3_get_num_literals(
 	value _v_c,
 	value _v_lbls)
 {
   Z3_context c; /*in*/
-  Z3_labels lbls; /*in*/
+  Z3_literals lbls; /*in*/
   unsigned int _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_labels(_v_lbls, &lbls, _ctx);
-  _res = Z3_get_num_labels(c, lbls);
+  camlidl_ml2c_z3_Z3_literals(_v_lbls, &lbls, _ctx);
+  _res = Z3_get_num_literals(c, lbls);
   _vres = Val_int(_res);
   camlidl_free(_ctx);
   return _vres;
@@ -3463,7 +5446,7 @@ value camlidl_z3_Z3_get_label_symbol(
 	value _v_idx)
 {
   Z3_context c; /*in*/
-  Z3_labels lbls; /*in*/
+  Z3_literals lbls; /*in*/
   unsigned int idx; /*in*/
   Z3_symbol _res;
   value _vres;
@@ -3471,7 +5454,7 @@ value camlidl_z3_Z3_get_label_symbol(
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_labels(_v_lbls, &lbls, _ctx);
+  camlidl_ml2c_z3_Z3_literals(_v_lbls, &lbls, _ctx);
   idx = Int_val(_v_idx);
   _res = Z3_get_label_symbol(c, lbls, idx);
   _vres = camlidl_c2ml_z3_Z3_symbol(&_res, _ctx);
@@ -3479,35 +5462,57 @@ value camlidl_z3_Z3_get_label_symbol(
   return _vres;
 }
 
-value camlidl_z3_Z3_disable_label(
+value camlidl_z3_Z3_get_literal(
 	value _v_c,
 	value _v_lbls,
 	value _v_idx)
 {
   Z3_context c; /*in*/
-  Z3_labels lbls; /*in*/
+  Z3_literals lbls; /*in*/
+  unsigned int idx; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_literals(_v_lbls, &lbls, _ctx);
+  idx = Int_val(_v_idx);
+  _res = Z3_get_literal(c, lbls, idx);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_disable_literal(
+	value _v_c,
+	value _v_lbls,
+	value _v_idx)
+{
+  Z3_context c; /*in*/
+  Z3_literals lbls; /*in*/
   unsigned int idx; /*in*/
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_labels(_v_lbls, &lbls, _ctx);
+  camlidl_ml2c_z3_Z3_literals(_v_lbls, &lbls, _ctx);
   idx = Int_val(_v_idx);
-  Z3_disable_label(c, lbls, idx);
+  Z3_disable_literal(c, lbls, idx);
   camlidl_free(_ctx);
   return Val_unit;
 }
 
-value camlidl_z3_Z3_block_labels(
+value camlidl_z3_Z3_block_literals(
 	value _v_c,
 	value _v_lbls)
 {
   Z3_context c; /*in*/
-  Z3_labels lbls; /*in*/
+  Z3_literals lbls; /*in*/
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_labels(_v_lbls, &lbls, _ctx);
-  Z3_block_labels(c, lbls);
+  camlidl_ml2c_z3_Z3_literals(_v_lbls, &lbls, _ctx);
+  Z3_block_literals(c, lbls);
   camlidl_free(_ctx);
   return Val_unit;
 }
@@ -3539,7 +5544,7 @@ value camlidl_z3_Z3_get_model_constant(
   Z3_context c; /*in*/
   Z3_model m; /*in*/
   unsigned int i; /*in*/
-  Z3_const_decl_ast _res;
+  Z3_func_decl _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
@@ -3548,111 +5553,35 @@ value camlidl_z3_Z3_get_model_constant(
   camlidl_ml2c_z3_Z3_model(_v_m, &m, _ctx);
   i = Int_val(_v_i);
   _res = Z3_get_model_constant(c, m, i);
-  _vres = camlidl_c2ml_z3_Z3_const_decl_ast(&_res, _ctx);
+  _vres = camlidl_c2ml_z3_Z3_func_decl(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_get_value(
+value camlidl_z3_Z3_eval_func_decl(
 	value _v_c,
 	value _v_m,
 	value _v_decl)
 {
   Z3_context c; /*in*/
   Z3_model m; /*in*/
-  Z3_const_decl_ast decl; /*in*/
-  Z3_value _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_model(_v_m, &m, _ctx);
-  camlidl_ml2c_z3_Z3_const_decl_ast(_v_decl, &decl, _ctx);
-  _res = Z3_get_value(c, m, decl);
-  _vres = camlidl_c2ml_z3_Z3_value(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_value_type(
-	value _v_c,
-	value _v_v)
-{
-  Z3_context c; /*in*/
-  Z3_value v; /*in*/
-  Z3_type_ast _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_value(_v_v, &v, _ctx);
-  _res = Z3_get_value_type(c, v);
-  _vres = camlidl_c2ml_z3_Z3_type_ast(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_value_kind(
-	value _v_c,
-	value _v_v)
-{
-  Z3_context c; /*in*/
-  Z3_value v; /*in*/
-  Z3_value_kind _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_value(_v_v, &v, _ctx);
-  _res = Z3_get_value_kind(c, v);
-  _vres = camlidl_c2ml_z3_Z3_value_kind(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_numeral_value_string(
-	value _v_c,
-	value _v_v)
-{
-  Z3_context c; /*in*/
-  Z3_value v; /*in*/
-  char const *_res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_value(_v_v, &v, _ctx);
-  _res = Z3_get_numeral_value_string(c, v);
-  _vres = copy_string(_res);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_numeral_value_int(
-	value _v_c,
-	value _v_v)
-{
-  Z3_context c; /*in*/
-  Z3_value v; /*in*/
-  int *i; /*out*/
+  Z3_func_decl decl; /*in*/
+  Z3_ast *v; /*out*/
   int _res;
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
-  int _c1;
+  Z3_ast _c1;
   value _vresult;
   value _vres[2] = { 0, 0, };
 
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_value(_v_v, &v, _ctx);
-  i = &_c1;
-  _res = Z3_get_numeral_value_int(c, v, i);
+  camlidl_ml2c_z3_Z3_model(_v_m, &m, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_decl, &decl, _ctx);
+  v = &_c1;
+  _res = Z3_eval_func_decl(c, m, decl, v);
   Begin_roots_block(_vres, 2)
     _vres[0] = Val_int(_res);
-    _vres[1] = Val_int(*i);
+    _vres[1] = camlidl_c2ml_z3_Z3_ast(&*v, _ctx);
     _vresult = camlidl_alloc_small(2, 0);
     Field(_vresult, 0) = _vres[0];
     Field(_vresult, 1) = _vres[1];
@@ -3661,13 +5590,13 @@ value camlidl_z3_Z3_get_numeral_value_int(
   return _vresult;
 }
 
-value camlidl_z3_Z3_get_numeral_value_uint(
+value camlidl_z3_Z3_is_array_value(
 	value _v_c,
 	value _v_v)
 {
   Z3_context c; /*in*/
-  Z3_value v; /*in*/
-  unsigned int *u; /*out*/
+  Z3_ast v; /*in*/
+  unsigned int *num_entries; /*out*/
   int _res;
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
@@ -3676,12 +5605,12 @@ value camlidl_z3_Z3_get_numeral_value_uint(
   value _vres[2] = { 0, 0, };
 
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_value(_v_v, &v, _ctx);
-  u = &_c1;
-  _res = Z3_get_numeral_value_uint(c, v, u);
+  camlidl_ml2c_z3_Z3_ast(_v_v, &v, _ctx);
+  num_entries = &_c1;
+  _res = Z3_is_array_value(c, v, num_entries);
   Begin_roots_block(_vres, 2)
     _vres[0] = Val_int(_res);
-    _vres[1] = Val_int(*u);
+    _vres[1] = Val_int(*num_entries);
     _vresult = camlidl_alloc_small(2, 0);
     Field(_vresult, 0) = _vres[0];
     Field(_vresult, 1) = _vres[1];
@@ -3690,165 +5619,75 @@ value camlidl_z3_Z3_get_numeral_value_uint(
   return _vresult;
 }
 
-value camlidl_z3_Z3_get_bool_value_bool(
-	value _v_c,
-	value _v_v)
-{
-  Z3_context c; /*in*/
-  Z3_value v; /*in*/
-  int _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_value(_v_v, &v, _ctx);
-  _res = Z3_get_bool_value_bool(c, v);
-  _vres = Val_int(_res);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_tuple_value_mk_decl(
-	value _v_c,
-	value _v_v)
-{
-  Z3_context c; /*in*/
-  Z3_value v; /*in*/
-  Z3_const_decl_ast _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_value(_v_v, &v, _ctx);
-  _res = Z3_get_tuple_value_mk_decl(c, v);
-  _vres = camlidl_c2ml_z3_Z3_const_decl_ast(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_tuple_value_num_fields(
-	value _v_c,
-	value _v_v)
-{
-  Z3_context c; /*in*/
-  Z3_value v; /*in*/
-  unsigned int _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_value(_v_v, &v, _ctx);
-  _res = Z3_get_tuple_value_num_fields(c, v);
-  _vres = Val_int(_res);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_tuple_value_field(
+value camlidl_z3_Z3_get_array_value(
 	value _v_c,
 	value _v_v,
-	value _v_i)
+	value _v_indices,
+	value _v_values)
 {
   Z3_context c; /*in*/
-  Z3_value v; /*in*/
-  unsigned int i; /*in*/
-  Z3_value _res;
-  value _vres;
-
+  Z3_ast v; /*in*/
+  unsigned int num_entries; /*in*/
+  Z3_ast *indices; /*in,out*/
+  Z3_ast *values; /*in,out*/
+  Z3_ast *else_value; /*out*/
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  mlsize_t _c4;
+  mlsize_t _c5;
+  value _v6;
+  Z3_ast _c7;
+  mlsize_t _c8;
+  value _v9;
+  mlsize_t _c10;
+  value _v11;
+  value _vresult;
+  value _vres[3] = { 0, 0, 0, };
+
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_value(_v_v, &v, _ctx);
-  i = Int_val(_v_i);
-  _res = Z3_get_tuple_value_field(c, v, i);
-  _vres = camlidl_c2ml_z3_Z3_value(&_res, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_v, &v, _ctx);
+  _c1 = Wosize_val(_v_indices);
+  indices = camlidl_malloc(_c1 * sizeof(Z3_ast ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_indices, _c2);
+    camlidl_ml2c_z3_Z3_ast(_v3, &indices[_c2], _ctx);
+  }
+  num_entries = _c1;
+  _c4 = Wosize_val(_v_values);
+  values = camlidl_malloc(_c4 * sizeof(Z3_ast ), _ctx);
+  for (_c5 = 0; _c5 < _c4; _c5++) {
+    _v6 = Field(_v_values, _c5);
+    camlidl_ml2c_z3_Z3_ast(_v6, &values[_c5], _ctx);
+  }
+  num_entries = _c4;
+  else_value = &_c7;
+  Z3_get_array_value(c, v, num_entries, indices, values, else_value);
+  Begin_roots_block(_vres, 3)
+    _vres[0] = camlidl_alloc(num_entries, 0);
+    Begin_root(_vres[0])
+      for (_c8 = 0; _c8 < num_entries; _c8++) {
+        _v9 = camlidl_c2ml_z3_Z3_ast(&indices[_c8], _ctx);
+        modify(&Field(_vres[0], _c8), _v9);
+      }
+    End_roots()
+    _vres[1] = camlidl_alloc(num_entries, 0);
+    Begin_root(_vres[1])
+      for (_c10 = 0; _c10 < num_entries; _c10++) {
+        _v11 = camlidl_c2ml_z3_Z3_ast(&values[_c10], _ctx);
+        modify(&Field(_vres[1], _c10), _v11);
+      }
+    End_roots()
+    _vres[2] = camlidl_c2ml_z3_Z3_ast(&*else_value, _ctx);
+    _vresult = camlidl_alloc_small(3, 0);
+    Field(_vresult, 0) = _vres[0];
+    Field(_vresult, 1) = _vres[1];
+    Field(_vresult, 2) = _vres[2];
+  End_roots()
   camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_array_value_size(
-	value _v_c,
-	value _v_v)
-{
-  Z3_context c; /*in*/
-  Z3_value v; /*in*/
-  unsigned int _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_value(_v_v, &v, _ctx);
-  _res = Z3_get_array_value_size(c, v);
-  _vres = Val_int(_res);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_array_value_else(
-	value _v_c,
-	value _v_v)
-{
-  Z3_context c; /*in*/
-  Z3_value v; /*in*/
-  Z3_value _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_value(_v_v, &v, _ctx);
-  _res = Z3_get_array_value_else(c, v);
-  _vres = camlidl_c2ml_z3_Z3_value(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_array_value_entry_index(
-	value _v_c,
-	value _v_v,
-	value _v_i)
-{
-  Z3_context c; /*in*/
-  Z3_value v; /*in*/
-  unsigned int i; /*in*/
-  Z3_value _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_value(_v_v, &v, _ctx);
-  i = Int_val(_v_i);
-  _res = Z3_get_array_value_entry_index(c, v, i);
-  _vres = camlidl_c2ml_z3_Z3_value(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
-value camlidl_z3_Z3_get_array_value_entry_value(
-	value _v_c,
-	value _v_v,
-	value _v_i)
-{
-  Z3_context c; /*in*/
-  Z3_value v; /*in*/
-  unsigned int i; /*in*/
-  Z3_value _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_value(_v_v, &v, _ctx);
-  i = Int_val(_v_i);
-  _res = Z3_get_array_value_entry_value(c, v, i);
-  _vres = camlidl_c2ml_z3_Z3_value(&_res, _ctx);
-  camlidl_free(_ctx);
-  return _vres;
+  return _vresult;
 }
 
 value camlidl_z3_Z3_get_model_num_funcs(
@@ -3870,28 +5709,6 @@ value camlidl_z3_Z3_get_model_num_funcs(
   return _vres;
 }
 
-value camlidl_z3_Z3_is_model_func_internal(
-	value _v_c,
-	value _v_m,
-	value _v_i)
-{
-  Z3_context c; /*in*/
-  Z3_model m; /*in*/
-  unsigned int i; /*in*/
-  int _res;
-  value _vres;
-
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_model(_v_m, &m, _ctx);
-  i = Int_val(_v_i);
-  _res = Z3_is_model_func_internal(c, m, i);
-  _vres = Val_int(_res);
-  camlidl_free(_ctx);
-  return _vres;
-}
-
 value camlidl_z3_Z3_get_model_func_decl(
 	value _v_c,
 	value _v_m,
@@ -3900,7 +5717,7 @@ value camlidl_z3_Z3_get_model_func_decl(
   Z3_context c; /*in*/
   Z3_model m; /*in*/
   unsigned int i; /*in*/
-  Z3_const_decl_ast _res;
+  Z3_func_decl _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
@@ -3909,7 +5726,7 @@ value camlidl_z3_Z3_get_model_func_decl(
   camlidl_ml2c_z3_Z3_model(_v_m, &m, _ctx);
   i = Int_val(_v_i);
   _res = Z3_get_model_func_decl(c, m, i);
-  _vres = camlidl_c2ml_z3_Z3_const_decl_ast(&_res, _ctx);
+  _vres = camlidl_c2ml_z3_Z3_func_decl(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
@@ -3922,7 +5739,7 @@ value camlidl_z3_Z3_get_model_func_else(
   Z3_context c; /*in*/
   Z3_model m; /*in*/
   unsigned int i; /*in*/
-  Z3_value _res;
+  Z3_ast _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
@@ -3931,7 +5748,7 @@ value camlidl_z3_Z3_get_model_func_else(
   camlidl_ml2c_z3_Z3_model(_v_m, &m, _ctx);
   i = Int_val(_v_i);
   _res = Z3_get_model_func_else(c, m, i);
-  _vres = camlidl_c2ml_z3_Z3_value(&_res, _ctx);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
@@ -3995,7 +5812,7 @@ value camlidl_z3_Z3_get_model_func_entry_arg(
   unsigned int i; /*in*/
   unsigned int j; /*in*/
   unsigned int k; /*in*/
-  Z3_value _res;
+  Z3_ast _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
@@ -4006,7 +5823,7 @@ value camlidl_z3_Z3_get_model_func_entry_arg(
   j = Int_val(_v_j);
   k = Int_val(_v_k);
   _res = Z3_get_model_func_entry_arg(c, m, i, j, k);
-  _vres = camlidl_c2ml_z3_Z3_value(&_res, _ctx);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
@@ -4021,7 +5838,7 @@ value camlidl_z3_Z3_get_model_func_entry_value(
   Z3_model m; /*in*/
   unsigned int i; /*in*/
   unsigned int j; /*in*/
-  Z3_value _res;
+  Z3_ast _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
@@ -4031,7 +5848,7 @@ value camlidl_z3_Z3_get_model_func_entry_value(
   i = Int_val(_v_i);
   j = Int_val(_v_j);
   _res = Z3_get_model_func_entry_value(c, m, i, j);
-  _vres = camlidl_c2ml_z3_Z3_value(&_res, _ctx);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
@@ -4044,11 +5861,11 @@ value camlidl_z3_Z3_eval(
   Z3_context c; /*in*/
   Z3_model m; /*in*/
   Z3_ast t; /*in*/
-  Z3_value *v; /*out*/
+  Z3_ast *v; /*out*/
   int _res;
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
-  Z3_value _c1;
+  Z3_ast _c1;
   value _vresult;
   value _vres[2] = { 0, 0, };
 
@@ -4059,7 +5876,7 @@ value camlidl_z3_Z3_eval(
   _res = Z3_eval(c, m, t, v);
   Begin_roots_block(_vres, 2)
     _vres[0] = Val_int(_res);
-    _vres[1] = camlidl_c2ml_z3_Z3_value(&*v, _ctx);
+    _vres[1] = camlidl_c2ml_z3_Z3_ast(&*v, _ctx);
     _vresult = camlidl_alloc_small(2, 0);
     Field(_vresult, 0) = _vres[0];
     Field(_vresult, 1) = _vres[1];
@@ -4068,31 +5885,49 @@ value camlidl_z3_Z3_eval(
   return _vresult;
 }
 
-value camlidl_z3_Z3_set_soft_timeout(
+value camlidl_z3_Z3_eval_decl(
 	value _v_c,
-	value _v_t)
+	value _v_m,
+	value _v_d,
+	value _v_args)
 {
   Z3_context c; /*in*/
-  unsigned int t; /*in*/
+  Z3_model m; /*in*/
+  Z3_func_decl d; /*in*/
+  unsigned int num_args; /*in*/
+  Z3_ast *args; /*in*/
+  Z3_ast *v; /*out*/
+  int _res;
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
-  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  t = Int_val(_v_t);
-  Z3_set_soft_timeout(c, t);
-  camlidl_free(_ctx);
-  return Val_unit;
-}
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  Z3_ast _c4;
+  value _vresult;
+  value _vres[2] = { 0, 0, };
 
-value camlidl_z3_Z3_reset_soft_timeout(
-	value _v_c)
-{
-  Z3_context c; /*in*/
-  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
-  camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  Z3_reset_soft_timeout(c);
+  camlidl_ml2c_z3_Z3_model(_v_m, &m, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  _c1 = Wosize_val(_v_args);
+  args = camlidl_malloc(_c1 * sizeof(Z3_ast ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_args, _c2);
+    camlidl_ml2c_z3_Z3_ast(_v3, &args[_c2], _ctx);
+  }
+  num_args = _c1;
+  v = &_c4;
+  _res = Z3_eval_decl(c, m, d, num_args, args, v);
+  Begin_roots_block(_vres, 2)
+    _vres[0] = Val_int(_res);
+    _vres[1] = camlidl_c2ml_z3_Z3_ast(&*v, _ctx);
+    _vresult = camlidl_alloc_small(2, 0);
+    Field(_vresult, 0) = _vres[0];
+    Field(_vresult, 1) = _vres[1];
+  End_roots()
   camlidl_free(_ctx);
-  return Val_unit;
+  return _vresult;
 }
 
 value camlidl_z3_Z3_open_log(
@@ -4114,6 +5949,21 @@ value camlidl_z3_Z3_open_log(
   return _vres;
 }
 
+value camlidl_z3_Z3_append_log(
+	value _v_c,
+	value _v_string)
+{
+  Z3_context c; /*in*/
+  char const *string; /*in*/
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  string = String_val(_v_string);
+  Z3_append_log(c, string);
+  camlidl_free(_ctx);
+  return Val_unit;
+}
+
 value camlidl_z3_Z3_close_log(
 	value _v_c)
 {
@@ -4122,6 +5972,21 @@ value camlidl_z3_Z3_close_log(
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   Z3_close_log(c);
+  camlidl_free(_ctx);
+  return Val_unit;
+}
+
+value camlidl_z3_Z3_set_ast_print_mode(
+	value _v_c,
+	value _v_mode)
+{
+  Z3_context c; /*in*/
+  Z3_ast_print_mode mode; /*in*/
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_ast_print_mode(_v_mode, &mode, _ctx);
+  Z3_set_ast_print_mode(c, mode);
   camlidl_free(_ctx);
   return Val_unit;
 }
@@ -4140,6 +6005,63 @@ value camlidl_z3_Z3_ast_to_string(
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   camlidl_ml2c_z3_Z3_ast(_v_a, &a, _ctx);
   _res = Z3_ast_to_string(c, a);
+  _vres = copy_string(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_pattern_to_string(
+	value _v_c,
+	value _v_p)
+{
+  Z3_context c; /*in*/
+  Z3_pattern p; /*in*/
+  char const *_res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_pattern(_v_p, &p, _ctx);
+  _res = Z3_pattern_to_string(c, p);
+  _vres = copy_string(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_sort_to_string(
+	value _v_c,
+	value _v_s)
+{
+  Z3_context c; /*in*/
+  Z3_sort s; /*in*/
+  char const *_res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_s, &s, _ctx);
+  _res = Z3_sort_to_string(c, s);
+  _vres = copy_string(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_func_decl_to_string(
+	value _v_c,
+	value _v_d)
+{
+  Z3_context c; /*in*/
+  Z3_func_decl d; /*in*/
+  char const *_res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  _res = Z3_func_decl_to_string(c, d);
   _vres = copy_string(_res);
   camlidl_free(_ctx);
   return _vres;
@@ -4164,23 +6086,53 @@ value camlidl_z3_Z3_model_to_string(
   return _vres;
 }
 
-value camlidl_z3_Z3_value_to_string(
+value camlidl_z3_Z3_benchmark_to_smtlib_string(
 	value _v_c,
-	value _v_v)
+	value _v_name,
+	value _v_logic,
+	value _v_status,
+	value _v_attributes,
+	value _v_assumptions,
+	value _v_formula)
 {
   Z3_context c; /*in*/
-  Z3_value v; /*in*/
+  char const *name; /*in*/
+  char const *logic; /*in*/
+  char const *status; /*in*/
+  char const *attributes; /*in*/
+  unsigned int num_assumptions; /*in*/
+  Z3_ast *assumptions; /*in*/
+  Z3_ast formula; /*in*/
   char const *_res;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_value(_v_v, &v, _ctx);
-  _res = Z3_value_to_string(c, v);
+  name = String_val(_v_name);
+  logic = String_val(_v_logic);
+  status = String_val(_v_status);
+  attributes = String_val(_v_attributes);
+  _c1 = Wosize_val(_v_assumptions);
+  assumptions = camlidl_malloc(_c1 * sizeof(Z3_ast ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_assumptions, _c2);
+    camlidl_ml2c_z3_Z3_ast(_v3, &assumptions[_c2], _ctx);
+  }
+  num_assumptions = _c1;
+  camlidl_ml2c_z3_Z3_ast(_v_formula, &formula, _ctx);
+  _res = Z3_benchmark_to_smtlib_string(c, name, logic, status, attributes, num_assumptions, assumptions, formula);
   _vres = copy_string(_res);
   camlidl_free(_ctx);
   return _vres;
+}
+
+value camlidl_z3_Z3_benchmark_to_smtlib_string_bytecode(value * argv, int argn)
+{
+  return camlidl_z3_Z3_benchmark_to_smtlib_string(argv[0], argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]);
 }
 
 value camlidl_z3_Z3_context_to_string(
@@ -4199,22 +6151,54 @@ value camlidl_z3_Z3_context_to_string(
   return _vres;
 }
 
+value camlidl_z3_Z3_statistics_to_string(
+	value _v_c)
+{
+  Z3_context c; /*in*/
+  char const *_res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  _res = Z3_statistics_to_string(c);
+  _vres = copy_string(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_context_assignment(
+	value _v_c)
+{
+  Z3_context c; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  _res = Z3_get_context_assignment(c);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
 value camlidl_z3_Z3_parse_smtlib_string(
 	value _v_c,
 	value _v_str,
-	value _v_type_names,
-	value _v_types,
+	value _v_sort_names,
+	value _v_sorts,
 	value _v_decl_names,
 	value _v_decls)
 {
   Z3_context c; /*in*/
   char const *str; /*in*/
-  unsigned int num_types; /*in*/
-  Z3_symbol *type_names; /*in*/
-  Z3_type_ast *types; /*in*/
+  unsigned int num_sorts; /*in*/
+  Z3_symbol *sort_names; /*in*/
+  Z3_sort *sorts; /*in*/
   unsigned int num_decls; /*in*/
   Z3_symbol *decl_names; /*in*/
-  Z3_const_decl_ast *decls; /*in*/
+  Z3_func_decl *decls; /*in*/
   mlsize_t _c1;
   mlsize_t _c2;
   value _v3;
@@ -4231,20 +6215,20 @@ value camlidl_z3_Z3_parse_smtlib_string(
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   str = String_val(_v_str);
-  _c1 = Wosize_val(_v_type_names);
-  type_names = camlidl_malloc(_c1 * sizeof(Z3_symbol ), _ctx);
+  _c1 = Wosize_val(_v_sort_names);
+  sort_names = camlidl_malloc(_c1 * sizeof(Z3_symbol ), _ctx);
   for (_c2 = 0; _c2 < _c1; _c2++) {
-    _v3 = Field(_v_type_names, _c2);
-    camlidl_ml2c_z3_Z3_symbol(_v3, &type_names[_c2], _ctx);
+    _v3 = Field(_v_sort_names, _c2);
+    camlidl_ml2c_z3_Z3_symbol(_v3, &sort_names[_c2], _ctx);
   }
-  num_types = _c1;
-  _c4 = Wosize_val(_v_types);
-  types = camlidl_malloc(_c4 * sizeof(Z3_type_ast ), _ctx);
+  num_sorts = _c1;
+  _c4 = Wosize_val(_v_sorts);
+  sorts = camlidl_malloc(_c4 * sizeof(Z3_sort ), _ctx);
   for (_c5 = 0; _c5 < _c4; _c5++) {
-    _v6 = Field(_v_types, _c5);
-    camlidl_ml2c_z3_Z3_type_ast(_v6, &types[_c5], _ctx);
+    _v6 = Field(_v_sorts, _c5);
+    camlidl_ml2c_z3_Z3_sort(_v6, &sorts[_c5], _ctx);
   }
-  num_types = _c4;
+  num_sorts = _c4;
   _c7 = Wosize_val(_v_decl_names);
   decl_names = camlidl_malloc(_c7 * sizeof(Z3_symbol ), _ctx);
   for (_c8 = 0; _c8 < _c7; _c8++) {
@@ -4253,13 +6237,13 @@ value camlidl_z3_Z3_parse_smtlib_string(
   }
   num_decls = _c7;
   _c10 = Wosize_val(_v_decls);
-  decls = camlidl_malloc(_c10 * sizeof(Z3_const_decl_ast ), _ctx);
+  decls = camlidl_malloc(_c10 * sizeof(Z3_func_decl ), _ctx);
   for (_c11 = 0; _c11 < _c10; _c11++) {
     _v12 = Field(_v_decls, _c11);
-    camlidl_ml2c_z3_Z3_const_decl_ast(_v12, &decls[_c11], _ctx);
+    camlidl_ml2c_z3_Z3_func_decl(_v12, &decls[_c11], _ctx);
   }
   num_decls = _c10;
-  Z3_parse_smtlib_string(c, str, num_types, type_names, types, num_decls, decl_names, decls);
+  Z3_parse_smtlib_string(c, str, num_sorts, sort_names, sorts, num_decls, decl_names, decls);
   camlidl_free(_ctx);
   return Val_unit;
 }
@@ -4272,19 +6256,19 @@ value camlidl_z3_Z3_parse_smtlib_string_bytecode(value * argv, int argn)
 value camlidl_z3_Z3_parse_smtlib_file(
 	value _v_c,
 	value _v_file_name,
-	value _v_type_names,
-	value _v_types,
+	value _v_sort_names,
+	value _v_sorts,
 	value _v_decl_names,
 	value _v_decls)
 {
   Z3_context c; /*in*/
   char const *file_name; /*in*/
-  unsigned int num_types; /*in*/
-  Z3_symbol *type_names; /*in*/
-  Z3_type_ast *types; /*in*/
+  unsigned int num_sorts; /*in*/
+  Z3_symbol *sort_names; /*in*/
+  Z3_sort *sorts; /*in*/
   unsigned int num_decls; /*in*/
   Z3_symbol *decl_names; /*in*/
-  Z3_const_decl_ast *decls; /*in*/
+  Z3_func_decl *decls; /*in*/
   mlsize_t _c1;
   mlsize_t _c2;
   value _v3;
@@ -4301,20 +6285,20 @@ value camlidl_z3_Z3_parse_smtlib_file(
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   file_name = String_val(_v_file_name);
-  _c1 = Wosize_val(_v_type_names);
-  type_names = camlidl_malloc(_c1 * sizeof(Z3_symbol ), _ctx);
+  _c1 = Wosize_val(_v_sort_names);
+  sort_names = camlidl_malloc(_c1 * sizeof(Z3_symbol ), _ctx);
   for (_c2 = 0; _c2 < _c1; _c2++) {
-    _v3 = Field(_v_type_names, _c2);
-    camlidl_ml2c_z3_Z3_symbol(_v3, &type_names[_c2], _ctx);
+    _v3 = Field(_v_sort_names, _c2);
+    camlidl_ml2c_z3_Z3_symbol(_v3, &sort_names[_c2], _ctx);
   }
-  num_types = _c1;
-  _c4 = Wosize_val(_v_types);
-  types = camlidl_malloc(_c4 * sizeof(Z3_type_ast ), _ctx);
+  num_sorts = _c1;
+  _c4 = Wosize_val(_v_sorts);
+  sorts = camlidl_malloc(_c4 * sizeof(Z3_sort ), _ctx);
   for (_c5 = 0; _c5 < _c4; _c5++) {
-    _v6 = Field(_v_types, _c5);
-    camlidl_ml2c_z3_Z3_type_ast(_v6, &types[_c5], _ctx);
+    _v6 = Field(_v_sorts, _c5);
+    camlidl_ml2c_z3_Z3_sort(_v6, &sorts[_c5], _ctx);
   }
-  num_types = _c4;
+  num_sorts = _c4;
   _c7 = Wosize_val(_v_decl_names);
   decl_names = camlidl_malloc(_c7 * sizeof(Z3_symbol ), _ctx);
   for (_c8 = 0; _c8 < _c7; _c8++) {
@@ -4323,13 +6307,13 @@ value camlidl_z3_Z3_parse_smtlib_file(
   }
   num_decls = _c7;
   _c10 = Wosize_val(_v_decls);
-  decls = camlidl_malloc(_c10 * sizeof(Z3_const_decl_ast ), _ctx);
+  decls = camlidl_malloc(_c10 * sizeof(Z3_func_decl ), _ctx);
   for (_c11 = 0; _c11 < _c10; _c11++) {
     _v12 = Field(_v_decls, _c11);
-    camlidl_ml2c_z3_Z3_const_decl_ast(_v12, &decls[_c11], _ctx);
+    camlidl_ml2c_z3_Z3_func_decl(_v12, &decls[_c11], _ctx);
   }
   num_decls = _c10;
-  Z3_parse_smtlib_file(c, file_name, num_types, type_names, types, num_decls, decl_names, decls);
+  Z3_parse_smtlib_file(c, file_name, num_sorts, sort_names, sorts, num_decls, decl_names, decls);
   camlidl_free(_ctx);
   return Val_unit;
 }
@@ -4431,7 +6415,7 @@ value camlidl_z3_Z3_get_smtlib_decl(
 {
   Z3_context c; /*in*/
   unsigned int i; /*in*/
-  Z3_const_decl_ast _res;
+  Z3_func_decl _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
@@ -4439,7 +6423,96 @@ value camlidl_z3_Z3_get_smtlib_decl(
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
   i = Int_val(_v_i);
   _res = Z3_get_smtlib_decl(c, i);
-  _vres = camlidl_c2ml_z3_Z3_const_decl_ast(&_res, _ctx);
+  _vres = camlidl_c2ml_z3_Z3_func_decl(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_smtlib_num_sorts(
+	value _v_c)
+{
+  Z3_context c; /*in*/
+  unsigned int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  _res = Z3_get_smtlib_num_sorts(c);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_smtlib_sort(
+	value _v_c,
+	value _v_i)
+{
+  Z3_context c; /*in*/
+  unsigned int i; /*in*/
+  Z3_sort _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  i = Int_val(_v_i);
+  _res = Z3_get_smtlib_sort(c, i);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_get_smtlib_error(
+	value _v_c)
+{
+  Z3_context c; /*in*/
+  char const *_res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  _res = Z3_get_smtlib_error(c);
+  _vres = copy_string(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_parse_z3_string(
+	value _v_c,
+	value _v_str)
+{
+  Z3_context c; /*in*/
+  char const *str; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  str = String_val(_v_str);
+  _res = Z3_parse_z3_string(c, str);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_parse_z3_file(
+	value _v_c,
+	value _v_file_name)
+{
+  Z3_context c; /*in*/
+  char const *file_name; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  file_name = String_val(_v_file_name);
+  _res = Z3_parse_z3_file(c, file_name);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
   camlidl_free(_ctx);
   return _vres;
 }
@@ -4476,32 +6549,370 @@ value camlidl_z3_Z3_get_version(value _unit)
   return _vresult;
 }
 
-value camlidl_z3_Z3_type_check(
+value camlidl_z3_Z3_reset_memory(value _unit)
+{
+  Z3_reset_memory();
+  return Val_unit;
+}
+
+value camlidl_z3_Z3_theory_mk_sort(
 	value _v_c,
-	value _v_t)
+	value _v_t,
+	value _v_s)
 {
   Z3_context c; /*in*/
-  Z3_ast t; /*in*/
-  int _res;
+  Z3_theory t; /*in*/
+  Z3_symbol s; /*in*/
+  Z3_sort _res;
   value _vres;
 
   struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
   camlidl_ctx _ctx = &_ctxs;
   camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
-  camlidl_ml2c_z3_Z3_ast(_v_t, &t, _ctx);
-  _res = Z3_type_check(c, t);
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  camlidl_ml2c_z3_Z3_symbol(_v_s, &s, _ctx);
+  _res = Z3_theory_mk_sort(c, t, s);
+  _vres = camlidl_c2ml_z3_Z3_sort(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_theory_mk_value(
+	value _v_c,
+	value _v_t,
+	value _v_n,
+	value _v_s)
+{
+  Z3_context c; /*in*/
+  Z3_theory t; /*in*/
+  Z3_symbol n; /*in*/
+  Z3_sort s; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  camlidl_ml2c_z3_Z3_symbol(_v_n, &n, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_s, &s, _ctx);
+  _res = Z3_theory_mk_value(c, t, n, s);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_theory_mk_constant(
+	value _v_c,
+	value _v_t,
+	value _v_n,
+	value _v_s)
+{
+  Z3_context c; /*in*/
+  Z3_theory t; /*in*/
+  Z3_symbol n; /*in*/
+  Z3_sort s; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  camlidl_ml2c_z3_Z3_symbol(_v_n, &n, _ctx);
+  camlidl_ml2c_z3_Z3_sort(_v_s, &s, _ctx);
+  _res = Z3_theory_mk_constant(c, t, n, s);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_theory_mk_func_decl(
+	value _v_c,
+	value _v_t,
+	value _v_n,
+	value _v_domain,
+	value _v_range)
+{
+  Z3_context c; /*in*/
+  Z3_theory t; /*in*/
+  Z3_symbol n; /*in*/
+  unsigned int domain_size; /*in*/
+  Z3_sort const *domain; /*in*/
+  Z3_sort range; /*in*/
+  Z3_func_decl _res;
+  mlsize_t _c1;
+  mlsize_t _c2;
+  value _v3;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_context(_v_c, &c, _ctx);
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  camlidl_ml2c_z3_Z3_symbol(_v_n, &n, _ctx);
+  _c1 = Wosize_val(_v_domain);
+  domain = camlidl_malloc(_c1 * sizeof(Z3_sort const ), _ctx);
+  for (_c2 = 0; _c2 < _c1; _c2++) {
+    _v3 = Field(_v_domain, _c2);
+    camlidl_ml2c_z3_Z3_sort(_v3, &domain[_c2], _ctx);
+  }
+  domain_size = _c1;
+  camlidl_ml2c_z3_Z3_sort(_v_range, &range, _ctx);
+  _res = Z3_theory_mk_func_decl(c, t, n, domain_size, domain, range);
+  _vres = camlidl_c2ml_z3_Z3_func_decl(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_theory_get_context(
+	value _v_t)
+{
+  Z3_theory t; /*in*/
+  Z3_context _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  _res = Z3_theory_get_context(t);
+  _vres = camlidl_c2ml_z3_Z3_context(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_theory_assert_axiom(
+	value _v_t,
+	value _v_ax)
+{
+  Z3_theory t; /*in*/
+  Z3_ast ax; /*in*/
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_ax, &ax, _ctx);
+  Z3_theory_assert_axiom(t, ax);
+  camlidl_free(_ctx);
+  return Val_unit;
+}
+
+value camlidl_z3_Z3_theory_assume_eq(
+	value _v_t,
+	value _v_lhs,
+	value _v_rhs)
+{
+  Z3_theory t; /*in*/
+  Z3_ast lhs; /*in*/
+  Z3_ast rhs; /*in*/
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_lhs, &lhs, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_rhs, &rhs, _ctx);
+  Z3_theory_assume_eq(t, lhs, rhs);
+  camlidl_free(_ctx);
+  return Val_unit;
+}
+
+value camlidl_z3_Z3_theory_enable_axiom_simplification(
+	value _v_t,
+	value _v_flag)
+{
+  Z3_theory t; /*in*/
+  int flag; /*in*/
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  flag = Int_val(_v_flag);
+  Z3_theory_enable_axiom_simplification(t, flag);
+  camlidl_free(_ctx);
+  return Val_unit;
+}
+
+value camlidl_z3_Z3_theory_get_eqc_root(
+	value _v_t,
+	value _v_n)
+{
+  Z3_theory t; /*in*/
+  Z3_ast n; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_n, &n, _ctx);
+  _res = Z3_theory_get_eqc_root(t, n);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_theory_get_eqc_next(
+	value _v_t,
+	value _v_n)
+{
+  Z3_theory t; /*in*/
+  Z3_ast n; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_n, &n, _ctx);
+  _res = Z3_theory_get_eqc_next(t, n);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_theory_get_num_parents(
+	value _v_t,
+	value _v_n)
+{
+  Z3_theory t; /*in*/
+  Z3_ast n; /*in*/
+  unsigned int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_n, &n, _ctx);
+  _res = Z3_theory_get_num_parents(t, n);
   _vres = Val_int(_res);
   camlidl_free(_ctx);
   return _vres;
 }
 
-value camlidl_z3_Z3_get_allocation_size(value _unit)
+value camlidl_z3_Z3_theory_get_parent(
+	value _v_t,
+	value _v_n,
+	value _v_i)
 {
+  Z3_theory t; /*in*/
+  Z3_ast n; /*in*/
+  unsigned int i; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_n, &n, _ctx);
+  i = Int_val(_v_i);
+  _res = Z3_theory_get_parent(t, n, i);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_theory_is_value(
+	value _v_t,
+	value _v_n)
+{
+  Z3_theory t; /*in*/
+  Z3_ast n; /*in*/
+  int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  camlidl_ml2c_z3_Z3_ast(_v_n, &n, _ctx);
+  _res = Z3_theory_is_value(t, n);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_theory_is_decl(
+	value _v_t,
+	value _v_d)
+{
+  Z3_theory t; /*in*/
+  Z3_func_decl d; /*in*/
+  int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  camlidl_ml2c_z3_Z3_func_decl(_v_d, &d, _ctx);
+  _res = Z3_theory_is_decl(t, d);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_theory_get_num_elems(
+	value _v_t)
+{
+  Z3_theory t; /*in*/
   unsigned int _res;
   value _vres;
 
-  _res = Z3_get_allocation_size();
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  _res = Z3_theory_get_num_elems(t);
   _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_theory_get_elem(
+	value _v_t,
+	value _v_i)
+{
+  Z3_theory t; /*in*/
+  unsigned int i; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  i = Int_val(_v_i);
+  _res = Z3_theory_get_elem(t, i);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_theory_get_num_apps(
+	value _v_t)
+{
+  Z3_theory t; /*in*/
+  unsigned int _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  _res = Z3_theory_get_num_apps(t);
+  _vres = Val_int(_res);
+  camlidl_free(_ctx);
+  return _vres;
+}
+
+value camlidl_z3_Z3_theory_get_app(
+	value _v_t,
+	value _v_i)
+{
+  Z3_theory t; /*in*/
+  unsigned int i; /*in*/
+  Z3_ast _res;
+  value _vres;
+
+  struct camlidl_ctx_struct _ctxs = { CAMLIDL_TRANSIENT, NULL };
+  camlidl_ctx _ctx = &_ctxs;
+  camlidl_ml2c_z3_Z3_theory(_v_t, &t, _ctx);
+  i = Int_val(_v_i);
+  _res = Z3_theory_get_app(t, i);
+  _vres = camlidl_c2ml_z3_Z3_ast(&_res, _ctx);
+  camlidl_free(_ctx);
   return _vres;
 }
 
