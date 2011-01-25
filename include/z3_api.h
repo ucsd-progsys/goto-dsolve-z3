@@ -19,6 +19,10 @@ DEFINE_VOID(Z3_theory_data);
 #define __int64 long long
 #endif
 
+#ifndef __uint64
+#define __uint64 unsigned long long
+#endif
+
 // Backwards compatibility
 #define Z3_type_ast            Z3_sort
 #define Z3_const_decl_ast      Z3_func_decl
@@ -174,6 +178,8 @@ typedef enum
     Z3_BV_SORT,
     Z3_ARRAY_SORT,
     Z3_DATATYPE_SORT,
+    Z3_RELATION_SORT,
+    Z3_FINITE_DOMAIN_SORT,
     Z3_UNKNOWN_SORT = 1000
 } Z3_sort_kind;
 
@@ -367,6 +373,10 @@ typedef enum
    - Z3_OP_ROTATE_LEFT Left rotation.
 
    - Z3_OP_ROTATE_RIGHT Right rotation.
+
+   - Z3_OP_EXT_ROTATE_LEFT (extended) Left rotation. Similar to Z3_OP_ROTATE_LEFT, but it is a binary operator instead of a parametric one.
+
+   - Z3_OP_EXT_ROTATE_RIGHT (extended) Right rotation. Similar to Z3_OP_ROTATE_RIGHT, but it is a binary operator instead of a parametric one.
 
    - Z3_OP_INT2BV Coerce integer to bit-vector. NB. This function
        is not supported by the decision procedures. Only the most
@@ -826,6 +836,8 @@ typedef enum {
     Z3_OP_BASHR,
     Z3_OP_ROTATE_LEFT,
     Z3_OP_ROTATE_RIGHT,
+    Z3_OP_EXT_ROTATE_LEFT,
+    Z3_OP_EXT_ROTATE_RIGHT,
 
     Z3_OP_INT2BV,
     Z3_OP_BV2INT,
@@ -872,6 +884,21 @@ typedef enum {
     Z3_OP_PR_MODUS_PONENS_OEQ, 
     Z3_OP_PR_TH_LEMMA, 
 
+    Z3_OP_RA_STORE = 0x600,
+    Z3_OP_RA_EMPTY,
+    Z3_OP_RA_IS_EMPTY,
+    Z3_OP_RA_JOIN,
+    Z3_OP_RA_UNION,
+    Z3_OP_RA_WIDEN,
+    Z3_OP_RA_PROJECT,
+    Z3_OP_RA_FILTER,
+    Z3_OP_RA_NEGATION_FILTER,
+    Z3_OP_RA_RENAME,
+    Z3_OP_RA_COMPLEMENT,
+    Z3_OP_RA_SELECT,
+    Z3_OP_RA_CLONE,
+    Z3_OP_FD_LT,
+    Z3_OP_FD_LE,
     Z3_OP_UNINTERPRETED
 } Z3_decl_kind;
 
@@ -2095,6 +2122,22 @@ extern "C" {
     Z3_ast Z3_API Z3_mk_rotate_right(__in Z3_context c, __in unsigned i, __in Z3_ast t1);
 
     /**
+       \brief \mlh mk_ext_rotate_left c t1 t2 \endmlh
+       Rotate bits of \c t1 to the left \c t2 times.
+       
+       The nodes \c t1 and \c t2 must have the same bit-vector sort.
+    */
+    Z3_ast Z3_API Z3_mk_ext_rotate_left(__in Z3_context c, __in Z3_ast t1, __in Z3_ast t2);
+
+    /**
+       \brief \mlh mk_ext_rotate_right c t1 t2 \endmlh
+       Rotate bits of \c t1 to the right \c t2 times.
+       
+       The nodes \c t1 and \c t2 must have the same bit-vector sort.
+    */
+    Z3_ast Z3_API Z3_mk_ext_rotate_right(__in Z3_context c, __in Z3_ast t1, __in Z3_ast t2);
+    
+    /**
        \brief \mlh mk_int2bv c n t1 \endmlh
        Create an \c n bit bit-vector from the integer argument \c t1.
 
@@ -2560,7 +2603,7 @@ extern "C" {
         __in Z3_symbol quantifier_id,
         __in Z3_symbol skolem_id,
         __in unsigned num_patterns, __in_ecount(num_patterns) Z3_pattern const* patterns, 
-        __in unsigned no_num_patterns, __in_ecount(num_patterns) Z3_ast const* no_patterns, 
+        __in unsigned num_no_patterns, __in_ecount(num_no_patterns) Z3_ast const* no_patterns, 
         __in unsigned num_decls, __in_ecount(num_decls) Z3_sort const* sorts, 
         __in_ecount(num_decls) Z3_symbol const* decl_names, 
         __in Z3_ast body);
@@ -2860,6 +2903,20 @@ extern "C" {
     Z3_pattern Z3_API Z3_get_quantifier_pattern_ast(__in Z3_context c, __in Z3_ast a, unsigned i);
 
     /**
+       \brief Return number of no_patterns used in quantifier.
+       
+       \pre Z3_get_ast_kind(a) == Z3_QUANTIFIER_AST
+    */
+    unsigned Z3_API Z3_get_quantifier_num_no_patterns(__in Z3_context c, __in Z3_ast a);
+
+    /**
+       \brief Return i'th no_pattern.
+       
+       \pre Z3_get_ast_kind(a) == Z3_QUANTIFIER_AST
+    */
+    Z3_ast Z3_API Z3_get_quantifier_no_pattern_ast(__in Z3_context c, __in Z3_ast a, unsigned i);
+
+    /**
        \brief Return symbol of the i'th bound variable.
        
        \pre Z3_get_ast_kind(a) == Z3_QUANTIFIER_AST
@@ -3136,6 +3193,36 @@ extern "C" {
     */
     Z3_func_decl Z3_API Z3_get_datatype_sort_constructor_accessor(
         __in Z3_context c, __in Z3_sort t, unsigned idx_c, unsigned idx_a);
+
+
+    /** 
+        \brief Return arity of relation.
+
+        \pre Z3_get_sort_kind(s) == Z3_RELATION_SORT
+
+        \sa Z3_get_relation_column
+    */
+
+    unsigned Z3_API Z3_get_relation_arity(__in Z3_context c, __in Z3_sort s);
+
+    /** 
+        \brief Return sort at i'th column of relation sort.
+
+        \pre Z3_get_sort_kind(c, s) == Z3_RELATION_SORT
+        \pre col < Z3_get_relation_arity(c, s)
+
+        \sa Z3_get_relation_arity
+    */
+    Z3_sort Z3_API Z3_get_relation_column(__in Z3_context c, __in Z3_sort s, unsigned col);
+
+
+#ifndef CAMLIDL
+    /** 
+        \brief Store the size of the sort in \c r. Return Z3_TRUE if the call succeeded.
+        That is, Z3_get_sort_kind(s) == Z3_FINITE_DOMAIN_SORT
+    */
+    Z3_bool Z3_API Z3_get_finite_domain_sort_size(__in Z3_context c, __in Z3_sort s, __out unsigned __int64* r);
+#endif
 
     /** 
         \brief Return number of terms in pattern.

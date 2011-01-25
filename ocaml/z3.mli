@@ -41,6 +41,8 @@ and enum_4 =
   | BV_SORT
   | ARRAY_SORT
   | DATATYPE_SORT
+  | RELATION_SORT
+  | FINITE_DOMAIN_SORT
   | UNKNOWN_SORT
 and sort_kind = enum_4
 and enum_5 =
@@ -177,6 +179,21 @@ and enum_6 =
   | OP_PR_SKOLEMIZE
   | OP_PR_MODUS_PONENS_OEQ
   | OP_PR_TH_LEMMA
+  | OP_RA_STORE
+  | OP_RA_EMPTY
+  | OP_RA_IS_EMPTY
+  | OP_RA_JOIN
+  | OP_RA_UNION
+  | OP_RA_WIDEN
+  | OP_RA_PROJECT
+  | OP_RA_FILTER
+  | OP_RA_NEGATION_FILTER
+  | OP_RA_RENAME
+  | OP_RA_COMPLEMENT
+  | OP_RA_SELECT
+  | OP_RA_CLONE
+  | OP_FD_LT
+  | OP_FD_LE
   | OP_UNINTERPRETED
 and decl_kind = enum_6
 and enum_7 =
@@ -193,6 +210,7 @@ and enum_8 =
   | PRINT_SMTLIB_FULL
   | PRINT_LOW_LEVEL
   | PRINT_SMTLIB_COMPLIANT
+  | PRINT_SMTLIB2_COMPLIANT
 and ast_print_mode = enum_8
 
 (**
@@ -768,6 +786,22 @@ and ast_print_mode = enum_8
 
     - OP_PR_TH_LEMMA: Generic proof for theory lemmas.
 
+         The theory lemma function comes with one or more parameters.
+         The first parameter indicates the name of the theory.
+         For the theory of arithmetic, additional parameters provide hints for
+         checking the theory lemma. 
+         The hints for arithmetic are:
+         
+         - farkas - followed by rational coefficients. Multiply the coefficients to the
+           inequalities in the lemma, add the (negated) inequalities and obtain a contradiction.
+
+         - triangle-eq - Indicates a lemma related to the equivalence:
+         {e
+            (iff (= t1 t2) (and (<= t1 t2) (<= t2 t1)))
+         }
+
+         - gcd-test - Indicates an integer linear arithmetic lemma that uses a gcd test.
+
     *)
 
 *)
@@ -786,6 +820,7 @@ and ast_print_mode = enum_8
 (**
    
 
+   
    
    
    
@@ -932,6 +967,9 @@ external update_param_value : context -> string -> string -> unit
        Summary: Create a Z3 symbol using an integer.
 
        Symbols are used to name several term and type constructors.
+
+       NB. Not all integers can be passed to this function.
+       The legal range of unsigned int integers is 0 to 2^30-1.
 
        - {b See also}: {!Z3.mk_string_symbol}
     *)
@@ -1263,9 +1301,6 @@ external mk_fresh_func_decl : context -> string -> sort array -> sort -> func_de
 
 (**
        Summary: Declare and create a fresh constant.
-       
-       
-       
        
        
        
@@ -1749,10 +1784,10 @@ external mk_bvult : context -> ast -> ast -> ast
        
        It abbreviates:
        {v 
-      (or (and (= (extract[|m-1|:|m-1|] s) bit1)
-               (= (extract[|m-1|:|m-1|] t) bit0))
-          (and (= (extract[|m-1|:|m-1|] s) (extract[|m-1|:|m-1|] t))
-               (bvult s t)))
+      (or (and (= (extract[|m-1|:|m-1|] t1) bit1)
+               (= (extract[|m-1|:|m-1|] t2) bit0))
+          (and (= (extract[|m-1|:|m-1|] t1) (extract[|m-1|:|m-1|] t2))
+               (bvult t1 t2)))
         v}
 
        The nodes t1 and t2 must have the same bit-vector sort.
@@ -2339,6 +2374,31 @@ external mk_quantifier : context -> bool -> int -> pattern array -> sort array -
 	= "camlidl_z3_Z3_mk_quantifier_bytecode" "camlidl_z3_Z3_mk_quantifier"
 
 (**
+       Summary: Create a quantifier - universal or existential, with pattern hints, no patterns, and attributes
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       - {b See also}: {!Z3.mk_pattern}
+       - {b See also}: {!Z3.mk_bound}
+       - {b See also}: {!Z3.mk_forall}
+       - {b See also}: {!Z3.mk_exists}
+    *)
+external mk_quantifier_ex : context -> bool -> int -> symbol -> symbol -> pattern array -> int -> ast array -> sort array -> symbol array -> ast -> ast
+	= "camlidl_z3_Z3_mk_quantifier_ex_bytecode" "camlidl_z3_Z3_mk_quantifier_ex"
+
+(**
        Summary: Create a universal quantifier using a list of constants that
        will form the set of bound variables.
 
@@ -2384,12 +2444,38 @@ external mk_exists_const : context -> int -> app array -> pattern array -> ast -
        quantifier using a list of constants that
        will form the set of bound variables.
     *)
-external mk_quantifier_const : context -> bool -> int -> int -> app -> int -> pattern -> ast -> ast
+external mk_quantifier_const : context -> bool -> int -> app array -> pattern array -> ast -> ast
 	= "camlidl_z3_Z3_mk_quantifier_const_bytecode" "camlidl_z3_Z3_mk_quantifier_const"
+
+(**
+       Summary: Create a universal or existential 
+       quantifier using a list of constants that
+       will form the set of bound variables.
+    *)
+external mk_quantifier_const_ex : context -> bool -> int -> symbol -> symbol -> app array -> pattern array -> ast array -> ast -> ast
+	= "camlidl_z3_Z3_mk_quantifier_const_ex_bytecode" "camlidl_z3_Z3_mk_quantifier_const_ex"
 
 (**
        {2 {L Accessors}}
     *)
+(** 
+        Summary: Return a unique identifier for t.
+    *)
+external get_ast_id : context -> ast -> int
+	= "camlidl_z3_Z3_get_ast_id"
+
+(** 
+        Summary: Return a unique identifier for f.
+    *)
+external get_func_decl_id : context -> func_decl -> int
+	= "camlidl_z3_Z3_get_func_decl_id"
+
+(** 
+        Summary: Return a unique identifier for s.
+    *)
+external get_sort_id : context -> sort -> int
+	= "camlidl_z3_Z3_get_sort_id"
+
 (**
        Summary: Return true if the given expression t is well sorted.
     *)
@@ -2857,6 +2943,27 @@ external get_datatype_sort_constructor_accessor : context -> sort -> int -> int 
 	= "camlidl_z3_Z3_get_datatype_sort_constructor_accessor"
 
 (** 
+        Summary: Return arity of relation.
+
+        - {b Precondition}: get_sort_kind s == RELATION_SORT
+
+        - {b See also}: {!Z3.get_relation_column}
+    *)
+external get_relation_arity : context -> sort -> int
+	= "camlidl_z3_Z3_get_relation_arity"
+
+(** 
+        Summary: Return sort at i'th column of relation sort.
+
+        - {b Precondition}: get_sort_kind c s == RELATION_SORT
+        - {b Precondition}: col < get_relation_arity c s
+
+        - {b See also}: {!Z3.get_relation_arity}
+    *)
+external get_relation_column : context -> sort -> int -> sort
+	= "camlidl_z3_Z3_get_relation_column"
+
+(** 
         Summary: Return number of terms in pattern.
     *)
 external get_pattern_num_terms : context -> pattern -> int
@@ -3028,10 +3135,9 @@ external check_assumptions : context -> ast array -> int -> ast array -> lbool *
        value for their corresponding terms if the current context forces the terms to be
        equal. You cannot deduce that terms corresponding to different numerals must be all different, 
        (especially when using non-convex theories).
-       Since Z3 does not rely on exhaustive equality propagation, it is the case that that not 
-       all implied equalities are returned by this call.
-       Only implied equalities that follow from simple constraint and 
-       equality propagation is discovered. 
+       All implied equalities are returned by this call.
+       This means that two terms map to the same class identifier if and only if
+       the current context implies that they are equal.
 
        A side-effect of the function is a satisfiability check.
        The function return L_FALSE if the current assertions are not satisfiable.

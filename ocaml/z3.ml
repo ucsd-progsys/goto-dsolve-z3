@@ -41,6 +41,8 @@ and enum_4 =
   | BV_SORT
   | ARRAY_SORT
   | DATATYPE_SORT
+  | RELATION_SORT
+  | FINITE_DOMAIN_SORT
   | UNKNOWN_SORT
 and sort_kind = enum_4
 and enum_5 =
@@ -177,6 +179,21 @@ and enum_6 =
   | OP_PR_SKOLEMIZE
   | OP_PR_MODUS_PONENS_OEQ
   | OP_PR_TH_LEMMA
+  | OP_RA_STORE
+  | OP_RA_EMPTY
+  | OP_RA_IS_EMPTY
+  | OP_RA_JOIN
+  | OP_RA_UNION
+  | OP_RA_WIDEN
+  | OP_RA_PROJECT
+  | OP_RA_FILTER
+  | OP_RA_NEGATION_FILTER
+  | OP_RA_RENAME
+  | OP_RA_COMPLEMENT
+  | OP_RA_SELECT
+  | OP_RA_CLONE
+  | OP_FD_LT
+  | OP_FD_LE
   | OP_UNINTERPRETED
 and decl_kind = enum_6
 and enum_7 =
@@ -193,6 +210,7 @@ and enum_8 =
   | PRINT_SMTLIB_FULL
   | PRINT_LOW_LEVEL
   | PRINT_SMTLIB_COMPLIANT
+  | PRINT_SMTLIB2_COMPLIANT
 and ast_print_mode = enum_8
 
 external mk_config : unit -> config
@@ -600,14 +618,29 @@ external mk_exists : context -> int -> pattern array -> sort array -> symbol arr
 external mk_quantifier : context -> bool -> int -> pattern array -> sort array -> symbol array -> ast -> ast
 	= "camlidl_z3_Z3_mk_quantifier_bytecode" "camlidl_z3_Z3_mk_quantifier"
 
+external mk_quantifier_ex : context -> bool -> int -> symbol -> symbol -> pattern array -> int -> ast array -> sort array -> symbol array -> ast -> ast
+	= "camlidl_z3_Z3_mk_quantifier_ex_bytecode" "camlidl_z3_Z3_mk_quantifier_ex"
+
 external mk_forall_const : context -> int -> app array -> pattern array -> ast -> ast
 	= "camlidl_z3_Z3_mk_forall_const"
 
 external mk_exists_const : context -> int -> app array -> pattern array -> ast -> ast
 	= "camlidl_z3_Z3_mk_exists_const"
 
-external mk_quantifier_const : context -> bool -> int -> int -> app -> int -> pattern -> ast -> ast
+external mk_quantifier_const : context -> bool -> int -> app array -> pattern array -> ast -> ast
 	= "camlidl_z3_Z3_mk_quantifier_const_bytecode" "camlidl_z3_Z3_mk_quantifier_const"
+
+external mk_quantifier_const_ex : context -> bool -> int -> symbol -> symbol -> app array -> pattern array -> ast array -> ast -> ast
+	= "camlidl_z3_Z3_mk_quantifier_const_ex_bytecode" "camlidl_z3_Z3_mk_quantifier_const_ex"
+
+external get_ast_id : context -> ast -> int
+	= "camlidl_z3_Z3_get_ast_id"
+
+external get_func_decl_id : context -> func_decl -> int
+	= "camlidl_z3_Z3_get_func_decl_id"
+
+external get_sort_id : context -> sort -> int
+	= "camlidl_z3_Z3_get_sort_id"
 
 external is_well_sorted : context -> ast -> bool
 	= "camlidl_z3_Z3_is_well_sorted"
@@ -755,6 +788,12 @@ external get_datatype_sort_recognizer : context -> sort -> int -> func_decl
 
 external get_datatype_sort_constructor_accessor : context -> sort -> int -> int -> func_decl
 	= "camlidl_z3_Z3_get_datatype_sort_constructor_accessor"
+
+external get_relation_arity : context -> sort -> int
+	= "camlidl_z3_Z3_get_relation_arity"
+
+external get_relation_column : context -> sort -> int -> sort
+	= "camlidl_z3_Z3_get_relation_column"
 
 external get_pattern_num_terms : context -> pattern -> int
 	= "camlidl_z3_Z3_get_pattern_num_terms"
